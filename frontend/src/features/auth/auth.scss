@@ -1,0 +1,86 @@
+.auth-container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #009999;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="file"] {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+
+  input[type="submit"] {
+    padding: 10px;
+    background-color: #2A4480;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background-color: #06266F;
+    }
+  }
+}
+
+.error-message {
+  color: red;
+  font-size: 0.875em;
+}
+
+.success-message {
+  color: green;
+  font-size: 1em;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+// Стили для кастомного поля загрузки файла
+.file-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2A4480;
+  color: white;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  text-align: center;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background-color: #06266F;
+  }
+}
+
+.file-chosen {
+  color: #888;
+}
+
+#file-input {
+  display: none;
+}

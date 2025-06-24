@@ -1,0 +1,103 @@
+// frontend/src/features/shared/styles/pagination.scss
+// Переменные для пагинации (можно сделать import из variables.scss)
+$button-bg: linear-gradient(180deg, #424242 0%, #212121 100%);
+$button-border: #111;
+$button-active-border: #1976d2;
+$button-shadow-active: 0 4px 16px #c4c7c9;
+$font-family: jura-bold;
+
+// Миксин для кнопки пагинации
+@mixin pag-button {
+  position: relative;
+  border-radius: 7px;
+  padding: 6px 24px 6px 24px;
+  background: $button-bg;
+  border: 1px solid $button-border;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 1px 0 #555 inset;
+  cursor: pointer;
+  font-weight: normal;
+  transition: border 0.2s, font-weight 0.2s, box-shadow 0.2s;
+  font-family: $font-family;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.pag-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+
+  .pag-button {
+    @include pag-button;
+
+    &.active {
+      font-weight: bold;
+      border: 2px solid $button-active-border;
+      box-shadow: $button-shadow-active;
+      transform: translateY(-5px);
+    }
+
+    &.arrow-left {
+      &::before {
+        content: '';
+        position: absolute;
+        left: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 12px solid #212121;
+      }
+    }
+
+    &.arrow-right {
+      &::after {
+        content: '';
+        position: absolute;
+        right: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-left: 12px solid #212121;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+
+  .pag-ellipsis {
+    display: inline-block;
+    min-width: 24px;
+    text-align: center;
+    color: #fff;
+    font-size: 1.2rem;
+    user-select: none;
+    pointer-events: none;
+    line-height: 32px;
+  }
+
+  .pag-arrow-label {
+    display: inline;
+  }
+}
+
+@media (max-width: 699px) {
+  .pag-container {
+    .pag-arrow-label {
+      display: none;
+    }
+    .pag-button {
+      padding: 6px 12px 6px 12px;
+    }
+  }
+}

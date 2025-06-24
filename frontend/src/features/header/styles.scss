@@ -1,0 +1,135 @@
+/* Общие стили */
+body {
+    background: #006363;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-y: scroll; /* Оставляем возможность вертикальной прокрутки */
+    overflow-x: hidden; /* Убираем горизонтальную прокрутку */
+    scrollbar-width: none; /* Для Firefox */
+}
+
+body::-webkit-scrollbar {
+    display: none; /* Для Chrome, Safari и других WebKit-браузеров */
+}
+
+
+.header_root {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.header_image_container {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.header_image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-width: 100%;
+}
+
+
+.header_text {
+    position: absolute;
+    top: 4vw;
+    left: 4vw;
+    color: rgb(41, 63, 83);
+    text-shadow: 0 0 5px rgba(8, 151, 151, 0.7);
+    font-family: caveat;
+}
+
+.header_text h1 {
+    margin: 0;
+    font-size: 7vw;
+    text-shadow: 
+        0 0 5px #e972cf, 
+        0 0 10px #eb33bd, 
+        0 0 15px #e031e0, 
+        0 0 20px #e033e6, 
+        0 0 25px #e77cde, 
+        0 0 30px #eb6cc5, 
+        0 0 35px #dd7ac4;
+    filter: brightness(3); /* Увеличение яркости */
+}
+
+.quote_container {
+    position: absolute;
+    bottom: 1vw;
+    left: 1vw;
+    color: white;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+    font-family: caveat;
+    width: calc(100% - 40px); /* Учитываем отступы */
+}
+
+.quote_container h1,
+.quote_container p {
+    text-align: right;
+    margin: 1.3vw 3vw;
+    word-wrap: break-word;
+    font-size: 3vw;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+
+    .header_root {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .header_image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .header_text {
+        background-image: url(https://bhair.online/media/post_images/up.webp);
+        background-size: cover; /* или contain */
+        background-position: center; /* Центрирование изображения */
+        position: static;
+        text-align: center;
+        min-height: 15vw;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .header_text h1 {
+        font-size: 12vw;
+    }
+    
+    .quote_container {
+        background-image: url(https://bhair.online/media/post_images/bottom.webp);
+        background-size: cover; /* или contain */
+        background-position: center; /* Центрирование изображения */
+        position: static;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(3, 3, 3);
+    }
+    
+    
+    .quote_container h1,
+    .quote_container p {
+        text-align: center;
+        font-size: 6vw;
+        margin: 0;
+        padding: 0;
+    }
+    
+}

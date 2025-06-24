@@ -1,0 +1,263 @@
+// Variables
+$main-bg: #1D7373;
+$main-dark: #06266F;
+$main-accent: #2A4480;
+$danger: #ff0000;
+$light: #c4c7c9;
+$secondary: #009999;
+$secondary-light: #5CCCCC;
+$heart: #013333;
+$white: #fff;
+
+// Mixins
+@mixin button-styles($bg, $color: $white) {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background: $bg;
+  color: $color;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-family: jura-bold;
+}
+
+// General
+.container {
+  max-width: 650px;
+  margin: 50px auto;
+  padding: 20px;
+  background: $main-bg;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin: 10px 0;
+}
+
+
+.create-edit-container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  background: $secondary;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  font-family: jura-bold;
+  text-align: center;
+
+  button {
+    @include button-styles($main-accent);
+  }
+}
+
+.createpost-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.createpost-input-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: $main-accent;
+  color: $white;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  text-align: center;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background-color: $main-dark;
+  }
+}
+
+.file-chosen {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: $white;
+}
+
+// Avatar Styles
+.avatar-img {
+  display: block;
+  margin: 2em auto 0 auto;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.comment-avatar-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+// Comments
+.comment {
+  border-radius: 34px 0px 34px 0px;
+  border: 1px solid $light;
+  margin-bottom: 1rem;
+  padding: 5px;
+  animation: fadeIn 0.5s ease-in-out;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.add-comment {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  textarea {
+    flex: 1;
+    margin-right: 0.5rem;
+    resize: none;
+  }
+
+  .fa-play {
+    font-size: 2.3rem;
+    color: $white;
+    cursor: pointer;
+    margin-right: 1rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Posts
+.posts-feed {
+  max-width: 650px;
+  margin: 50px auto;
+  padding: 20px;
+  background: $main-bg;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: jura-bold;
+  }
+}
+
+.post,
+.post-feed {
+  padding: 10px;
+  background: $main-bg;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.feed-post-body {
+  margin: 5px 0;
+  font-family: exo2;
+  font-size: 1rem;
+  text-align: justify;
+  padding: 0.3rem 0.2rem;
+  color: $light;
+  border-top: 2px solid #006363;
+  border-bottom: 2px solid #006363;
+}
+
+.post-feed-header,
+.post-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.post-feed img.post-feed-avatar-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.post-feed-image,
+.profile-post-image {
+  max-width: 100%;
+  height: auto;
+  background: $secondary-light;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0px -5px 21px 5px rgba(0,0,0,0.38);
+}
+
+.post-feed-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.like-comments {
+  display: flex;
+  align-items: center;
+}
+
+.heart-icon {
+  font-size: 1.6rem;
+  color: $heart;
+  margin-right: 5px;
+
+  &.liked {
+    color: red;
+  }
+}
+
+.like-count,
+.comments-count {
+  font-size: 1.2rem;
+  color: $heart;
+  font-family: exo2;
+  margin-left: 0.1rem;
+}
+
+.comments-count {
+  margin-left: 0.5rem;
+}
+
+.comments-icon {
+  margin-left: 1.3rem;
+  font-size: 1.3rem;
+  color: $light;
+}
+
+.time-elapsed {
+  font-size: 1rem;
+  color: $light;
+  font-family: exo2;
+}

@@ -1,0 +1,8 @@
+node_modules/
+secrets.py
+bobr_env/
+media/
+manage.py
+__pycache__/
+dist/
+
