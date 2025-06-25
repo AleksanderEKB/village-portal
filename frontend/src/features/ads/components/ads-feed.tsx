@@ -7,7 +7,7 @@ import type { AdsCategory } from '../../../types/globalTypes';
 import { usePagination } from '../../shared/utils/pagination';
 import Pagination from '../../shared/components/Pagination';
 import { useNavigate, Link } from 'react-router-dom';
-import '../styles.scss';
+import '../feed_styles.scss';
 import { faMoneyBill1 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
