@@ -5,4 +5,4 @@ media/
 manage.py
 __pycache__/
 dist/
-
+static/

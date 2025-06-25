@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = SECRET_KEY
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS
 
@@ -105,7 +105,9 @@ USE_TZ = True
 
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/home/kutak/bobrovsky/static/'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/home/kutak/bobrovsky/media/'
 
@@ -116,6 +118,12 @@ CORS_ALLOWED_ORIGINS = [
     LOCALHOST_1,
     LOCALHOST_2,
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://bobrovsky.online",
+]
+CSRF_COOKIE_SECURE = True
+
 
 AUTH_USER_MODEL = 'backend.User'
 
