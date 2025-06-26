@@ -1,0 +1,49 @@
+.ads-card-page {
+  background: #1d7373;
+  border: 1px solid #ddd;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  padding: 1.25rem;
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  }
+
+  .ads-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ads-user-avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .ads-user-avatar-stub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    background: #eee;
+    color: #888;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+
+  .ads-user-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #000000;
+  }
+}

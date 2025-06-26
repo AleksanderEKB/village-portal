@@ -8,7 +8,9 @@ import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 import { ADS_CATEGORY_LABELS } from '../../ads/adsCategories';
 import type { AdsCategory } from '../../../types/globalTypes';
 import ImageGalleryModal from './ImageGalleryModal';
-import '../page_styles.scss';
+import { faMoneyBill1, faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import '../scss_page/main.scss';
 
 export const getDefaultCategoryImage = (category: AdsCategory | string) =>
   `/media/default/${category}.webp`;
@@ -58,9 +60,16 @@ const AdsPage: React.FC = () => {
     }
   };
 
+  const handleMainImageClick = () => {
+    if (galleryImages.length > 0) {
+      setGalleryIndex(0);
+      setGalleryOpen(true);
+    }
+  };
+
   return (
     <div className="ads-page-container">
-      <div className="ads-card ads-card-page">
+      <div className="ads-card-page">
         <Link to={`/profile/${ad.user.id}`} className="ads-user-info">
           {ad.user?.avatar ? (
             <img
@@ -76,16 +85,11 @@ const AdsPage: React.FC = () => {
           <span className="ads-user-name">{ad.user.username}</span>
         </Link>
 
-        <div className="test">
+        <div className="ads-details">
           <div
             className="ads-main-image-wrapper-page"
             style={{ cursor: galleryImages.length > 0 ? 'pointer' : 'default' }}
-            onClick={() => {
-              if (galleryImages.length > 0) {
-                setGalleryIndex(0);
-                setGalleryOpen(true);
-              }
-            }}
+            onClick={handleMainImageClick}
           >
             <img
               src={ad.main_image || getDefaultCategoryImage(ad.category)}
@@ -96,11 +100,23 @@ const AdsPage: React.FC = () => {
           </div>
           {/* Этот блок отображается только на desktop (>699px) */}
           <div className="ads-info-block info-block-desktop">
+            <div>
+              <span className="ads-category">{ADS_CATEGORY_LABELS[ad.category] ?? ad.category}</span>
+            </div>
             <h2>{ad.title}</h2>
-            <div className="ads-category">{ADS_CATEGORY_LABELS[ad.category] ?? ad.category}</div>
+            <hr />
             <div className="ads-description">{ad.description}</div>
-            {ad.price && <div className="ads-price">{ad.price} ₽</div>}
-            <div className="ads-location">{ad.location}</div>
+            <hr />
+            {ad.price &&
+              <div className="ads-price">
+                <FontAwesomeIcon className='icon-price' icon={faMoneyBill1} />
+                {ad.price} ₽
+              </div>
+            }
+            <div className="ads-location">
+              <FontAwesomeIcon className='location' icon={faLocationDot} />
+              {ad.location}
+            </div>
             <div className="ads-contact">
               {ad.contact_phone && <div>Тел: {ad.contact_phone}</div>}
               {ad.contact_email && <div>Email: {ad.contact_email}</div>}
@@ -109,6 +125,7 @@ const AdsPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Галерея миниатюр показывается только если больше одной картинки */}
         {galleryImages.length > 1 && (
           <div className="ads-images-gallery">
             {galleryImages.slice(1).map((img, idx) => (
@@ -126,6 +143,7 @@ const AdsPage: React.FC = () => {
           </div>
         )}
 
+        {/* Модалка галереи открывается даже при одной картинке */}
         {galleryOpen && galleryImages.length > 0 && (
           <ImageGalleryModal
             images={galleryImages}
@@ -136,8 +154,8 @@ const AdsPage: React.FC = () => {
 
         {/* Этот блок отображается только на мобильных (<=699px) */}
         <div className="ads-info-block info-block-mobile">
-          <h2>{ad.title}</h2>
           <div className="ads-category">{ADS_CATEGORY_LABELS[ad.category] ?? ad.category}</div>
+          <h2>{ad.title}</h2>
           <div className="ads-description">{ad.description}</div>
           {ad.price && <div className="ads-price">{ad.price} ₽</div>}
           <div className="ads-location">{ad.location}</div>
@@ -147,42 +165,23 @@ const AdsPage: React.FC = () => {
           </div>
           <div className="ads-date">{formatTimeElapsed(ad.created_at)}</div>
         </div>
-
         {isOwner && (
           <div className="ads-actions" style={{ marginTop: 16 }}>
             <button
-              className="ads-edit-btn"
+              className="func-btn-1"
               onClick={() => navigate(`/ads/${ad.slug}/edit`)}
-              style={{
-                marginRight: 8,
-                padding: '6px 16px',
-                background: '#1976d2',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 4,
-                cursor: 'pointer'
-              }}
             >
               Редактировать
             </button>
             <button
-              className="ads-delete-btn"
+              className="delete-btn"
               onClick={handleDeleteAd}
-              style={{
-                padding: '6px 16px',
-                background: '#d32f2f',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 4,
-                cursor: 'pointer'
-              }}
             >
               Удалить
             </button>
           </div>
         )}
       </div>
-      <button onClick={() => navigate(-1)} className="ads-back-btn">← Назад</button>
     </div>
   );
 };

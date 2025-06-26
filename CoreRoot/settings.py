@@ -119,9 +119,7 @@ CORS_ALLOWED_ORIGINS = [
     LOCALHOST_2,
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://bobrovsky.online",
-]
+CSRF_TRUSTED_ORIGINS = [ MY_HOST ]
 CSRF_COOKIE_SECURE = True
 
 

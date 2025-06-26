@@ -1,0 +1,34 @@
+// Управление видимостью инфо-блоков
+.info-block-desktop { display: block; }
+.info-block-mobile { display: none; }
+
+@media (max-width: 699px) {
+  .ads-images-gallery {
+    flex-direction: row;
+    gap: 6px;
+    margin-top: 10px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+
+    .ads-gallery-image {
+      height: 80px;
+      width: auto;
+      object-fit: cover;
+      border-radius: 3px;
+      flex-shrink: 0;
+      background: #f0f0f0;
+    }
+  }
+  .info-block-desktop { display: none !important; }
+  .info-block-mobile { display: block !important; }
+}
+
+.info-block-mobile {
+  h2 {
+    color: rgb(22, 218, 22);
+  }
+
+  .ads-location {
+    color: #eee;
+  }
+}

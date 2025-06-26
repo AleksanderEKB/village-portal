@@ -1,0 +1,98 @@
+.ads-details {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+
+  .ads-main-image-wrapper-page {
+    flex: 1 1 0%;
+    width: 50%;
+    min-width: 0;
+    max-width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $main-bg;
+
+    .ads-main-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      box-shadow: 0px -5px 21px 5px rgba(0,0,0,0.38);
+      border-radius: 0.2rem;
+
+    }
+  }
+
+  .ads-info-block {
+    flex: 1 1 0%;
+    width: 50%;
+    min-width: 0;
+    max-width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 1rem 1rem 1rem .5rem;
+
+    h2 {
+      font-size: 1.8rem;
+      margin: 0 0 0.3rem 0;
+      font-weight: 600;
+    }
+    .ads-category {
+      display: inline-block;
+      font-size: .95rem;
+      color: #d1d1d1;
+      margin-bottom: 0.2rem;
+      border: solid 1px #000000;
+      padding: .1rem .5em .4rem .5rem;
+      border-radius: .4em;
+      background: $grey-gradient;
+    }
+    
+    .ads-description {
+      font-size: 1rem;
+      color: #000000;
+      margin-bottom: .3rem;
+      flex: 1;
+    }
+    .ads-price {
+      font-size: 1.1rem;
+      color: #000000;
+      font-weight: bold;
+    }
+    .ads-location {
+      font-size: 0.97rem;
+      color: #888;
+    }
+    .ads-contact {
+      font-size: 0.93rem;
+      color: #666;
+      display: flex;
+      flex-direction: column;
+    }
+    .ads-date {
+      font-size: 0.85rem;
+      color: #bbb;
+      margin-top: auto;
+      align-self: flex-end; 
+      text-align: right;
+    }
+  }
+
+  @media (max-width: 699px) {
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .ads-main-image-wrapper-page,
+    .ads-info-block {
+      width: 100%;
+      max-width: 100%;
+    }
+    .ads-info-block {
+      padding: 1rem 0 0 0;
+    }
+    
+  }
+}
