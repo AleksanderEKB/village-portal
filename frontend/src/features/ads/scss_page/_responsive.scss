@@ -25,10 +25,58 @@
 
 .info-block-mobile {
   h2 {
-    color: rgb(22, 218, 22);
+    font-size: 1.8rem;
+    margin: 0 0 0.3rem 0;
+    font-weight: 600;
   }
 
-  .ads-location {
-    color: #eee;
+
+  .ads-category {
+    display: inline-block;
+    font-size: .95rem;
+    color: #d1d1d1;
+    margin-top: .7rem;
+    margin-bottom: .2rem;
+    border: solid 1px #000000;
+    padding: .1rem .5em .4rem .5rem;
+    border-radius: .4em;
+    background: $grey-gradient;
   }
+
+  .ads-description {
+    font-size: 1rem;
+    margin-bottom: .3rem;
+    flex: 1;
+  }
+
+
+  .ads-price {
+    display: inline-block;
+    font-size: 1.2rem;
+    color: #d1d1d1;
+    border: solid 1px #000000;
+    padding: .2rem .5em .4rem .5rem;
+    border-radius: .4em;
+    background: $grey-gradient;
+  }
+
+
+  .ads-location {
+    font-size: 1.2rem;
+  }
+  .ads-contact {
+    margin-top: .5rem;
+    font-size: 1.2rem;
+  }
+
+  .ads-date {
+    padding-right: 3rem;
+    font-size: 0.85rem;
+    margin-top: auto;
+    align-self: flex-end; 
+    text-align: right;
+    color: #ddd;
+  }
+
+
 }

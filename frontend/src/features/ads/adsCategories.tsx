@@ -1,6 +1,6 @@
 // src/features/ads/adsCategories.ts
 export const ADS_CATEGORY_LABELS: Record<string, string> = {
-  sell: 'Продаю',
+  sell: 'Продам',
   buy: 'Куплю',
   free: 'Отдам даром',
   service: 'Услуги',

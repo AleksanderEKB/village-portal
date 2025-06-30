@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../app/store';
@@ -8,7 +8,7 @@ import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 import { ADS_CATEGORY_LABELS } from '../../ads/adsCategories';
 import type { AdsCategory } from '../../../types/globalTypes';
 import ImageGalleryModal from './ImageGalleryModal';
-import { faMoneyBill1, faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faMoneyBill1, faLocationDot, faPhone, faEnvelope, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../scss_page/main.scss';
 
@@ -23,6 +23,9 @@ const AdsPage: React.FC = () => {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
 
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const { currentAd, loading, error } = useSelector((state: RootState) => state.ads);
   const currentUser = useSelector((state: RootState) => state.auth.user);
 
@@ -31,6 +34,22 @@ const AdsPage: React.FC = () => {
       dispatch(fetchAdById(slug));
     }
   }, [dispatch, slug]);
+
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+          setMenuOpen(false);
+        }
+      };
+      if (menuOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+      } else {
+        document.removeEventListener('mousedown', handleClickOutside);
+      }
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [menuOpen]);
 
   const galleryImages = useMemo(() => {
     if (!currentAd) return [];
@@ -108,18 +127,25 @@ const AdsPage: React.FC = () => {
             <div className="ads-description">{ad.description}</div>
             <hr />
             {ad.price &&
-              <div className="ads-price">
-                <FontAwesomeIcon className='icon-price' icon={faMoneyBill1} />
-                {ad.price} ₽
+              <div>
+                <span className="ads-price">
+                  <FontAwesomeIcon className='icon-price' icon={faMoneyBill1} />
+                  {ad.price && Number(ad.price).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
+                </span>
               </div>
             }
+            <hr />
             <div className="ads-location">
               <FontAwesomeIcon className='location' icon={faLocationDot} />
               {ad.location}
             </div>
             <div className="ads-contact">
-              {ad.contact_phone && <div>Тел: {ad.contact_phone}</div>}
-              {ad.contact_email && <div>Email: {ad.contact_email}</div>}
+              <FontAwesomeIcon className='contact' icon={faPhone} />
+              {ad.contact_phone}
+            </div>
+            <div className="ads-contact">
+              <FontAwesomeIcon className='contact' icon={faEnvelope} />
+              {ad.contact_email}
             </div>
             <div className="ads-date">{formatTimeElapsed(ad.created_at)}</div>
           </div>
@@ -156,29 +182,61 @@ const AdsPage: React.FC = () => {
         <div className="ads-info-block info-block-mobile">
           <div className="ads-category">{ADS_CATEGORY_LABELS[ad.category] ?? ad.category}</div>
           <h2>{ad.title}</h2>
+          <hr />
           <div className="ads-description">{ad.description}</div>
-          {ad.price && <div className="ads-price">{ad.price} ₽</div>}
-          <div className="ads-location">{ad.location}</div>
+          <hr />
+          {ad.price &&
+            <div>
+              <span className="ads-price">
+                <FontAwesomeIcon className='icon-price' icon={faMoneyBill1} />
+                {ad.price && Number(ad.price).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
+              </span>
+            </div>
+          }
+          <hr />
+          <div className="ads-location">
+            <FontAwesomeIcon className='location' icon={faLocationDot} />
+            {ad.location}
+          </div>
           <div className="ads-contact">
-            {ad.contact_phone && <div>Тел: {ad.contact_phone}</div>}
-            {ad.contact_email && <div>Email: {ad.contact_email}</div>}
+            <FontAwesomeIcon className='contact' icon={faPhone} />
+            {ad.contact_phone}
+          </div>
+          <div className="ads-contact">
+            <FontAwesomeIcon className='contact' icon={faEnvelope} />
+            {ad.contact_email}
           </div>
           <div className="ads-date">{formatTimeElapsed(ad.created_at)}</div>
         </div>
+        {/* МЕНЮ В ПРАВОМ НИЖНЕМ УГЛУ */}
         {isOwner && (
-          <div className="ads-actions" style={{ marginTop: 16 }}>
+          <div className="ads-menu-wrapper" ref={menuRef}>
             <button
-              className="func-btn-1"
-              onClick={() => navigate(`/ads/${ad.slug}/edit`)}
+              className="ads-menu-btn"
+              onClick={() => setMenuOpen(v => !v)}
+              aria-label="Меню"
             >
-              Редактировать
+              <FontAwesomeIcon className='dropmenu' icon={faPenToSquare} size="lg" />
             </button>
-            <button
-              className="delete-btn"
-              onClick={handleDeleteAd}
-            >
-              Удалить
-            </button>
+            {menuOpen && (
+              <div className="ads-menu-dropdown">
+                <button
+                  className="ads-menu-item"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    navigate(`/ads/${ad.slug}/edit`);
+                  }}
+                >
+                  Редактировать
+                </button>
+                <button
+                  className="ads-menu-item ads-menu-item-delete"
+                  onClick={handleDeleteAd}
+                >
+                  Удалить
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

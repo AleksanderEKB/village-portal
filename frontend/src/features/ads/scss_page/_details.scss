@@ -40,6 +40,7 @@
       margin: 0 0 0.3rem 0;
       font-weight: 600;
     }
+    
     .ads-category {
       display: inline-block;
       font-size: .95rem;
@@ -53,31 +54,32 @@
     
     .ads-description {
       font-size: 1rem;
-      color: #000000;
       margin-bottom: .3rem;
       flex: 1;
     }
     .ads-price {
-      font-size: 1.1rem;
-      color: #000000;
-      font-weight: bold;
+      display: inline-block;
+      font-size: 1.2rem;
+      color: #d1d1d1;
+      border: solid 1px #000000;
+      padding: .2rem .5em .4rem .5rem;
+      border-radius: .4em;
+      background: $grey-gradient;
     }
     .ads-location {
-      font-size: 0.97rem;
-      color: #888;
+      font-size: 1.2rem;
     }
     .ads-contact {
-      font-size: 0.93rem;
-      color: #666;
-      display: flex;
-      flex-direction: column;
+      margin-top: .5rem;
+      font-size: 1.2rem;
     }
     .ads-date {
+      padding-right: 2.5rem;
       font-size: 0.85rem;
-      color: #bbb;
       margin-top: auto;
       align-self: flex-end; 
       text-align: right;
+      color: #ddd;
     }
   }
 

@@ -1,0 +1,66 @@
+@import '../../shared/styles/variables';
+
+.ads-menu-wrapper {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+}
+
+.ads-menu-btn {
+  background: #fc0000;
+  background: $red-gradient;
+  border: 1px solid black;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 20px;
+  &:hover {
+    background: #fc0000;
+    background: radial-gradient(circle,rgba(252, 0, 0, 1) 16%, rgba(0, 0, 0, 1) 100%);
+  }
+}
+
+.ads-menu-dropdown {
+  position: absolute;
+  right: 0;
+  bottom: 54px; // 44px + 10px (отступ)
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  min-width: 130px;
+  padding: 6px 0;
+  animation: slideUp 0.16s cubic-bezier(.4,1.5,.6,1) backwards;
+}
+
+@keyframes slideUp {
+  0%{ transform: translateY(24px); opacity: 0;}
+  100%{ transform: translateY(0); opacity: 1;}
+}
+
+.ads-menu-item {
+  background: $grey-gradient;
+  border-radius: 12px;
+  color: #fff;
+  text-align: left;
+  padding: 10px 20px;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover {
+    background: $grey-gradient-hover;
+  }
+
+}
+.ads-menu-item-delete {
+  color: #e14b4b;
+  font-weight: bold;
+}
