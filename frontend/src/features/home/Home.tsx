@@ -1,6 +1,6 @@
 import React from 'react';
 import InformComponent from '../info/components/inform';
-import AdsFeed from '../ads/components/ads-feed';
+import AdsFeed from '../ads/components/AdsFeed';
 import Footer from '../footer/components/Footer';
 import '../shared/fonts/fonts.scss';
 

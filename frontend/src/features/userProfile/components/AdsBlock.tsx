@@ -4,7 +4,7 @@ import type { Advertisement, AdsCategory } from '../../../types/globalTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoneyBill1 } from '@fortawesome/free-solid-svg-icons';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
-import { ADS_CATEGORY_LABELS } from '../../ads/adsCategories';
+import { ADS_CATEGORY_LABELS } from '../../ads/utils/adsCategories';
 import { usePagination } from '../../shared/utils/pagination';
 import Pagination from '../../shared/components/Pagination';
 

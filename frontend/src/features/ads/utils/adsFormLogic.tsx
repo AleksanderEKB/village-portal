@@ -1,5 +1,5 @@
 // frontend/src/features/ads/adsFormLogic.tsx
-import type { AdsCategory } from '../../types/globalTypes';
+import type { AdsCategory } from '../../../types/globalTypes';
 
 export function getPriceInputState(category: AdsCategory) {
   // Не показывать price для

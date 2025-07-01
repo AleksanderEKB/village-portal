@@ -39,22 +39,22 @@ class AdvertisementSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     f'Можно добавить не более 5 изображений к одному объявлению. Сейчас: {current_images_count}, добавляете: {len(images_data)}'
                 )
-        # main_image должен быть только один (но он одно поле — это всегда соблюдается)
+        category = data.get('category') or getattr(self.instance, 'category', None)
+        if category in ['free', 'loss', 'sundry']:
+            data['price'] = None
         return data
 
 
 class AdvertisementCreateSerializer(serializers.ModelSerializer):
     main_image = serializers.ImageField(required=False, allow_null=True)
-    # Не объявляем images как поле!
 
     class Meta:
         model = Advertisement
         fields = [
             'id', 'title', 'description', 'category', 'price',
             'location', 'contact_phone', 'contact_email', 'is_active',
-            'main_image',  # images тут БОЛЬШЕ НЕ НУЖНО!
+            'main_image',
         ]
-        # extra_kwargs = {'images': {'required': False, 'write_only': True}}  # УДАЛИ!
     
     def validate(self, data):
         request = self.context.get('request')
@@ -66,6 +66,9 @@ class AdvertisementCreateSerializer(serializers.ModelSerializer):
             for img in images:
                 if hasattr(main_image, 'name') and hasattr(img, 'name') and main_image.name == img.name:
                     raise serializers.ValidationError("Основное изображение не должно совпадать с дополнительными.")
+        category = data.get('category')
+        if category in ['free', 'loss', 'sundry']:
+            data['price'] = None
         return data
 
     def create(self, validated_data):

@@ -1,9 +1,8 @@
 // frontend/src/features/ads/adsSlice.tsx
-
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { Advertisement } from '../../types/globalTypes';
 import axiosInstance from '../../axiosInstance';
-import { ADS_CATEGORY_LABELS } from './adsCategories';
+import { ADS_CATEGORY_LABELS } from './utils/adsCategories';
 
 interface AdvertisementWithLabel extends Advertisement {
   category_label: string;

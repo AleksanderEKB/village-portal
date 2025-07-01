@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../axiosInstance';
-import { MAX_IMAGES } from '../constants';
-import { allowAdditionalImages } from '../adsFormLogic';
+import { MAX_IMAGES } from '../utils/constants';
+import { allowAdditionalImages } from '../utils/adsFormLogic';
 import type { AdsCategory } from '../../../types/globalTypes';
 
 export interface UseAdsFormProps {

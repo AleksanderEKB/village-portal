@@ -17,11 +17,10 @@ import CreatePost from './features/posts/components/CreatePost';
 import PostFeed from './features/posts/components/PostFeed';
 import EditPost from './features/posts/components/EditPost';
 import PostPage from './features/posts/components/PostPage';
-import AdsFeed from './features/ads/components/ads-feed';
+import AdsFeed from './features/ads/components/AdsFeed';
 import SocialComponent from './features/info/components/inform';
-import AdsForm from './features/ads/components/adsCreate';
-import AdsPage from './features/ads/components/adsPage';
-import AdsEditForm from './features/userProfile/components/AdsEditForm';
+import AdsForm from './features/ads/components/AdsForm';
+import AdsPage from './features/ads/components/AdsPage';
 
 
 import { ToastContainer } from 'react-toastify';
@@ -31,7 +30,6 @@ interface User {
   id: number;
   username: string;
   email: string;
-  // остальные поля пользователя, если нужно
 }
 
 const Main: React.FC = () => {
@@ -76,7 +74,7 @@ const Main: React.FC = () => {
         <Route path="/ads" element={<AdsFeed />} />
         <Route path="/ads/create-ads" element={<AdsForm />} />
         <Route path="/ads/:slug" element={<AdsPage />} />
-        <Route path="/ads/:slug/edit" element={<PrivateRoute><AdsEditForm /></PrivateRoute>} />
+        <Route path="/ads/:slug/edit" element={<PrivateRoute><AdsForm /></PrivateRoute>} />
       </Routes>
     </>
   );

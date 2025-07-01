@@ -1,5 +1,5 @@
 // frontend/src/features/ads/constants.tsx
-import type { AdsCategory } from '../../types/globalTypes';
+import type { AdsCategory } from '../../../types/globalTypes';
 
 export const CATEGORY_OPTIONS: { value: AdsCategory, label: string }[] = [
   { value: 'sell', label: 'Продаю' },
