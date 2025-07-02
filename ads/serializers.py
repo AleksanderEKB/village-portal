@@ -1,5 +1,6 @@
 # ads/serializers.py
 from rest_framework import serializers
+from django.db import models
 from .models import Advertisement, AdvertisementImage, Category
 from backend.serializers import UserSerializer
 
@@ -43,6 +44,23 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         if category in ['free', 'loss', 'sundry']:
             data['price'] = None
         return data
+    
+    def update(self, instance, validated_data):
+        # Сохраняем обычные поля
+        instance = super().update(instance, validated_data)
+
+        request = self.context.get('request')
+        if request and request.FILES.getlist('images'):
+            images = request.FILES.getlist('images')
+            # Определяем максимальный order
+            max_order = instance.images.aggregate(models.Max('order'))['order__max'] or 0
+            for idx, image in enumerate(images):
+                AdvertisementImage.objects.create(
+                    advertisement=instance,
+                    image=image,
+                    order=max_order + idx + 1
+                )
+        return instance
 
 
 class AdvertisementCreateSerializer(serializers.ModelSerializer):

@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../app/store';
 import { fetchAdById, setCurrentAd } from '../adsSlice';
-import axiosInstance from '../../../axiosInstance';
 import { CATEGORY_OPTIONS, MAX_IMAGES } from '../utils/constants';
 import {
   getPriceInputState,
@@ -11,30 +10,7 @@ import {
   getTitlePlaceholder,
   allowAdditionalImages,
 } from '../utils/adsFormLogic';
-import type { AdsCategory } from '../../../types/globalTypes';
-import { validateAdForm, AdFormValidationErrors } from '../utils/validateAdForm';
-
-type FormState = {
-  title: string;
-  description: string;
-  category: AdsCategory;
-  price: string;
-  location: string;
-  contact_phone: string;
-  main_image: File | null;
-  images: File[];
-};
-
-const initialForm: FormState = {
-  title: '',
-  description: '',
-  category: 'sell',
-  price: '',
-  location: '',
-  contact_phone: '',
-  main_image: null,
-  images: [],
-};
+import { useAdForm } from '../utils/useAdsForm'; // Кастомный хук
 
 const AdsForm: React.FC = () => {
   const { slug } = useParams<{ slug?: string }>();
@@ -44,153 +20,39 @@ const AdsForm: React.FC = () => {
   const currentAd = useSelector((state: RootState) => state.ads.currentAd);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
-  const [form, setForm] = useState<FormState>(initialForm);
-  const [validationErrors, setValidationErrors] = useState<AdFormValidationErrors>({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
+  // Подгружаем объявление при необходимости
   useEffect(() => {
-    setValidationErrors(validateAdForm(form, !!slug));
-  }, [form, slug]);
-
-  useEffect(() => {
-    if (slug) {
-      dispatch(fetchAdById(slug));
-    } else {
-      setForm(initialForm);
-      dispatch(setCurrentAd(null));
-    }
+    if (slug) dispatch(fetchAdById(slug));
+    else dispatch(setCurrentAd(null));
   }, [dispatch, slug]);
 
-  useEffect(() => {
-    if (slug && currentAd) {
-      setForm({
-        title: currentAd.title || '',
-        description: currentAd.description || '',
-        category: currentAd.category as AdsCategory,
-        price: currentAd.price || '',
-        location: currentAd.location || '',
-        contact_phone: currentAd.contact_phone || '',
-        main_image: null,
-        images: [],
-      });
-    }
-  }, [slug, currentAd]);
-
-  useEffect(() => {
-    return () => {
-      setForm(initialForm);
-      dispatch(setCurrentAd(null));
-    };
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (!form.main_image && form.images.length > 0) {
-      setForm(f => ({ ...f, images: [] }));
-    }
-  }, [form.main_image]);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setForm(prev => {
-      if (name === 'category') {
-        const newCategory = value as AdsCategory;
-        const shouldHavePrice = getPriceInputState(newCategory);
-        return {
-          ...prev,
-          category: newCategory,
-          price: shouldHavePrice ? prev.price : '',
-          images: allowAdditionalImages(newCategory) ? prev.images : [],
-        };
-      }
-      return { ...prev, [name]: value };
-    });
+  // Навигация после сабмита
+  const handleAfterSubmit = (slug?: string) => {
+    if (slug) navigate(`/ads/${slug}`);
+    else navigate('/ads');
   };
 
-  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    if (file && !file.type.startsWith('image/')) {
-      setValidationErrors(prev => ({ ...prev, main_image: 'Файл должен быть изображением' }));
-      // Не устанавливаем файл
-      setForm(prev => ({ ...prev, main_image: null }));
-      return;
-    }
-    setValidationErrors(prev => ({ ...prev, main_image: undefined }));
-    setForm(prev => ({ ...prev, main_image: file }));
-  };
-
-  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files ? Array.from(e.target.files) : [];
-    // Пропускаем не-изображения
-    const imageFiles = files.filter(f => f.type.startsWith('image/'));
-    const existingNames = form.images.map(f => f.name);
-
-    const newFiles = imageFiles.filter(f => !existingNames.includes(f.name));
-    const images = [...form.images, ...newFiles].slice(0, MAX_IMAGES);
-    setForm(prevForm => ({
-      ...prevForm,
-      images,
-    }));
-    e.target.value = '';
-  };
-
-
-  const handleRemoveImage = (idx: number) => {
-    setForm(prevForm => ({
-      ...prevForm,
-      images: prevForm.images.filter((_, i) => i !== idx),
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    const errors = validateAdForm(form, !!slug);
-    setValidationErrors(errors);
-    if (Object.keys(errors).length > 0) {
-      setLoading(false);
-      return;
-    }
-
-    const data = new FormData();
-    data.append('title', form.title);
-    data.append('description', form.description);
-    data.append('category', form.category);
-    if (getPriceInputState(form.category) && form.price) {
-      data.append('price', form.price);
-    }
-    if (form.price) data.append('price', form.price);
-    if (form.location) data.append('location', form.location);
-    if (form.contact_phone) data.append('contact_phone', form.contact_phone);
-    if (form.main_image) data.append('main_image', form.main_image);
-    if (allowAdditionalImages(form.category)) {
-      form.images.forEach(f => data.append('images', f));
-    }
-
-    try {
-      if (slug) {
-        await axiosInstance.patch(`/api/ads/${slug}/`, data, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        dispatch(setCurrentAd(null));
-        navigate(`/ads/${slug}`);
-      } else {
-        await axiosInstance.post('/api/ads/', data, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        setForm(initialForm);
-        navigate('/ads');
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Ошибка отправки');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Используем хук
+  const {
+    form,
+    validationErrors,
+    loading,
+    error,
+    totalImagesCount,
+    handleChange,
+    handleMainImageChange,
+    handleClearMainImage,
+    handleImagesChange,
+    handleRemoveImage,
+    handleRemoveServerImage,
+    handleSubmit,
+  } = useAdForm({
+    slug,
+    currentAd,
+    onAfterSubmit: handleAfterSubmit,
+    dispatch,
+    setCurrentAd,
+  });
 
   if (!isAuthenticated) return <div>Только для зарегистрированных пользователей</div>;
 
@@ -208,9 +70,7 @@ const AdsForm: React.FC = () => {
         onChange={handleChange}
         required
       />
-      {validationErrors.title && (
-        <div className="error">{validationErrors.title}</div>
-      )}
+      {validationErrors.title && <div className="error">{validationErrors.title}</div>}
 
       <textarea
         name="description"
@@ -219,9 +79,7 @@ const AdsForm: React.FC = () => {
         onChange={handleChange}
         required
       />
-      {validationErrors.description && (
-        <div className="error">{validationErrors.description}</div>
-      )}
+      {validationErrors.description && <div className="error">{validationErrors.description}</div>}
 
       <select name="category" value={form.category} onChange={handleChange}>
         {CATEGORY_OPTIONS.map(opt => (
@@ -238,9 +96,7 @@ const AdsForm: React.FC = () => {
             value={form.price}
             onChange={handleChange}
           />
-          {validationErrors.price && (
-            <div className="error">{validationErrors.price}</div>
-          )}
+          {validationErrors.price && <div className="error">{validationErrors.price}</div>}
         </>
       )}
 
@@ -250,9 +106,7 @@ const AdsForm: React.FC = () => {
         value={form.location}
         onChange={handleChange}
       />
-      {validationErrors.location && (
-        <div className="error">{validationErrors.location}</div>
-      )}
+      {validationErrors.location && <div className="error">{validationErrors.location}</div>}
 
       <input
         name="contact_phone"
@@ -260,17 +114,74 @@ const AdsForm: React.FC = () => {
         value={form.contact_phone}
         onChange={handleChange}
       />
-      {validationErrors.contact_phone && (
-        <div className="error">{validationErrors.contact_phone}</div>
-      )}
+      {validationErrors.contact_phone && <div className="error">{validationErrors.contact_phone}</div>}
 
       <label>
         Основное изображение:
         <input type="file" accept="image/*" onChange={handleMainImageChange} />
       </label>
-      {validationErrors.main_image && (
-        <div className="error">{validationErrors.main_image}</div>
+      {(form.main_image || form.main_image_url) && (
+        <div style={{ position: 'relative', margin: '10px 0 15px 0', display: 'inline-block' }}>
+          {form.main_image ? (
+            form.main_image.type?.startsWith('image/') ? (
+              <img
+                src={URL.createObjectURL(form.main_image)}
+                alt="Превью"
+                width={120}
+                height={120}
+                style={{ objectFit: 'cover', borderRadius: 10, border: '1px solid #ccc', display: 'block' }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: 120,
+                  height: 120,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#eee',
+                  borderRadius: 10,
+                  border: '1px solid #ccc',
+                  color: '#999',
+                  fontSize: 14,
+                }}
+              >
+                Не изображение
+              </div>
+            )
+          ) : (
+            <img
+              src={form.main_image_url!}
+              alt="Превью"
+              width={120}
+              height={120}
+              style={{ objectFit: 'cover', borderRadius: 10, border: '1px solid #ccc', display: 'block' }}
+            />
+          )}
+          <button
+            type="button"
+            onClick={handleClearMainImage}
+            style={{
+              position: 'absolute',
+              right: 4,
+              top: 4,
+              background: 'red',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '50%',
+              width: 24,
+              height: 24,
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: 18,
+              lineHeight: '18px',
+            }}
+            aria-label="Очистить основное изображение"
+            title="Очистить"
+          >×</button>
+        </div>
       )}
+      {validationErrors.main_image && <div className="error">{validationErrors.main_image}</div>}
 
       {additionalImagesAllowed && (
         <label>
@@ -280,29 +191,34 @@ const AdsForm: React.FC = () => {
             accept="image/*"
             multiple
             onChange={handleImagesChange}
-            disabled={!form.main_image || form.images.length >= MAX_IMAGES}
+            disabled={!form.main_image && !form.main_image_url || totalImagesCount >= MAX_IMAGES}
           />
-          {form.main_image && (
-            <div style={{ marginBottom: 15 }}>
-              <div style={{ fontSize: 12, color: '#555', marginBottom: 3 }}>Превью основного изображения:</div>
-              <img
-                src={URL.createObjectURL(form.main_image)}
-                alt="Превью"
-                width={120}
-                height={120}
-                style={{ objectFit: 'cover', borderRadius: 10, border: '1px solid #ccc' }}
-              />
-            </div>
-          )}
         </label>
       )}
-      {validationErrors.images && (
-        <div className="error">{validationErrors.images}</div>
-      )}
+      {validationErrors.images && <div className="error">{validationErrors.images}</div>}
 
-
-      {additionalImagesAllowed && form.images.length > 0 && (
+      {additionalImagesAllowed && (form.server_images.length > 0 || form.images.length > 0) && (
         <div style={{ display: 'flex', gap: 8, margin: '8px 0' }}>
+          {form.server_images.map((img, idx) => (
+            <div key={img.id} style={{ position: 'relative', width: 80 }}>
+              <img
+                src={img.image}
+                alt={`image_${idx}`}
+                width={80}
+                height={80}
+                style={{ objectFit: 'cover', borderRadius: 8, border: '1px solid #ccc' }}
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveServerImage(img.id)}
+                style={{
+                  position: 'absolute', right: 2, top: 2, background: 'red', color: '#fff',
+                  border: 'none', borderRadius: '50%', width: 20, height: 20, cursor: 'pointer'
+                }}
+                aria-label="Удалить"
+              >×</button>
+            </div>
+          ))}
           {form.images.map((file, idx) => (
             <div key={file.name + idx} style={{ position: 'relative', width: 80 }}>
               <img
@@ -321,7 +237,7 @@ const AdsForm: React.FC = () => {
                 }}
                 aria-label="Удалить"
               >×</button>
-              <div style={{ fontSize: 12, textAlign: 'center', wordBreak: 'break-all' }}>{file.name}</div>
+              <div>{file.name}</div>
             </div>
           ))}
         </div>

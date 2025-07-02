@@ -36,9 +36,11 @@ const AdsFeed: React.FC = () => {
       <h1>Объявления</h1>
       <div className='ads-content'>
         {isAuthenticated && (
+          <div className='center-btn'>
             <Link to="/ads/create-ads" className="func-btn-1">
               Создать объявление
             </Link>
+          </div>
         )}
         {loading && <div>Загрузка...</div>}
         {error && <div className="error">{error}</div>}

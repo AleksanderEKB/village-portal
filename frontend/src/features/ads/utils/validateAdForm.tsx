@@ -50,11 +50,11 @@ export function validateAdForm(
       errors.price = 'Укажите корректную цену';
     }
   }
-  if (values.location && values.location.trim().length < 2) {
-    errors.location = 'Слишком короткое название места';
+  if (!values.location || values.location.trim().length < 2) {
+    errors.location = 'Укажите место (минимум 2 символа)';
   }
-  if (values.contact_phone && !isPhone(values.contact_phone)) {
-    errors.contact_phone = 'Неправильный формат телефона';
+  if (!values.contact_phone || !isPhone(values.contact_phone)) {
+    errors.contact_phone = 'Укажите телефон (от 7 до 11 цифр)';
   }
   if (values.main_image && !isImageFile(values.main_image)) {
     errors.main_image = 'Файл должен быть изображением (jpg, png и т.п.)';
