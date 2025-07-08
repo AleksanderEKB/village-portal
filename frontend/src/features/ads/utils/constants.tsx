@@ -2,7 +2,7 @@
 import type { AdsCategory } from '../../../types/globalTypes';
 
 export const CATEGORY_OPTIONS: { value: AdsCategory, label: string }[] = [
-  { value: 'sell', label: 'Продаю' },
+  { value: 'sell', label: 'Продам' },
   { value: 'buy', label: 'Куплю' },
   { value: 'free', label: 'Отдам даром' },
   { value: 'service', label: 'Услуги' },

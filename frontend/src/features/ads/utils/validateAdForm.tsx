@@ -39,11 +39,11 @@ export function validateAdForm(
 ): AdFormValidationErrors {
   const errors: AdFormValidationErrors = {};
 
-  if (!values.title || values.title.trim().length < 4) {
-    errors.title = 'Введите заголовок (минимум 4 символа)';
+  if (!values.title || values.title.trim().length < 3) {
+    errors.title = 'Введите заголовок (минимум 3 символа)';
   }
   if (!values.description || values.description.trim().length < 10) {
-    errors.description = 'Описание слишком короткое';
+    errors.description = 'Описание (минимум 10 символов)';
   }
   if (['sell', 'rent'].includes(values.category)) {
     if (!values.price || isNaN(Number(values.price)) || Number(values.price) <= 0) {

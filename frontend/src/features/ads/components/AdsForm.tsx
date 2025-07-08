@@ -4,13 +4,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../app/store';
 import { fetchAdById, setCurrentAd } from '../adsSlice';
 import { CATEGORY_OPTIONS, MAX_IMAGES } from '../utils/constants';
+import { AdsCategory } from '../../../types/globalTypes';
 import {
   getPriceInputState,
   getPricePlaceholder,
   getTitlePlaceholder,
   allowAdditionalImages,
 } from '../utils/adsFormLogic';
-import { useAdForm } from '../utils/useAdsForm'; // Кастомный хук
+import { useAdForm } from '../utils/useAdsForm';
+import CustomSelect from './CustomSelect';
+import '../styles/scss_ads-form/main.scss';
 
 const AdsForm: React.FC = () => {
   const { slug } = useParams<{ slug?: string }>();
@@ -20,21 +23,19 @@ const AdsForm: React.FC = () => {
   const currentAd = useSelector((state: RootState) => state.ads.currentAd);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
-  // Подгружаем объявление при необходимости
   useEffect(() => {
     if (slug) dispatch(fetchAdById(slug));
     else dispatch(setCurrentAd(null));
   }, [dispatch, slug]);
 
-  // Навигация после сабмита
   const handleAfterSubmit = (slug?: string) => {
     if (slug) navigate(`/ads/${slug}`);
     else navigate('/ads');
   };
 
-  // Используем хук
   const {
     form,
+    setForm,
     validationErrors,
     loading,
     error,
@@ -54,6 +55,13 @@ const AdsForm: React.FC = () => {
     setCurrentAd,
   });
 
+  const handleCategoryChange = ({ name, value }: { name: string; value: AdsCategory }) => {
+    setForm((prev: typeof form) => ({
+      ...prev,
+      [name]: value,
+      images: allowAdditionalImages(value) ? prev.images : [],
+    }));
+  };
   if (!isAuthenticated) return <div>Только для зарегистрированных пользователей</div>;
 
   const showPriceInput = getPriceInputState(form.category);
@@ -62,9 +70,18 @@ const AdsForm: React.FC = () => {
   const additionalImagesAllowed = allowAdditionalImages(form.category);
 
   return (
+    <>
+    <h1 className="ads-form__heading">Форма подачи объявления</h1>
     <form className="ads-form" onSubmit={handleSubmit} encType="multipart/form-data">
+      <CustomSelect
+        name="category"
+        value={form.category}
+        options={CATEGORY_OPTIONS}
+        onChange={handleCategoryChange}
+      />
       <input
         name="title"
+        type="text"
         placeholder={titlePlaceholder}
         value={form.title}
         onChange={handleChange}
@@ -81,12 +98,6 @@ const AdsForm: React.FC = () => {
       />
       {validationErrors.description && <div className="error">{validationErrors.description}</div>}
 
-      <select name="category" value={form.category} onChange={handleChange}>
-        {CATEGORY_OPTIONS.map(opt => (
-          <option value={opt.value} key={opt.value}>{opt.label}</option>
-        ))}
-      </select>
-
       {showPriceInput && (
         <>
           <input
@@ -102,6 +113,7 @@ const AdsForm: React.FC = () => {
 
       <input
         name="location"
+        type = "text"
         placeholder="Город/Место"
         value={form.location}
         onChange={handleChange}
@@ -110,6 +122,7 @@ const AdsForm: React.FC = () => {
 
       <input
         name="contact_phone"
+        type = "text"
         placeholder="Телефон"
         value={form.contact_phone}
         onChange={handleChange}
@@ -121,61 +134,22 @@ const AdsForm: React.FC = () => {
         <input type="file" accept="image/*" onChange={handleMainImageChange} />
       </label>
       {(form.main_image || form.main_image_url) && (
-        <div style={{ position: 'relative', margin: '10px 0 15px 0', display: 'inline-block' }}>
+        <div className="main-image-preview">
           {form.main_image ? (
             form.main_image.type?.startsWith('image/') ? (
               <img
                 src={URL.createObjectURL(form.main_image)}
                 alt="Превью"
-                width={120}
-                height={120}
-                style={{ objectFit: 'cover', borderRadius: 10, border: '1px solid #ccc', display: 'block' }}
               />
             ) : (
-              <div
-                style={{
-                  width: 120,
-                  height: 120,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: '#eee',
-                  borderRadius: 10,
-                  border: '1px solid #ccc',
-                  color: '#999',
-                  fontSize: 14,
-                }}
-              >
-                Не изображение
-              </div>
+              <div className="no-image">Не изображение</div>
             )
           ) : (
-            <img
-              src={form.main_image_url!}
-              alt="Превью"
-              width={120}
-              height={120}
-              style={{ objectFit: 'cover', borderRadius: 10, border: '1px solid #ccc', display: 'block' }}
-            />
+            <img src={form.main_image_url!} alt="Превью" />
           )}
           <button
             type="button"
             onClick={handleClearMainImage}
-            style={{
-              position: 'absolute',
-              right: 4,
-              top: 4,
-              background: 'red',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '50%',
-              width: 24,
-              height: 24,
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: 18,
-              lineHeight: '18px',
-            }}
             aria-label="Очистить основное изображение"
             title="Очистить"
           >×</button>
@@ -198,46 +172,32 @@ const AdsForm: React.FC = () => {
       {validationErrors.images && <div className="error">{validationErrors.images}</div>}
 
       {additionalImagesAllowed && (form.server_images.length > 0 || form.images.length > 0) && (
-        <div style={{ display: 'flex', gap: 8, margin: '8px 0' }}>
+        <div className="additional-images-list">
           {form.server_images.map((img, idx) => (
-            <div key={img.id} style={{ position: 'relative', width: 80 }}>
+            <div className="img-thumb" key={img.id}>
               <img
                 src={img.image}
                 alt={`image_${idx}`}
-                width={80}
-                height={80}
-                style={{ objectFit: 'cover', borderRadius: 8, border: '1px solid #ccc' }}
               />
               <button
                 type="button"
                 onClick={() => handleRemoveServerImage(img.id)}
-                style={{
-                  position: 'absolute', right: 2, top: 2, background: 'red', color: '#fff',
-                  border: 'none', borderRadius: '50%', width: 20, height: 20, cursor: 'pointer'
-                }}
                 aria-label="Удалить"
               >×</button>
             </div>
           ))}
           {form.images.map((file, idx) => (
-            <div key={file.name + idx} style={{ position: 'relative', width: 80 }}>
+            <div className="img-thumb" key={file.name + idx}>
               <img
                 src={URL.createObjectURL(file)}
                 alt={file.name}
-                width={80}
-                height={80}
-                style={{ objectFit: 'cover', borderRadius: 8, border: '1px solid #ccc' }}
               />
               <button
                 type="button"
                 onClick={() => handleRemoveImage(idx)}
-                style={{
-                  position: 'absolute', right: 2, top: 2, background: 'red', color: '#fff',
-                  border: 'none', borderRadius: '50%', width: 20, height: 20, cursor: 'pointer'
-                }}
                 aria-label="Удалить"
               >×</button>
-              <div>{file.name}</div>
+              <div className="file-name">{file.name}</div>
             </div>
           ))}
         </div>
@@ -249,6 +209,7 @@ const AdsForm: React.FC = () => {
         {loading ? 'Отправка...' : (slug ? 'Сохранить' : 'Опубликовать')}
       </button>
     </form>
+    </>
   );
 };
 

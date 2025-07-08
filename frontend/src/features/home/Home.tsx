@@ -4,7 +4,6 @@ import AdsFeed from '../ads/components/AdsFeed';
 import Footer from '../footer/components/Footer';
 import '../shared/fonts/fonts.scss';
 
-
 const Home: React.FC = () => {
   return (
     <div>

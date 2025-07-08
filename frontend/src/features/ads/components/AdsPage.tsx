@@ -9,7 +9,7 @@ import AdInfoBlock from '../components/AdInfoBlock';
 import AdOwnerMenu from './AdOwnerMenu';
 import GalleryThumbnails from './GalleryThumbnails';
 
-import '../scss_page/main.scss';
+import '../styles/scss_page/main.scss';
 
 const AdsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
