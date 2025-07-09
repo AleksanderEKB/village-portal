@@ -135,10 +135,18 @@ const AdsForm: React.FC = () => {
       />
       {validationErrors.contact_phone && <div className="error">{validationErrors.contact_phone}</div>}
 
-      <label>
-        Основное изображение:
-        <input type="file" accept="image/*" onChange={handleMainImageChange} />
-      </label>
+      <div className="upload-btn-wrapper">
+        <input
+          type="file"
+          accept="image/*"
+          id="main-img-upload"
+          style={{ display: "none" }}
+          onChange={handleMainImageChange}
+        />
+        <label htmlFor="main-img-upload" className="upload-btn">
+          Добавить основное изображение
+        </label>
+      </div>
       {(form.main_image || form.main_image_url) && (
         <div className="main-image-preview">
           {form.main_image ? (
@@ -164,16 +172,20 @@ const AdsForm: React.FC = () => {
       {validationErrors.main_image && <div className="error">{validationErrors.main_image}</div>}
 
       {additionalImagesAllowed && (
-        <label>
-          Доп. изображения (до {MAX_IMAGES}):
+        <div className="upload-btn-wrapper">
           <input
             type="file"
             accept="image/*"
             multiple
+            id="additional-img-upload"
+            style={{ display: "none" }}
             onChange={handleImagesChange}
             disabled={!form.main_image && !form.main_image_url || totalImagesCount >= MAX_IMAGES}
           />
-        </label>
+          <label htmlFor="additional-img-upload" className="upload-btn">
+            Добавить доп. изображения (до {MAX_IMAGES})
+          </label>
+        </div>
       )}
       {validationErrors.images && <div className="error">{validationErrors.images}</div>}
 

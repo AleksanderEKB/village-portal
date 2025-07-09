@@ -1,3 +1,4 @@
+// frontend/src/features/ads/styles/scss_ads-form/_images.scss
 .ads-form {
   // Main image preview
   .main-image-preview {
@@ -88,6 +89,36 @@
         color: #444;
         word-break: break-all;
       }
+    }
+  }
+
+  .upload-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 18px 0 15px 0;
+    width: 100%;
+
+
+    // Для label, если используется вместо button
+    label.upload-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: $grey-gradient;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-weight: 600;
+      font-size: 1.07rem;
+      transition: background 0.18s, opacity 0.13s;
+
+      &:hover, &:focus {
+        background: $grey-gradient-hover;
+      }
+    }
+    input[type="file"]:disabled + label.upload-btn {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
   }
 }
