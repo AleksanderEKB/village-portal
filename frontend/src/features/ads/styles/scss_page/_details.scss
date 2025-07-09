@@ -72,6 +72,11 @@
     .ads-contact {
       margin-top: .5rem;
       font-size: 1.2rem;
+
+        .phone-number {
+          letter-spacing: .1em; // можно увеличить/уменьшить
+          font-variant-numeric: tabular-nums; // чтобы все цифры были одинаковой ширины (не обязательно)
+  }
     }
     .ads-date {
       padding-right: 2.5rem;

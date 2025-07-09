@@ -1,3 +1,4 @@
+// frontend/src/features/ads/components/AdsForm.tsx
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -54,6 +55,11 @@ const AdsForm: React.FC = () => {
     dispatch,
     setCurrentAd,
   });
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Оставляем только цифры
+    setForm(prev => ({ ...prev, contact_phone: value }));
+  };
 
   const handleCategoryChange = ({ name, value }: { name: string; value: AdsCategory }) => {
     setForm((prev: typeof form) => ({
@@ -122,10 +128,10 @@ const AdsForm: React.FC = () => {
 
       <input
         name="contact_phone"
-        type = "text"
-        placeholder="Телефон"
+        type="text"
+        placeholder="Телефон (только цифры)"
         value={form.contact_phone}
-        onChange={handleChange}
+        onChange={handlePhoneChange}
       />
       {validationErrors.contact_phone && <div className="error">{validationErrors.contact_phone}</div>}
 

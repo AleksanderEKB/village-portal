@@ -1,9 +1,8 @@
-# ads/serializers.py
+# backend/ads/serializers.py
 from rest_framework import serializers
 from django.db import models
 from .models import Advertisement, AdvertisementImage, Category
 from backend.serializers import UserSerializer
-
 
 class AdvertisementImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,6 +31,8 @@ class AdvertisementSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context.get('request')
+        
+        # Проверка для изображений
         if request and request.method in ['POST', 'PUT', 'PATCH']:
             images_data = request.FILES.getlist('images')
             instance = getattr(self, 'instance', None)
@@ -40,11 +41,21 @@ class AdvertisementSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     f'Можно добавить не более 5 изображений к одному объявлению. Сейчас: {current_images_count}, добавляете: {len(images_data)}'
                 )
+        
+        # Проверка категории
         category = data.get('category') or getattr(self.instance, 'category', None)
         if category in ['free', 'loss', 'sundry']:
             data['price'] = None
+        
+        # Валидация телефона
+        contact_phone = data.get('contact_phone')
+        if contact_phone and not contact_phone.isdigit():
+            raise serializers.ValidationError("Телефон должен содержать только цифры.")
+        if contact_phone and not (7 <= len(contact_phone) <= 15):
+            raise serializers.ValidationError("Номер телефона должен содержать от 7 до 15 цифр.")
+
         return data
-    
+
     def update(self, instance, validated_data):
         # Сохраняем обычные поля
         instance = super().update(instance, validated_data)
@@ -75,18 +86,30 @@ class AdvertisementCreateSerializer(serializers.ModelSerializer):
         ]
     
     def validate(self, data):
+        # Валидация телефона на бэке
+        contact_phone = data.get('contact_phone')
+        if contact_phone and not contact_phone.isdigit():
+            raise serializers.ValidationError("Телефон должен содержать только цифры.")
+        if contact_phone and not (7 <= len(contact_phone) <= 15):
+            raise serializers.ValidationError("Номер телефона должен содержать от 7 до 15 цифр.")
+
         request = self.context.get('request')
         images = request.FILES.getlist('images')
         if len(images) > 5:
             raise serializers.ValidationError('Можно добавить не более 5 изображений к одному объявлению.')
+        
+        # Проверка на совпадение имени основного и дополнительного изображения
         main_image = request.FILES.get('main_image')
         if main_image and images:
             for img in images:
                 if hasattr(main_image, 'name') and hasattr(img, 'name') and main_image.name == img.name:
                     raise serializers.ValidationError("Основное изображение не должно совпадать с дополнительными.")
+        
+        # Если категория в списке 'free', 'loss', 'sundry', цена должна быть None
         category = data.get('category')
         if category in ['free', 'loss', 'sundry']:
             data['price'] = None
+        
         return data
 
     def create(self, validated_data):
@@ -101,4 +124,3 @@ class AdvertisementCreateSerializer(serializers.ModelSerializer):
         if value not in dict(Category.choices):
             raise serializers.ValidationError("Некорректная категория.")
         return value
-

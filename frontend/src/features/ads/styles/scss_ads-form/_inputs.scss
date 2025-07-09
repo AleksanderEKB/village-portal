@@ -8,27 +8,27 @@
   select {
     font-family: $font-general;
     box-sizing: border-box;
-    width: 100%;                // Элементы растягиваются на всю ширину контейнера
-    font-size: 1rem;            // Стандартный размер шрифта для всех элементов
+    width: 100%;
+    font-size: 1rem;
     padding: 1rem;
-    margin-top: 40px;            // Отступ сверху — чтобы элементы не слипались
-    border: 1.5px solid #bbb;   // Светло-серая рамка
-    border-radius: 8px;         // Скругление углов рамки
-    background: #fafbfc;        // Светлый фон
-    transition: border 0.2s, box-shadow 0.2s; // Плавная анимация при изменении рамки и тени
-    outline: none;              // Убирает стандартный outline браузера
+    margin-top: 40px;
+    border: 1.5px solid #bbb;
+    border-radius: 8px;
+    background: #fafbfc;
+    transition: border 0.2s, box-shadow 0.2s;
+    outline: none;
 
     &:focus {
-      border-color: #4682f4;    // При фокусе синяя рамка
-      box-shadow: 0 0 0 1px #4682f4; // Тонкая внешняя синяя тень вокруг элемента
-      background: #fff;         // Белый фон при фокусе
+      border-color: #4682f4;
+      box-shadow: 0 0 0 1px #4682f4;
+      background: #fff;
     }
   }
 
   // Стили только для textarea внутри .ads-form
   textarea {
-    min-height: 70px;           // Минимальная высота
-    resize: vertical;           // Только вертикальное изменение размера
+    min-height: 70px;
+    resize: vertical;
   }
 
   // Стили только для select внутри .ads-form
@@ -40,10 +40,10 @@
 
   // Стили для label внутри .ads-form
   label {
-    font-size: 1.01rem;         // Немного увеличенный размер шрифта
-    margin-bottom: 2px;         // Отступ снизу
+    font-size: 1.01rem;
+    margin-bottom: 2px;
     display: block;             // Каждый label занимает всю строку
-    font-weight: 500;           // Полужирный текст
-    color: #35405a;             // Темно-синий цвет текста
+    font-weight: 500;
+    color: #35405a;
   }
 }

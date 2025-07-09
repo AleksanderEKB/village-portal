@@ -11,10 +11,12 @@
     cursor: pointer;
     box-shadow: 0 2px 11px 0 rgba(70,130,244,0.11);
     transition: background 0.18s, opacity 0.13s;
+    font-family: inherit;
 
     &:disabled {
       opacity: 0.62;
       cursor: not-allowed;
+      font-family: inherit;
     }
   }
 }

@@ -1,4 +1,4 @@
-// src/features/ads/utils/useAdForm.ts
+// frontend/src/features/ads/utils/useAdForm.ts
 import { useState, useEffect } from 'react';
 import type { AdsCategory } from '../../../types/globalTypes';
 import { getPriceInputState, allowAdditionalImages } from './adsFormLogic';

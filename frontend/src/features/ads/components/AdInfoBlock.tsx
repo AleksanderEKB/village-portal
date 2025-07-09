@@ -34,7 +34,7 @@ const AdInfoBlock: React.FC<Props> = ({ ad, desktop }) => (
     </div>
     <div className="ads-contact">
       <FontAwesomeIcon className='contact' icon={faPhone} />
-      {ad.contact_phone}
+      <span className="phone-number">{ad.contact_phone}</span>
     </div>
     <div className="ads-date">{formatTimeElapsed(ad.created_at)}</div>
   </div>

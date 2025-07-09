@@ -58,7 +58,7 @@
     transform 0.22s cubic-bezier(.5,1.5,.5,1);
 
   &.open {
-    font-family: $font-general;
+    // font-family: $font-general;
     max-height: 350px; // больше, чем надо
     opacity: 1;
     pointer-events: auto;
