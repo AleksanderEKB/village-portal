@@ -1,5 +1,5 @@
 // frontend/src/features/ads/components/AdsForm.tsx
-import React, { useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../app/store';
@@ -74,6 +74,8 @@ const AdsForm: React.FC = () => {
   const pricePlaceholder = getPricePlaceholder(form.category);
   const titlePlaceholder = getTitlePlaceholder(form.category);
   const additionalImagesAllowed = allowAdditionalImages(form.category);
+  const mainImageInputRef = useRef<HTMLInputElement>(null);
+  const additionalImagesInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <>
@@ -134,17 +136,21 @@ const AdsForm: React.FC = () => {
         onChange={handlePhoneChange}
       />
       {validationErrors.contact_phone && <div className="error">{validationErrors.contact_phone}</div>}
-
       <div className="upload-btn-wrapper">
         <input
           type="file"
           accept="image/*"
           id="main-img-upload"
           style={{ display: "none" }}
-          onChange={handleMainImageChange}
+          onChange={(e) => {
+            handleMainImageChange(e);
+            // Сбросить value, чтобы можно было выбрать тот же файл повторно
+            if (mainImageInputRef.current) mainImageInputRef.current.value = '';
+          }}
+          ref={mainImageInputRef}
         />
         <label htmlFor="main-img-upload" className="upload-btn">
-          Добавить основное изображение
+          {(form.main_image || form.main_image_url) ? 'Изменить' : 'Добавить основное изображение'}
         </label>
       </div>
       {(form.main_image || form.main_image_url) && (
@@ -179,8 +185,13 @@ const AdsForm: React.FC = () => {
             multiple
             id="additional-img-upload"
             style={{ display: "none" }}
-            onChange={handleImagesChange}
+            onChange={(e) => {
+              handleImagesChange(e);
+              // Сбросить value, чтобы можно было выбрать тот же файл повторно
+              if (additionalImagesInputRef.current) additionalImagesInputRef.current.value = '';
+            }}
             disabled={!form.main_image && !form.main_image_url || totalImagesCount >= MAX_IMAGES}
+            ref={additionalImagesInputRef}
           />
           <label htmlFor="additional-img-upload" className="upload-btn">
             Добавить доп. изображения (до {MAX_IMAGES})

@@ -1,10 +1,11 @@
-// frontend/src/features/ads/utils/useAdForm.ts
+// frontend/src/features/ads/utils/useAdsForm.ts
 import { useState, useEffect } from 'react';
 import type { AdsCategory } from '../../../types/globalTypes';
 import { getPriceInputState, allowAdditionalImages } from './adsFormLogic';
 import { validateAdForm, AdFormValidationErrors } from './validateAdForm';
 import { MAX_IMAGES } from './constants';
 import axiosInstance from '../../../axiosInstance';
+import { toast } from 'react-toastify';
 
 export type ServerImage = { id: number; image: string; order: number };
 
@@ -131,9 +132,19 @@ export function useAdForm({
       setForm(prev => ({ ...prev, main_image: file })); // всё равно сохраняем файл
       return;
     }
+    // Проверка: файл не должен совпадать с одним из доп. изображений
+    if (file && form.images.some(f2 =>
+        f2.name === file.name &&
+        f2.size === file.size &&
+        f2.lastModified === file.lastModified
+    )) {
+      toast.error('Такое изображение уже добавлено');
+      return;
+    }
     setValidationErrors(prev => ({ ...prev, main_image: undefined }));
     setForm(prev => ({ ...prev, main_image: file, main_image_url: null }));
   };
+
 
   const handleClearMainImage = () => {
     setForm(prev => ({ ...prev, main_image: null, main_image_url: null }));
@@ -143,16 +154,34 @@ export function useAdForm({
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     const imageFiles = files.filter(f => f.type.startsWith('image/'));
-    const existingNames = form.images.map(f => f.name);
 
-    const newFiles = imageFiles.filter(f => !existingNames.includes(f.name));
+    // Для сравнения по имени + размеру + lastModified
+    const isSameFile = (fileA: File, fileB: File) =>
+      fileA.name === fileB.name &&
+      fileA.size === fileB.size &&
+      fileA.lastModified === fileB.lastModified;
+
+    const existingNames = form.images.map(f => `${f.name}_${f.size}_${f.lastModified}`);
+    const mainImageKey =
+      form.main_image ? `${form.main_image.name}_${form.main_image.size}_${form.main_image.lastModified}` : null;
+
+    // Фильтруем новые файлы: не должны совпадать ни с дополнительными, ни с основным
+    const newFiles = imageFiles.filter(f => {
+      const fileKey = `${f.name}_${f.size}_${f.lastModified}`;
+      if (existingNames.includes(fileKey) || (mainImageKey && mainImageKey === fileKey)) {
+        toast.error('Такое изображение уже добавлено');
+        return false;
+      }
+      return true;
+    });
+
     const images = [...form.images, ...newFiles].slice(0, MAX_IMAGES - form.server_images.length);
     setForm(prevForm => ({
       ...prevForm,
       images,
     }));
-    e.target.value = '';
   };
+
 
   const handleRemoveImage = (idx: number) => {
     setForm(prevForm => ({
