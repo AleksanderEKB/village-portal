@@ -6,15 +6,16 @@
     gap: 13px;
 
     .main-image-preview img, .main-image-preview .no-image {
-      width: 84px !important;
-      height: 84px !important;
+      width: 100%;
     }
     .additional-images-list .img-thumb img {
-      width: 58px !important;
-      height: 58px !important;
+      width: 3.625rem;
+      height: 3.625rem;
     }
     .additional-images-list .img-thumb {
-      width: 58px !important;
+      width: 3.625rem;
     }
+    
   }
+  
 }

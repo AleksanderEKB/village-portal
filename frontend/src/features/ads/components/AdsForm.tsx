@@ -15,6 +15,9 @@ import {
 import { useAdForm } from '../utils/useAdsForm';
 import CustomSelect from './CustomSelect';
 import '../styles/scss_ads-form/main.scss';
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 const AdsForm: React.FC = () => {
   const { slug } = useParams<{ slug?: string }>();
@@ -76,6 +79,7 @@ const AdsForm: React.FC = () => {
   const additionalImagesAllowed = allowAdditionalImages(form.category);
   const mainImageInputRef = useRef<HTMLInputElement>(null);
   const additionalImagesInputRef = useRef<HTMLInputElement>(null);
+  const remainingImagesCount = Math.max(0, MAX_IMAGES - totalImagesCount);
 
   return (
     <>
@@ -167,12 +171,15 @@ const AdsForm: React.FC = () => {
           ) : (
             <img src={form.main_image_url!} alt="Превью" />
           )}
-          <button
+         <button
             type="button"
             onClick={handleClearMainImage}
             aria-label="Очистить основное изображение"
             title="Очистить"
-          >×</button>
+            className="remove-image-btn"
+          >
+            <FontAwesomeIcon className="icon-remove" icon={faCircleXmark} />
+          </button>
         </div>
       )}
       {validationErrors.main_image && <div className="error">{validationErrors.main_image}</div>}
@@ -194,7 +201,7 @@ const AdsForm: React.FC = () => {
             ref={additionalImagesInputRef}
           />
           <label htmlFor="additional-img-upload" className="upload-btn">
-            Добавить доп. изображения (до {MAX_IMAGES})
+            Дополнительные изображения (осталось {remainingImagesCount})
           </label>
         </div>
       )}
@@ -212,7 +219,10 @@ const AdsForm: React.FC = () => {
                 type="button"
                 onClick={() => handleRemoveServerImage(img.id)}
                 aria-label="Удалить"
-              >×</button>
+                className="remove-image-btn"
+              >
+                <FontAwesomeIcon className="icon-remove" icon={faCircleXmark} />
+              </button>
             </div>
           ))}
           {form.images.map((file, idx) => (
@@ -225,8 +235,10 @@ const AdsForm: React.FC = () => {
                 type="button"
                 onClick={() => handleRemoveImage(idx)}
                 aria-label="Удалить"
-              >×</button>
-              <div className="file-name">{file.name}</div>
+                className="remove-image-btn"
+              >
+                <FontAwesomeIcon className="icon-remove" icon={faCircleXmark} />
+              </button>
             </div>
           ))}
         </div>

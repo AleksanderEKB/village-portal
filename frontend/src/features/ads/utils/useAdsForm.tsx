@@ -1,4 +1,3 @@
-// frontend/src/features/ads/utils/useAdsForm.ts
 import { useState, useEffect } from 'react';
 import type { AdsCategory } from '../../../types/globalTypes';
 import { getPriceInputState, allowAdditionalImages } from './adsFormLogic';
@@ -67,12 +66,10 @@ export function useAdForm({
 
   const totalImagesCount = form.server_images.length + form.images.length;
 
-  // Валидация на каждый чих
   useEffect(() => {
     setValidationErrors(validateAdForm(form, !!slug));
   }, [form, slug]);
 
-  // Если загрузили объявление с сервера
   useEffect(() => {
     if (slug && currentAd) {
       setForm({
@@ -90,7 +87,6 @@ export function useAdForm({
     }
   }, [slug, currentAd]);
 
-  // Очистка
   useEffect(() => {
     return () => {
       setForm(initialForm);
@@ -105,6 +101,7 @@ export function useAdForm({
   }, [form.main_image]);
 
   // --- Handlers ---
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -128,23 +125,22 @@ export function useAdForm({
   const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     if (file && !file.type.startsWith('image/')) {
+      toast.error('Файл не является изображением');
       setValidationErrors(prev => ({ ...prev, main_image: 'Файл должен быть изображением' }));
-      setForm(prev => ({ ...prev, main_image: file })); // всё равно сохраняем файл
+      // Не сохраняем файл!
       return;
     }
-    // Проверка: файл не должен совпадать с одним из доп. изображений
     if (file && form.images.some(f2 =>
-        f2.name === file.name &&
-        f2.size === file.size &&
-        f2.lastModified === file.lastModified
+      f2.name === file.name &&
+      f2.size === file.size &&
+      f2.lastModified === file.lastModified
     )) {
-      toast.error('Такое изображение уже добавлено');
+      toast.error('Это изображение уже добавлено в дополнительные');
       return;
     }
     setValidationErrors(prev => ({ ...prev, main_image: undefined }));
     setForm(prev => ({ ...prev, main_image: file, main_image_url: null }));
   };
-
 
   const handleClearMainImage = () => {
     setForm(prev => ({ ...prev, main_image: null, main_image_url: null }));
@@ -153,28 +149,30 @@ export function useAdForm({
 
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
+    if (files.some(f => !f.type.startsWith('image/'))) {
+      toast.error('Файл не является изображением');
+    }
     const imageFiles = files.filter(f => f.type.startsWith('image/'));
 
-    // Для сравнения по имени + размеру + lastModified
-    const isSameFile = (fileA: File, fileB: File) =>
-      fileA.name === fileB.name &&
-      fileA.size === fileB.size &&
-      fileA.lastModified === fileB.lastModified;
-
     const existingNames = form.images.map(f => `${f.name}_${f.size}_${f.lastModified}`);
-    const mainImageKey =
-      form.main_image ? `${form.main_image.name}_${form.main_image.size}_${form.main_image.lastModified}` : null;
+    const mainImageKey = form.main_image ? `${form.main_image.name}_${form.main_image.size}_${form.main_image.lastModified}` : null;
 
-    // Фильтруем новые файлы: не должны совпадать ни с дополнительными, ни с основным
-    const newFiles = imageFiles.filter(f => {
+    const newFiles: File[] = [];
+
+    imageFiles.forEach(f => {
       const fileKey = `${f.name}_${f.size}_${f.lastModified}`;
-      if (existingNames.includes(fileKey) || (mainImageKey && mainImageKey === fileKey)) {
-        toast.error('Такое изображение уже добавлено');
-        return false;
+      if (mainImageKey && mainImageKey === fileKey) {
+        toast.error('Это изображение уже выбрано как основное');
+        return;
       }
-      return true;
+      if (existingNames.includes(fileKey)) {
+        toast.error('Это изображение уже добавлено в дополнительные');
+        return;
+      }
+      newFiles.push(f);
     });
 
+    // Ограничение по количеству
     const images = [...form.images, ...newFiles].slice(0, MAX_IMAGES - form.server_images.length);
     setForm(prevForm => ({
       ...prevForm,
@@ -206,7 +204,6 @@ export function useAdForm({
     }
   };
 
-  // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);

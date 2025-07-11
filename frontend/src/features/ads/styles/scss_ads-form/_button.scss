@@ -3,12 +3,13 @@
 .ads-form {
   button[type="submit"] {
     margin-top: 15px;
-    background: linear-gradient(90deg, #4682f4 60%, #00c6fb 100%);
+    background: $grey-gradient;
     color: #fff;
-    border: none;
+    border: solid 1px #ddd;
     font-size: 1.14rem;
     font-weight: 600;
     border-radius: 9px;
+
     padding: 12px 0;
     cursor: pointer;
     box-shadow: 0 2px 11px 0 rgba(70,130,244,0.11);
@@ -19,6 +20,7 @@
       opacity: 0.62;
       cursor: not-allowed;
       font-family: inherit;
+      border: solid 1px #ff0000;
     }
   }
 }
