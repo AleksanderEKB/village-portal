@@ -9,6 +9,7 @@ export type AdFormValidationErrors = {
   contact_phone?: string;
   main_image?: string;
   images?: string;
+  [key: string]: string | undefined;
 };
 
 function isPhone(phone: string): boolean {

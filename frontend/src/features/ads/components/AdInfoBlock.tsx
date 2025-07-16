@@ -1,3 +1,4 @@
+// frontend/src/features/ads/components/AdInfoBlock.tsx
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoneyBill1, faLocationDot, faPhone } from '@fortawesome/free-solid-svg-icons';

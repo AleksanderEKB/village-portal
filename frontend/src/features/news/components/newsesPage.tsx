@@ -38,14 +38,14 @@ const NewsPage: React.FC = () => {
     <div>
       <h1>Новости</h1>
       <div>
-        {newses.map((news) => (
+        {/* {newses.map((news) => (
           <div key={news.id}>
             <hr />
             <h2>{news.title}</h2>
             <p>{news.content}</p>
             <hr />
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );

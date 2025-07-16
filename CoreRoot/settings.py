@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = SECRET_KEY
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ALLOWED_HOSTS
 
@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'post',
     'comment',
     'info',
-    'ads',
+    'ads.apps.AdsConfig',
 ]
 
 MIDDLEWARE = [
@@ -132,7 +132,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    # 'PAGE_SIZE': 15,
+    'PAGE_SIZE': 4,
 }
 
 

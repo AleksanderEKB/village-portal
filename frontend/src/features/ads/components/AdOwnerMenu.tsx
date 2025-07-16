@@ -1,3 +1,4 @@
+// frontend/src/features/ads/components/AdOwnerMenu.tsx
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,9 +8,11 @@ import { Advertisement } from '../../../types/globalTypes';
 interface Props {
   ad: Advertisement;
   onDelete: () => void;
+  onSwitchStatus: () => Promise<void>;
+  switching: boolean;
 }
 
-const AdOwnerMenu: React.FC<Props> = ({ ad, onDelete }) => {
+const AdOwnerMenu: React.FC<Props> = ({ ad, onDelete, onSwitchStatus, switching }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -39,6 +42,17 @@ const AdOwnerMenu: React.FC<Props> = ({ ad, onDelete }) => {
       </button>
       {menuOpen && (
         <div className="ads-menu-dropdown">
+                    <button
+            className={`ads-menu-item ${ad.is_active ? 'ads-menu-item-unpublish' : 'ads-menu-item-publish'}`}
+            onClick={onSwitchStatus}
+            disabled={switching}
+          >
+            {switching
+              ? "Обновление..."
+              : ad.is_active
+                ? "Скрыть"
+                : "Опубликовать снова"}
+          </button>
           <button
             className="ads-menu-item"
             onClick={() => {

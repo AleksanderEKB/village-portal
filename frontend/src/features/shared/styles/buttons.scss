@@ -11,12 +11,21 @@
   padding: .1rem .5em .4rem .5rem;
   border-radius: .4em;
   background: $grey-gradient;
+  text-decoration: none;
+
 }
 
-.center-btn {
+.center-btn-1 {
   display: flex;
   justify-content: center;
+  margin-top: 1.5rem;
   margin-bottom: 1.2rem;
+}
+
+.center-btn-2 {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
 }
 
 .center-btn a {

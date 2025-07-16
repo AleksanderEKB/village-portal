@@ -3,9 +3,12 @@ $font-general: general;
 
 $secondary-light: #5CCCCC;
 $main-bg: #1D7373;
+
 $grey-gradient: linear-gradient(180deg, #424242 0%, #212121 100%);
 $grey-gradient-hover: linear-gradient(180deg, #424242 50%, #212121 100%);
+
 $red-gradient: radial-gradient(circle,#FC0000 40%, #000000 100%);
+$red-gradient-hover: radial-gradient(circle,rgba(252, 0, 0, 1) 16%, rgba(0, 0, 0, 1) 100%);
 
 $main-dark: #06266F;
 $main-accent: #2A4480;

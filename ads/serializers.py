@@ -1,14 +1,20 @@
-# backend/ads/serializers.py
+# ads/serializers.py
 from rest_framework import serializers
 from django.db import models
 from .models import Advertisement, AdvertisementImage, Category
 from backend.serializers import UserSerializer
 
+# Валидация изображений
+def validate_image(image):
+    if image.size > 5*1024*1024:
+        raise serializers.ValidationError("Максимальный размер изображения — 5Мб.")
+    if not image.content_type.startswith('image/'):
+        raise serializers.ValidationError("Загружайте только изображения.")
+
 class AdvertisementImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdvertisementImage
         fields = ['id', 'image', 'order']
-
 
 class AdvertisementSerializer(serializers.ModelSerializer):
     images = AdvertisementImageSerializer(many=True, read_only=True)
@@ -31,22 +37,27 @@ class AdvertisementSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context.get('request')
-        
+
         # Проверка для изображений
         if request and request.method in ['POST', 'PUT', 'PATCH']:
             images_data = request.FILES.getlist('images')
+            for img in images_data:
+                validate_image(img)
+            main_image = request.FILES.get('main_image')
+            if main_image:
+                validate_image(main_image)
             instance = getattr(self, 'instance', None)
             current_images_count = instance.images.count() if instance else 0
             if images_data and (current_images_count + len(images_data)) > 5:
                 raise serializers.ValidationError(
                     f'Можно добавить не более 5 изображений к одному объявлению. Сейчас: {current_images_count}, добавляете: {len(images_data)}'
                 )
-        
+
         # Проверка категории
         category = data.get('category') or getattr(self.instance, 'category', None)
         if category in ['free', 'loss', 'sundry']:
             data['price'] = None
-        
+
         # Валидация телефона
         contact_phone = data.get('contact_phone')
         if contact_phone and not contact_phone.isdigit():
@@ -73,7 +84,6 @@ class AdvertisementSerializer(serializers.ModelSerializer):
                 )
         return instance
 
-
 class AdvertisementCreateSerializer(serializers.ModelSerializer):
     main_image = serializers.ImageField(required=False, allow_null=True)
 
@@ -81,12 +91,10 @@ class AdvertisementCreateSerializer(serializers.ModelSerializer):
         model = Advertisement
         fields = [
             'id', 'title', 'description', 'category', 'price',
-            'location', 'contact_phone', 'contact_email', 'is_active',
-            'main_image',
+            'location', 'contact_phone', 'contact_email', 'main_image',
         ]
-    
+
     def validate(self, data):
-        # Валидация телефона на бэке
         contact_phone = data.get('contact_phone')
         if contact_phone and not contact_phone.isdigit():
             raise serializers.ValidationError("Телефон должен содержать только цифры.")
@@ -97,19 +105,22 @@ class AdvertisementCreateSerializer(serializers.ModelSerializer):
         images = request.FILES.getlist('images')
         if len(images) > 5:
             raise serializers.ValidationError('Можно добавить не более 5 изображений к одному объявлению.')
-        
-        # Проверка на совпадение имени основного и дополнительного изображения
+        for img in images:
+            validate_image(img)
         main_image = request.FILES.get('main_image')
+        if main_image:
+            validate_image(main_image)
+        # Проверка на совпадение имени основного и дополнительного изображения
         if main_image and images:
             for img in images:
                 if hasattr(main_image, 'name') and hasattr(img, 'name') and main_image.name == img.name:
                     raise serializers.ValidationError("Основное изображение не должно совпадать с дополнительными.")
-        
+
         # Если категория в списке 'free', 'loss', 'sundry', цена должна быть None
         category = data.get('category')
         if category in ['free', 'loss', 'sundry']:
             data['price'] = None
-        
+
         return data
 
     def create(self, validated_data):

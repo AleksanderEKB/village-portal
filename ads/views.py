@@ -5,16 +5,20 @@ from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
 
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsOwnerOrReadOnly
+
 from .models import Advertisement, AdvertisementImage
 from .serializers import (
     AdvertisementSerializer,
     AdvertisementCreateSerializer,
 )
 
-
 class AdvertisementViewSet(viewsets.ModelViewSet):
-    queryset = Advertisement.objects.all().order_by('-created_at')
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = Advertisement.objects.all().select_related('user').prefetch_related('images').order_by('-created_at')
+    serializer_class = AdvertisementSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     parser_classes = [MultiPartParser, FormParser]
     lookup_field = 'slug'
 
@@ -22,6 +26,23 @@ class AdvertisementViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return AdvertisementCreateSerializer
         return AdvertisementSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+
+        # В личном кабинете (параметр ?mine=1) — все свои объявления
+        mine = self.request.query_params.get('mine')
+        if mine and user.is_authenticated:
+            return qs.filter(user=user)
+
+        # На главной и при просмотре чужих профилей — только активные
+        if self.action in ['list', 'retrieve']:
+            if not user.is_authenticated:
+                qs = qs.filter(is_active=True)
+            else:
+                qs = qs.filter(is_active=True) | qs.filter(user=user)
+        return qs
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -48,3 +69,12 @@ class AdvertisementViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Вы не можете удалить это изображение.'}, status=status.HTTP_403_FORBIDDEN)
         image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated], url_path='switch-status')
+    def switch_status(self, request, slug=None):
+        ad = self.get_object()
+        if ad.user != request.user:
+            return Response({'detail': 'Нет доступа'}, status=status.HTTP_403_FORBIDDEN)
+        ad.is_active = not ad.is_active
+        ad.save(update_fields=['is_active'])
+        return Response({'is_active': ad.is_active})

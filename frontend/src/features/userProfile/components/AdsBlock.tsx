@@ -1,3 +1,5 @@
+// frontend/src/features/userProfile/components/AdsBlock.tsx
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Advertisement, AdsCategory } from '../../../types/globalTypes';
@@ -7,6 +9,7 @@ import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 import { ADS_CATEGORY_LABELS } from '../../ads/utils/adsCategories';
 import { usePagination } from '../../shared/utils/pagination';
 import Pagination from '../../shared/components/Pagination';
+import axiosInstance from '../../../axiosInstance';
 
 export const getDefaultCategoryImage = (category: AdsCategory | string) =>
   `/media/default/${category}.webp`;
@@ -23,8 +26,19 @@ const AdsBlock: React.FC<AdsBlockProps> = ({
   handleDeleteAd,
 }) => {
   const [page, setPage] = useState(1);
+  const [loadingStatus, setLoadingStatus] = useState<string | null>(null);
 
-  // Используем usePagination для расчёта.
+  const handleSwitchStatus = async (slug: string) => {
+    setLoadingStatus(slug);
+    try {
+      await axiosInstance.post(`/api/ads/${slug}/switch-status/`);
+      window.location.reload(); // Лучше диспатчить fetchUserProfile, но reload тоже рабочий вариант.
+    } finally {
+      setLoadingStatus(null);
+    }
+  };
+
+  // Пагинация (текущая страница)
   const { totalPages, currentItems } = usePagination<Advertisement>(
     userAds,
     page,
@@ -71,11 +85,25 @@ const AdsBlock: React.FC<AdsBlockProps> = ({
                 <button onClick={() => handleDeleteAd(ad.slug)} className="delete-btn">
                   Удалить
                 </button>
+                <button
+                  onClick={() => handleSwitchStatus(ad.slug)}
+                  disabled={loadingStatus === ad.slug}
+                  className={ad.is_active ? 'func-btn-2' : 'func-btn-1'}
+                  style={{ minWidth: 170 }}
+                >
+                  {loadingStatus === ad.slug
+                    ? 'Обновление...'
+                    : ad.is_active ? 'Снять с публикации' : 'Вернуть в публикацию'}
+                </button>
               </div>
+              {!ad.is_active && (
+                <div style={{ color: 'red', fontWeight: 600, marginTop: 5 }}>
+                  Снято с публикации
+                </div>
+              )}
             </div>
           ))}
         </div>
-        {/* Пагинация */}
         <Pagination
           page={page}
           totalPages={totalPages}

@@ -1,9 +1,8 @@
-#ads/models.py
+# ads/models.py
 from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 from unidecode import unidecode
-
 
 class Category(models.TextChoices):
     SELL = "sell", "Продаю"
@@ -16,7 +15,7 @@ class Category(models.TextChoices):
 
 class Advertisement(models.Model):
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,  # <--- Вот это важно, т.к. кастомная модель
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="advertisements"
     )
@@ -44,11 +43,10 @@ class Advertisement(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     class Meta:
         verbose_name = "Объявление"
         verbose_name_plural = "Объявления"
-
 
 class AdvertisementImage(models.Model):
     advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE, related_name='images')
@@ -57,7 +55,5 @@ class AdvertisementImage(models.Model):
 
     class Meta:
         ordering = ['order']
-
-    class Meta:
         verbose_name = "Объявление доп. изображене"
         verbose_name_plural = "Объявления доп. изображения"

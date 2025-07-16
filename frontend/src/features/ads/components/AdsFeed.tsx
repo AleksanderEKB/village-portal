@@ -1,11 +1,10 @@
-// frontend/src/featurs/ads/components/ads-feed.tsx
-import React, { useEffect, useState } from 'react';
+// frontend/src/features/ads/components/ads-feed.tsx
+
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../app/store';
-import { fetchAds } from '../adsSlice';
+import { fetchAdsPaginated, clearAds } from '../adsSlice';
 import type { AdsCategory } from '../../../types/globalTypes';
-import { usePagination } from '../../shared/utils/pagination';
-import Pagination from '../../shared/components/Pagination';
 import { useNavigate, Link } from 'react-router-dom';
 import '../feed_styles.scss';
 import { faMoneyBill1 } from '@fortawesome/free-solid-svg-icons';
@@ -15,28 +14,30 @@ import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 export const getDefaultCategoryImage = (category: AdsCategory | string) =>
   `/media/default/${category}.webp`;
 
-
 const ITEMS_PER_PAGE = 4;
 
 const AdsFeed: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { ads, loading, error } = useSelector((state: RootState) => state.ads);
+  const { ads, loading, error, count } = useSelector((state: RootState) => state.ads);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const [page, setPage] = useState<number>(1);
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchAds());
-  }, [dispatch]);
+    dispatch(clearAds()); // сбрасываем при заходе на страницу
+    dispatch(fetchAdsPaginated({ limit: ITEMS_PER_PAGE, offset: 0 }));
+    // eslint-disable-next-line
+  }, []);
 
-  const { totalPages, currentItems: currentAds } = usePagination<typeof ads[0]>(ads, page, ITEMS_PER_PAGE);
-  
+  const handleShowMore = () => {
+    dispatch(fetchAdsPaginated({ limit: ITEMS_PER_PAGE, offset: ads.length }));
+  };
+
   return (
     <div className="ads-feed-container">
       <h1>Объявления</h1>
       <div className='ads-content'>
         {isAuthenticated && (
-          <div className='center-btn'>
+          <div className='center-btn-1'>
             <Link to="/ads/create-ads" className="func-btn-1">
               Создать объявление
             </Link>
@@ -46,7 +47,7 @@ const AdsFeed: React.FC = () => {
         {error && <div className="error">{error}</div>}
 
         <div className="ads-grid">
-          {currentAds.map(ad => (
+          {ads.map(ad => (
             <div className="ads-card" key={ad.id}>
               <Link to={`/profile/${ad.user.id}`} className="ads-user-info">
                 <img
@@ -79,7 +80,9 @@ const AdsFeed: React.FC = () => {
                     />
                   </div>
                 )}
-                <div className="ads-category">{ad.category_label}</div>
+                <div>
+                  <span className="ads-category">{ad.category_label}</span>
+                </div>
                 <hr />
                 <h2>{ad.title}</h2>
                 {ad.price && (
@@ -93,13 +96,14 @@ const AdsFeed: React.FC = () => {
             </div>
           ))}
         </div>
-        <Pagination
-          page={page}
-          totalPages={totalPages}
-          setPage={setPage}
-          prevLabel="Назад"
-          nextLabel="Вперед"
-        />
+
+        {ads.length < (count || 0) && (
+          <div className="center-btn-2">
+            <button className="func-btn-1" onClick={handleShowMore} disabled={loading}>
+              {loading ? 'Загрузка...' : 'Показать ещё'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

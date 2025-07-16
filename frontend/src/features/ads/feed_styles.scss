@@ -1,6 +1,7 @@
 // frontend/src/features/ads/styles.scss
 @import '../shared/styles/variables';
 
+
 .ads-feed-container {
   margin: 1rem 0.5rem 1rem 0.5rem;
   padding: 1rem 0.5rem 0 0.5rem;
@@ -23,6 +24,19 @@
     color: #e00;
     margin-bottom: 1rem;
   }
+
+
+  // надо сделать общий для всех
+  .ads-category {
+      display: inline-block;
+      font-size: .95rem;
+      color: #d1d1d1;
+      margin-bottom: 0.2rem;
+      border: solid 1px #000000;
+      padding: .1rem .5em .4rem .5rem;
+      border-radius: .4em;
+      background: $grey-gradient;
+    }
 
   .ads-grid {
     display: grid;

@@ -6,7 +6,7 @@
 }
 
 .ads-menu-btn {
-  background: #fc0000;
+  // background: #fc0000;
   background: $red-gradient;
   border: 1px solid black;
   border-radius: 50%;
@@ -20,8 +20,8 @@
   transition: background 0.15s;
   font-size: 20px;
   &:hover {
-    background: #fc0000;
-    background: radial-gradient(circle,rgba(252, 0, 0, 1) 16%, rgba(0, 0, 0, 1) 100%);
+    // background: #fc0000;
+    background: $red-gradient-hover;
   }
 }
 
@@ -59,6 +59,22 @@
 
 }
 .ads-menu-item-delete {
-  color: #e14b4b;
+  color: $danger;
   font-weight: bold;
 }
+
+.ads-menu-item-unpublish {
+  color: #ddd;
+  background: $grey-gradient;
+  &:hover {
+    background: $grey-gradient-hover;
+  }
+}
+.ads-menu-item-publish {
+  color: #ddd;
+  background: $grey-gradient;
+  &:hover {
+    background: $grey-gradient-hover;
+  }
+}
+
