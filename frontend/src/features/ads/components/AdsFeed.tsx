@@ -1,15 +1,15 @@
 // frontend/src/features/ads/components/ads-feed.tsx
-
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../app/store';
 import { fetchAdsPaginated, clearAds } from '../adsSlice';
 import type { AdsCategory } from '../../../types/globalTypes';
 import { useNavigate, Link } from 'react-router-dom';
-import '../feed_styles.scss';
-import { faMoneyBill1 } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AdPriceBlock from './AdInfoBlock/AdPrice';
+import AdCategory from './AdInfoBlock/AdCategory';
+import AdTitleDate from './AdInfoBlock/AdTitleDate';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
+import '../styles/scss_feed/main.scss';
 
 export const getDefaultCategoryImage = (category: AdsCategory | string) =>
   `/media/default/${category}.webp`;
@@ -74,24 +74,17 @@ const AdsFeed: React.FC = () => {
                   <div className="ads-main-image-wrapper">
                     <img
                       src={getDefaultCategoryImage(ad.category)}
-                      alt={ad.category_label}
+                      alt={ad.category}
                       className="ads-main-image"
                       style={{ opacity: 0.7 }}
                     />
                   </div>
                 )}
-                <div>
-                  <span className="ads-category">{ad.category_label}</span>
-                </div>
+                <AdCategory category={ad.category} />
                 <hr />
-                <h2>{ad.title}</h2>
-                {ad.price && (
-                  <div className="ads-price">
-                    <FontAwesomeIcon className='icon-price' icon={faMoneyBill1} />
-                    {ad.price} ₽
-                  </div>
-                )}
-                <div className="ads-date">{formatTimeElapsed(ad.created_at)}</div>
+                <AdTitleDate title={ad.title} />
+                <AdPriceBlock price={ad.price} />
+                {/* <div className="ads-date">{formatTimeElapsed(ad.created_at)}</div> */}
               </Link>
             </div>
           ))}

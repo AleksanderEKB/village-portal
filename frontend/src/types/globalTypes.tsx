@@ -19,7 +19,7 @@ export interface AdvertisementImage {
 }
 
 export interface Advertisement {
-  category_label: string;
+  // category_label: string;
   id: number;
   user: UserWithAvatar; // <-- тут!
   title: string;

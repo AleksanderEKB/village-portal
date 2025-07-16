@@ -1,0 +1,12 @@
+@import './variables';
+
+@mixin grey {
+    display: inline-block;
+    font-size: .95rem;
+    color: #d1d1d1;
+    margin-bottom: 0.2rem;
+    border: solid 1px #000000;
+    padding: .2rem .5em .2rem .5rem;
+    border-radius: .4em;
+    background: $grey-gradient;
+}

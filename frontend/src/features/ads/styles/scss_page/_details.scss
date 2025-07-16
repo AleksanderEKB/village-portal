@@ -42,14 +42,7 @@
     }
     
     .ads-category {
-      display: inline-block;
-      font-size: .95rem;
-      color: #d1d1d1;
-      margin-bottom: 0.2rem;
-      border: solid 1px #000000;
-      padding: .1rem .5em .4rem .5rem;
-      border-radius: .4em;
-      background: $grey-gradient;
+      @include grey;
     }
     
     .ads-description {
@@ -58,13 +51,8 @@
       flex: 1;
     }
     .ads-price {
-      display: inline-block;
+      @include grey;
       font-size: 1.2rem;
-      color: #d1d1d1;
-      border: solid 1px #000000;
-      padding: .2rem .5em .4rem .5rem;
-      border-radius: .4em;
-      background: $grey-gradient;
     }
     .ads-location {
       font-size: 1.2rem;
@@ -78,14 +66,30 @@
           font-variant-numeric: tabular-nums; // чтобы все цифры были одинаковой ширины (не обязательно)
   }
     }
-    .ads-date {
-      padding-right: 2.5rem;
-      font-size: 0.85rem;
-      margin-top: auto;
-      align-self: flex-end; 
-      text-align: right;
-      color: #ddd;
+    .ads-title-date-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .ads-title {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 600;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .ads-date {
+        color: #ddd;
+        font-size: 1rem;
+        margin-left: 1.5rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
     }
+
   }
 
   @media (max-width: 699px) {

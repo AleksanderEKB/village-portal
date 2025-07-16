@@ -8,6 +8,7 @@
   transition: box-shadow 0.2s;
   display: flex;
   flex-direction: column;
+  font-family: $font-general;
 
   &:hover {
     box-shadow: 0 4px 20px rgba(0,0,0,0.12);

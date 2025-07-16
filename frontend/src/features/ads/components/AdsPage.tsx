@@ -6,6 +6,7 @@ import AdInfoBlock from './AdInfoBlock';
 import GalleryThumbnails from './GalleryThumbnails';
 import { useAdsPage } from '../hooks/useAdsPage';
 import AdOwnerPanel from './AdOwnerPanel';
+import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 
 import '../styles/scss_page/main.scss';
 
@@ -96,6 +97,7 @@ const AdsPage: React.FC = () => {
           />
         )}
       </div>
+      <div className="ads-date">{formatTimeElapsed(ad.created_at)}Указать атрибуты </div>
     </div>
   );
 };
