@@ -49,6 +49,7 @@
       font-size: 1rem;
       margin-bottom: .3rem;
       flex: 1;
+      text-align: justify;
     }
     .ads-price {
       @include grey;
@@ -66,7 +67,7 @@
           font-variant-numeric: tabular-nums; // чтобы все цифры были одинаковой ширины (не обязательно)
   }
     }
-    .ads-title-date-row {
+    .ads-title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -81,13 +82,6 @@
         white-space: nowrap;
       }
 
-      .ads-date {
-        color: #ddd;
-        font-size: 1rem;
-        margin-left: 1.5rem;
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
     }
 
   }
@@ -106,4 +100,5 @@
     }
     
   }
+  
 }

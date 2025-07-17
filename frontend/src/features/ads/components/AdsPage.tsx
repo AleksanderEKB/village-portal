@@ -7,6 +7,7 @@ import GalleryThumbnails from './GalleryThumbnails';
 import { useAdsPage } from '../hooks/useAdsPage';
 import AdOwnerPanel from './AdOwnerPanel';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
+import AdDate from './AdInfoBlock/AdDate';
 
 import '../styles/scss_page/main.scss';
 
@@ -97,7 +98,8 @@ const AdsPage: React.FC = () => {
           />
         )}
       </div>
-      <div className="ads-date">{formatTimeElapsed(ad.created_at)}Указать атрибуты </div>
+      <AdDate created_at={ad.created_at} updated_at={ad.updated_at} />
+      {/* <div className="ads-date">{formatTimeElapsed(ad.created_at)}Указать атрибуты </div> */}
     </div>
   );
 };

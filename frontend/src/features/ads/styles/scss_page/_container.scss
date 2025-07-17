@@ -15,8 +15,23 @@
     padding-bottom: 1rem;
   }
 
+  .ads-date {
+    @include grey;
+    position: absolute;
+    right: 1rem;
+    margin-top: .6rem;
+  }
+
   .error {
     color: #e00;
     margin-bottom: 1rem;
   }
+
+  @media (max-width: 399px) {
+    .ads-date {
+      font-size: 3rem;
+    }
+  }
 }
+
+

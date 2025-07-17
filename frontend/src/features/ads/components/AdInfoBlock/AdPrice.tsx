@@ -13,7 +13,6 @@ const AdPriceBlock: React.FC<{ price?: Advertisement['price'] }> = ({ price }) =
         <FontAwesomeIcon className="icon-price" icon={faMoneyBill1} />
         {Number(price).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
       </span>
-      <hr />
     </div>
   );
 };

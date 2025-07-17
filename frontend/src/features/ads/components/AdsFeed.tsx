@@ -7,7 +7,7 @@ import type { AdsCategory } from '../../../types/globalTypes';
 import { useNavigate, Link } from 'react-router-dom';
 import AdPriceBlock from './AdInfoBlock/AdPrice';
 import AdCategory from './AdInfoBlock/AdCategory';
-import AdTitleDate from './AdInfoBlock/AdTitleDate';
+import AdTitleDate from './AdInfoBlock/AdTitle';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 import '../styles/scss_feed/main.scss';
 

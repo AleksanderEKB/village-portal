@@ -5,7 +5,7 @@ import AdPriceBlock from './AdInfoBlock/AdPrice';
 import AdDescription from './AdInfoBlock/AdDescription';
 import AdLocation from './AdInfoBlock/AdLocation';
 import AdContact from './AdInfoBlock/AdContact';
-import AdTitleDate from './AdInfoBlock/AdTitleDate';
+import AdTitleDate from './AdInfoBlock/AdTitle';
 import AdCategory from './AdInfoBlock/AdCategory';
 
 
@@ -17,7 +17,7 @@ interface Props {
 const AdInfoBlock: React.FC<Props> = ({ ad, desktop }) => (
   <div className={`ads-info-block ${desktop ? 'info-block-desktop' : 'info-block-mobile'}`}>
     <AdCategory category={ad.category} />
-    <AdTitleDate title={ad.title} created_at={ad.created_at} />
+    <AdTitleDate title={ad.title} />
     <hr />
     <AdDescription description={ad.description} />
     <hr />
