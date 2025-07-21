@@ -1,7 +1,7 @@
 // frontend/src/features/ads/components/AdInfoBlock/AdLocation.tsx
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoneyBill1, faLocationDot, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { Advertisement } from '../../../../types/globalTypes';
 
 interface Props {

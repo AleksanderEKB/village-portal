@@ -1,6 +1,10 @@
 // frontend/src/features/ads/components/ImageGalleryModal.tsx
 
 import React, { useEffect, useCallback } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleLeft, faCircleRight, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+
+
 
 type GalleryImage = {
   id: number | string;
@@ -45,7 +49,9 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
   return (
     <div className="gallery-modal-overlay" onClick={onClose}>
       <div className="gallery-modal-content" onClick={e => e.stopPropagation()}>
-        <button className="gallery-close" onClick={onClose} title="Закрыть">×</button>
+        <button className="gallery-close" onClick={onClose} title="Закрыть">
+          <FontAwesomeIcon icon={faCircleXmark} />
+        </button>
         <img
           src={images[current].image}
           alt={`Фото ${current + 1}`}
@@ -53,8 +59,12 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
         />
         {images.length > 1 && (
           <>
-            <button className="gallery-nav gallery-nav-left" onClick={prev} title="Назад">‹</button>
-            <button className="gallery-nav gallery-nav-right" onClick={next} title="Вперёд">›</button>
+            <button className="gallery-nav gallery-nav-left" onClick={prev} title="Назад">
+              <FontAwesomeIcon icon={faCircleLeft} />
+            </button>
+            <button className="gallery-nav gallery-nav-right" onClick={next} title="Вперёд">
+              <FontAwesomeIcon icon={faCircleRight} />
+            </button>
           </>
         )}
         <div className="gallery-modal-counter">

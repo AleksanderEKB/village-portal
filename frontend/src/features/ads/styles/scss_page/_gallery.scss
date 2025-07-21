@@ -48,8 +48,9 @@
 
 .gallery-close {
   position: absolute;
-  top: 16px; right: 20px;
-  font-size: 2.5rem;
+  top: -1rem;
+  right: -1rem;
+  font-size: 2rem;
   background: none;
   border: none;
   color: #fff;
@@ -63,7 +64,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 3rem;
+  font-size: 2.2rem;
   background: none;
   border: none;
   color: #fff;
@@ -73,8 +74,8 @@
   opacity: 0.8;
   &:hover { opacity: 1; }
 }
-.gallery-nav-left { left: 10px; }
-.gallery-nav-right { right: 10px; }
+.gallery-nav-left { left: 0; }
+.gallery-nav-right { right: 0; }
 
 .gallery-modal-counter {
   position: absolute;

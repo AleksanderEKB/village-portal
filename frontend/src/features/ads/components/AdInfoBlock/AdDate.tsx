@@ -16,11 +16,13 @@ const AdDate: React.FC<Props> = ({ created_at, updated_at }) => {
 
   return (
     <div className="ads-date">
-      Опубликовано {formatTimeElapsed(created_at)}
+      <span className="ads-date__created">
+        Опубликовано {formatTimeElapsed(created_at)}
+      </span>
       {wasUpdated && (
-        <span>
-          {' '}| Изменено {formatTimeElapsed(updated_at)}
-        </span>
+      <span className="ads-date__updated">
+        Изменено {formatTimeElapsed(updated_at)}
+      </span>
       )}
     </div>
   );

@@ -99,7 +99,6 @@ const AdsPage: React.FC = () => {
         )}
       </div>
       <AdDate created_at={ad.created_at} updated_at={ad.updated_at} />
-      {/* <div className="ads-date">{formatTimeElapsed(ad.created_at)}Указать атрибуты </div> */}
     </div>
   );
 };

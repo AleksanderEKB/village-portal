@@ -1,0 +1,19 @@
+.ad-owner-panel {
+  margin-top: 1rem;
+
+  .ad-status {
+    margin-top: 1rem;
+    font-weight: 600;
+
+    &.active {
+      @include grey;
+      color: #07ce00;
+      border: solid 1px #07ce00;
+    }
+    &.inactive {
+      @include grey;
+      color: #FC0000;
+      border: solid 1px #FC0000;
+    }
+  }
+}
