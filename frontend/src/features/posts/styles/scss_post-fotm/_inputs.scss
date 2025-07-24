@@ -1,0 +1,10 @@
+.create-edit-container {
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    @include inputs-areas;
+    min-height: 15rem;
+    margin-top: 0;
+  }
+}

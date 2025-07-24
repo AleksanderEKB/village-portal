@@ -8,12 +8,18 @@ from abstract.views import AbstractViewSet
 from comment.models import Comment
 from comment.serializers import CommentSerializer
 from auth.permissions import UserPermission
+from rest_framework.pagination import LimitOffsetPagination
+
+class CommentPagination(LimitOffsetPagination):
+    default_limit = 4
+    max_limit = 20
 
 
 class CommentViewSet(AbstractViewSet):
-    http_method_names = ('post', 'get', 'put', 'delete')
+    http_method_names = ('post', 'get', 'put', 'patch', 'delete')
     permission_classes = (UserPermission,)
     serializer_class = CommentSerializer
+    pagination_class = CommentPagination
 
 
     def get_queryset(self):
@@ -23,7 +29,8 @@ class CommentViewSet(AbstractViewSet):
         post_pk = self.kwargs['post_pk']
         if post_pk is None:
             return Http404
-        queryset = Comment.objects.filter(post__public_id=post_pk)
+        queryset = Comment.objects.filter(post__public_id=post_pk).order_by('-created')  # последние первыми
+        return queryset
 
         return queryset
     
@@ -38,3 +45,5 @@ class CommentViewSet(AbstractViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    

@@ -3,23 +3,7 @@
   input[type="number"],
   textarea,
   select {
-    font-family: $font-general;
-    box-sizing: border-box;
-    background: #d4d4d2;
-    width: 100%;
-    font-size: 1rem;
-    padding: 1rem;
-    margin-top: 2.2rem;
-    border: 1.5px solid #bbb;
-    border-radius: 8px;
-    transition: border 0.2s, box-shadow 0.2s;
-    outline: none;
-
-    &:focus {
-      border-color: #4682f4;
-      box-shadow: 0 0 0 1px #4682f4;
-      background: #fff;
-    }
+    @include inputs-areas;
 
     &.input-error {
       border-color: #e53e3e !important;

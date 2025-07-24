@@ -48,21 +48,6 @@ $white: #fff;
 }
 
 
-.create-edit-container {
-  max-width: 500px;
-  margin: 50px auto;
-  padding: 20px;
-  background: $secondary;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  font-family: jura-bold;
-  text-align: center;
-
-  button {
-    @include button-styles($main-accent);
-  }
-}
-
 .createpost-input-container {
   display: flex;
   flex-direction: column;

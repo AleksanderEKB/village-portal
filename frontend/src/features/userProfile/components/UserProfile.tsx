@@ -1,6 +1,8 @@
 // frontend/src/features/userProfile/components/UserProfile.tsx
 import React from 'react';
 import { useUserProfile } from '../hooks/useUserProfile';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../app/store';
 import ProfileBlock from './ProfileBlock';
 import PostsBlock from './PostsBlock';
 import AdsBlock from './AdsBlock';
@@ -9,7 +11,6 @@ import '../styles.scss';
 
 const UserProfile: React.FC = () => {
   const {
-    profile,
     userProfileLoading,
     userProfileError,
     isAuthenticated,
@@ -28,6 +29,8 @@ const UserProfile: React.FC = () => {
     setShowComments,
     handleDeleteAd,
   } = useUserProfile();
+
+  const profile = useSelector((state: RootState) => state.userProfile.profile);
 
   if (!profile && userProfileLoading) return <p>Загрузка...</p>;
   if (!profile) return <p>Нет данных профиля</p>;
@@ -55,10 +58,9 @@ const UserProfile: React.FC = () => {
         setCommentTexts={setCommentTexts}
         handleDeletePostClick={handleDeletePostClick}
       />
-      <AdsBlock
-        userAds={userAds}
-        handleDeleteAd={handleDeleteAd}
-      />
+      {profile && (
+        <AdsBlock userId={profile.id} />
+      )}
     </div>
   );
 };

@@ -10,8 +10,8 @@ from post.models import Post
 
 
 class CommentSerializer(AbstractSerializer):
-    author = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='public_id')
-    post = serializers.SlugRelatedField(queryset=Post.objects.all(), slug_field='public_id')
+    author = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='public_id', required=False)
+    post = serializers.SlugRelatedField(queryset=Post.objects.all(), slug_field='public_id', required=False)
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
@@ -26,14 +26,18 @@ class CommentSerializer(AbstractSerializer):
         return value
     
     def update(self, instance, validated_data):
+        request = self.context.get('request')
+        user = request.user if request else None
+        # Только автор может редактировать body
+        if user and user != instance.author:
+            validated_data.pop('body', None)
         if not instance.edited:
             validated_data['edited'] = True
         instance = super().update(instance, validated_data)
-
         return instance
 
     
     class Meta:
         model = Comment
         fields = ['id', 'post', 'author', 'body', 'edited', 'created', 'updated']
-        read_only_fields = ["edited"]
+        read_only_fields = ["edited", "author", "post"]

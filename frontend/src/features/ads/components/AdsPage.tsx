@@ -6,7 +6,6 @@ import AdInfoBlock from './AdInfoBlock';
 import GalleryThumbnails from './GalleryThumbnails';
 import { useAdsPage } from '../hooks/useAdsPage';
 import AdOwnerPanel from './AdOwnerPanel';
-import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 import AdDate from './AdInfoBlock/AdDate';
 
 import '../styles/scss_page/main.scss';

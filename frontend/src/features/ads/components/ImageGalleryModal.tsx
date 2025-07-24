@@ -1,5 +1,4 @@
 // frontend/src/features/ads/components/ImageGalleryModal.tsx
-
 import React, { useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleLeft, faCircleRight, faCircleXmark } from '@fortawesome/free-solid-svg-icons';

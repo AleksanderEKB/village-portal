@@ -1,11 +1,11 @@
 // frontend/src/features/ads/components/AdInfoBlock.tsx
 import React from 'react';
 import { Advertisement } from '../../../types/globalTypes';
-import AdPriceBlock from './AdInfoBlock/AdPrice';
+import AdPrice from './AdInfoBlock/AdPrice';
 import AdDescription from './AdInfoBlock/AdDescription';
 import AdLocation from './AdInfoBlock/AdLocation';
 import AdContact from './AdInfoBlock/AdContact';
-import AdTitleDate from './AdInfoBlock/AdTitle';
+import AdTitle from './AdInfoBlock/AdTitle';
 import AdCategory from './AdInfoBlock/AdCategory';
 
 
@@ -17,11 +17,11 @@ interface Props {
 const AdInfoBlock: React.FC<Props> = ({ ad, desktop }) => (
   <div className={`ads-info-block ${desktop ? 'info-block-desktop' : 'info-block-mobile'}`}>
     <AdCategory category={ad.category} />
-    <AdTitleDate title={ad.title} />
+    <AdTitle title={ad.title} />
     <hr />
     <AdDescription description={ad.description} />
     <hr />
-    <AdPriceBlock price={ad.price} />
+    <AdPrice price={ad.price} />
     <AdLocation location={ad.location} />
     <AdContact contact_phone={ad.contact_phone} />
   </div>

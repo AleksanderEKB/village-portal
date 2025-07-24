@@ -4,11 +4,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../app/store';
 import { fetchAdsPaginated, clearAds } from '../adsSlice';
 import type { AdsCategory } from '../../../types/globalTypes';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import AdPriceBlock from './AdInfoBlock/AdPrice';
 import AdCategory from './AdInfoBlock/AdCategory';
 import AdTitleDate from './AdInfoBlock/AdTitle';
-import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 import '../styles/scss_feed/main.scss';
 
 export const getDefaultCategoryImage = (category: AdsCategory | string) =>
@@ -20,7 +19,6 @@ const AdsFeed: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { ads, loading, error, count } = useSelector((state: RootState) => state.ads);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(clearAds()); // сбрасываем при заходе на страницу
@@ -83,8 +81,8 @@ const AdsFeed: React.FC = () => {
                 <AdCategory category={ad.category} />
                 <hr />
                 <AdTitleDate title={ad.title} />
+                <hr/>
                 <AdPriceBlock price={ad.price} />
-                {/* <div className="ads-date">{formatTimeElapsed(ad.created_at)}</div> */}
               </Link>
             </div>
           ))}

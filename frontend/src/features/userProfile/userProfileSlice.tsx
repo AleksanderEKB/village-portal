@@ -1,8 +1,7 @@
 // frontend/src/features/userProfile/userProfileSlice.tsx
-
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '../../axiosInstance';
-import { UserWithAvatar, PostExtended, Advertisement } from '../../types/globalTypes';
+import type { UserWithAvatar, PostExtended, Advertisement } from '../../types/globalTypes';
 
 // Типы для пагинированных ответов
 type PostsApiResponse = {
@@ -22,10 +21,6 @@ type AdsApiResponse = {
 type FetchUserProfileResponse = {
   profile: UserWithAvatar;
   posts: PostExtended[];
-  ads: Advertisement[];
-  adsCount: number;
-  adsNext: string | null;
-  adsPrevious: string | null;
 };
 
 interface UserProfileState {
@@ -51,6 +46,40 @@ const initialState: UserProfileState = {
   adsNext: null,
   adsPrevious: null,
 };
+
+// Получение объявлений пользователя по страницам (новая пагинация)
+export const fetchUserAdsPaginated = createAsyncThunk<
+  AdsApiResponse,
+  { userId: number | string; limit: number; offset: number },
+  { rejectValue: string }
+>(
+  'userProfile/fetchUserAdsPaginated',
+  async ({ userId, limit, offset }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get<AdsApiResponse>('/api/ads/', {
+        params: { user: userId, mine: 1, limit, offset },
+      });
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.detail || 'Ошибка загрузки объявлений');
+    }
+  }
+);
+
+// Получение профиля пользователя и его постов
+export const fetchUserProfile = createAsyncThunk<
+  FetchUserProfileResponse,
+  number | string
+>('userProfile/fetchUserProfile', async (userId) => {
+  const [profile, postsRes] = await Promise.all([
+    axiosInstance.get<UserWithAvatar>(`/api/user/${userId}/`),
+    axiosInstance.get<PostsApiResponse>('/api/post/', { params: { user: userId } }),
+  ]);
+  return {
+    profile: profile.data,
+    posts: postsRes.data.results,
+  };
+});
 
 export const fetchAdvertisementBySlug = createAsyncThunk<Advertisement, string>(
   'userProfile/fetchAdvertisementBySlug',
@@ -79,31 +108,6 @@ export const updateAdvertisement = createAsyncThunk<Advertisement, { slug: strin
     }
   }
 );
-
-/**
- * fetchUserProfile — теперь использует параметр mine: 1, чтобы получать все объявления юзера,
- * даже снятые с публикации.
- */
-export const fetchUserProfile = createAsyncThunk<
-  FetchUserProfileResponse,
-  number | string
->('userProfile/fetchUserProfile', async (userId) => {
-  const [profile, postsRes, adsRes] = await Promise.all([
-    axiosInstance.get<UserWithAvatar>(`/api/user/${userId}/`),
-    axiosInstance.get<PostsApiResponse>('/api/post/', { params: { user: userId } }),
-    axiosInstance.get<AdsApiResponse>('/api/ads/', { params: { user: userId, mine: 1 } }),
-    //                  ^^^^^^^^^^^^
-    // важно: mine: 1 — вернет все объявления пользователя, включая снятые с публикации
-  ]);
-  return {
-    profile: profile.data,
-    posts: postsRes.data.results,
-    ads: adsRes.data.results,
-    adsCount: adsRes.data.count,
-    adsNext: adsRes.data.next,
-    adsPrevious: adsRes.data.previous,
-  };
-});
 
 export const updateUserProfile = createAsyncThunk<UserWithAvatar, { userId: number | string; formData: FormData }>(
   'userProfile/updateUserProfile',
@@ -161,31 +165,92 @@ const userProfileSlice = createSlice({
     clearCurrentAd(state) {
       state.currentAd = null;
     },
+    clearUserAds(state) {
+      state.ads = [];
+      state.adsCount = undefined;
+      state.adsNext = null;
+      state.adsPrevious = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(deleteAdvertisement.fulfilled, (state, action) => {
-        state.ads = state.ads.filter((ad) => ad.slug !== action.payload);
-        if (state.currentAd && state.currentAd.slug === action.payload) {
-          state.currentAd = null;
-        }
-      })
+      // --- ПРОФИЛЬ ---
       .addCase(fetchUserProfile.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.profile = action.payload.profile;
         state.posts = action.payload.posts;
-        state.ads = action.payload.ads;
-        state.adsCount = action.payload.adsCount;
-        state.adsNext = action.payload.adsNext;
-        state.adsPrevious = action.payload.adsPrevious;
         state.loading = false;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Ошибка загрузки профиля';
       })
+
+      // --- ПАГИНАЦИЯ ОБЪЯВЛЕНИЙ ПОЛЬЗОВАТЕЛЯ ---
+      .addCase(fetchUserAdsPaginated.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserAdsPaginated.fulfilled, (state, action) => {
+        if (action.meta.arg.offset === 0) {
+          state.ads = action.payload.results;
+        } else {
+          state.ads = [...state.ads, ...action.payload.results];
+        }
+        state.adsCount = action.payload.count;
+        state.adsNext = action.payload.next;
+        state.adsPrevious = action.payload.previous;
+        state.loading = false;
+      })
+      .addCase(fetchUserAdsPaginated.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string || 'Ошибка загрузки объявлений';
+      })
+
+      // --- УДАЛЕНИЕ ОБЪЯВЛЕНИЯ ---
+      .addCase(deleteAdvertisement.fulfilled, (state, action) => {
+        state.ads = state.ads.filter((ad) => ad.slug !== action.payload);
+        if (state.currentAd && state.currentAd.slug === action.payload) {
+          state.currentAd = null;
+        }
+      })
+
+      // --- ОДНО ОБЪЯВЛЕНИЕ ---
+      .addCase(fetchAdvertisementBySlug.pending, (state) => {
+        state.loading = true;
+        state.currentAd = null;
+      })
+      .addCase(fetchAdvertisementBySlug.fulfilled, (state, action) => {
+        state.currentAd = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchAdvertisementBySlug.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string || 'Ошибка загрузки объявления';
+        state.currentAd = null;
+      })
+
+      // --- ОБНОВЛЕНИЕ ОБЪЯВЛЕНИЯ ---
+      .addCase(updateAdvertisement.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateAdvertisement.fulfilled, (state, action) => {
+        state.currentAd = action.payload;
+        state.loading = false;
+        state.ads = state.ads.map((ad) =>
+          ad.slug === action.payload.slug ? action.payload : ad
+        );
+      })
+      .addCase(updateAdvertisement.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string || 'Ошибка обновления объявления';
+      })
+
+      // --- ОБНОВЛЕНИЕ ПРОФИЛЯ ---
       .addCase(updateUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -198,6 +263,8 @@ const userProfileSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string || 'Ошибка обновления профиля';
       })
+
+      // --- УДАЛЕНИЕ ПРОФИЛЯ ---
       .addCase(deleteUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -215,37 +282,9 @@ const userProfileSlice = createSlice({
       .addCase(deleteUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string || 'Ошибка удаления профиля';
-      })
-      .addCase(fetchAdvertisementBySlug.pending, (state) => {
-        state.loading = true;
-        state.currentAd = null;
-      })
-      .addCase(fetchAdvertisementBySlug.fulfilled, (state, action) => {
-        state.currentAd = action.payload;
-        state.loading = false;
-      })
-      .addCase(fetchAdvertisementBySlug.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string || 'Ошибка загрузки объявления';
-        state.currentAd = null;
-      })
-      .addCase(updateAdvertisement.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(updateAdvertisement.fulfilled, (state, action) => {
-        state.currentAd = action.payload;
-        state.loading = false;
-        state.ads = state.ads.map((ad) =>
-          ad.slug === action.payload.slug ? action.payload : ad
-        );
-      })
-      .addCase(updateAdvertisement.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string || 'Ошибка обновления объявления';
       });
   },
 });
 
 export default userProfileSlice.reducer;
-export const { clearUserProfile, clearCurrentAd } = userProfileSlice.actions;
+export const { clearUserProfile, clearCurrentAd, clearUserAds } = userProfileSlice.actions;

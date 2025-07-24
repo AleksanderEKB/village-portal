@@ -1,0 +1,17 @@
+.ads-card-user {
+    @include ads-card;
+
+    .ads-category {
+    @include grey;
+    }
+
+    .item-right {
+        @include item-right;
+    }
+
+    .ads-price {
+    @include grey;
+    font-size: 1.1rem;
+    }
+}
+

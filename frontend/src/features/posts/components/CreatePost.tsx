@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../axiosInstance';
 import { RootState } from '../../../app/store';
 import { User } from '../../../types/globalTypes';
+import '../styles/scss_post-fotm/main.scss';
 
 const CreatePost: React.FC = () => {
   const [body, setBody] = useState<string>('');
@@ -39,29 +40,33 @@ const CreatePost: React.FC = () => {
   };
 
   return (
-    <div className='create-edit-container'>
-      <h1>Создать пост</h1>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          required
-        />
-        <div className="createpost-input-container">
-          <p>Загрузить изображение для поста</p>
-          <input
-            id="file-input"
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleImageChange}
+    <>
+      <h1 className="ads-form__heading">Новый пост</h1>
+      <div className='create-edit-container'>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <textarea
+            name="body"
+            value={body}
+            placeholder="Введите текст"
+            onChange={(e) => setBody(e.target.value)}
+            required
           />
-          <label htmlFor="file-input" className="createpost-input-label">Выбрать файл</label>
-          <span className="file-chosen">{fileName}</span>
-        </div>
-        <button type="submit">Создать</button>
-      </form>
-    </div>
+          <div className="createpost-input-container">
+            <p>Загрузить изображение для поста</p>
+            <input
+              id="file-input"
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+            <label htmlFor="file-input" className="createpost-input-label">Выбрать файл</label>
+            <span className="file-chosen">{fileName}</span>
+          </div>
+          <button type="submit">Создать</button>
+        </form>
+      </div>
+    </>
   );
 };
 

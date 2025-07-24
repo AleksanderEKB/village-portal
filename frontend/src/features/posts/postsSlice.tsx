@@ -1,7 +1,7 @@
 // frontend/src/features/posts/postsSlice.tsx
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '../../axiosInstance';
-import { PostExtended, Comment, UserWithAvatar } from '../../types/globalTypes';
+import { PostExtended, PostComment, UserWithAvatar } from '../../types/globalTypes';
 import { updateUserProfile } from '../userProfile/userProfileSlice';
 
 // Тип ответа API с пагинацией
@@ -15,7 +15,8 @@ export type PostsApiResponse = {
 export interface PostsState {
   posts: PostExtended[];
   post: PostExtended | null;
-  comments: Record<number, Comment[]>;
+  comments: Record<number, PostComment[]>;
+  commentsNext: Record<number, string | null>;
   loading: boolean;
   error: string | null;
   count?: number;
@@ -27,6 +28,7 @@ const initialState: PostsState = {
   posts: [],
   post: null,
   comments: {},
+  commentsNext: {},
   loading: false,
   error: null,
   count: undefined,
@@ -58,24 +60,31 @@ export const fetchPostById = createAsyncThunk<PostExtended, string>(
   }
 );
 
-export const fetchComments = createAsyncThunk<{ postId: number; comments: Comment[] }, number>(
+export const fetchComments = createAsyncThunk<
+  { postId: number; comments: PostComment[]; next?: string | null; offset: number },
+  { postId: number; limit?: number; offset?: number }
+>(
   'posts/fetchComments',
-  async (postId, { rejectWithValue }) => {
+  async ({ postId, limit = 4, offset = 0 }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get<Comment[]>(`/api/post/${postId}/comments/`);
-      return { postId, comments: res.data };
+      const res = await axiosInstance.get<{ results: PostComment[]; next: string | null }>(
+        `/api/post/${postId}/comments/`,
+        { params: { limit, offset } }
+      );
+      return { postId, comments: res.data.results, next: res.data.next, offset };
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.detail || 'Ошибка загрузки комментариев');
     }
   }
 );
 
+
 export const createComment = createAsyncThunk<
-  { postId: number; comment: Comment },
-  { postId: number; commentData: Partial<Comment> }
+  { postId: number; comment: PostComment },
+  { postId: number; commentData: Partial<PostComment> }
 >('posts/createComment', async ({ postId, commentData }, { rejectWithValue }) => {
   try {
-    const res = await axiosInstance.post<Comment>(`/api/post/${postId}/comments/`, commentData);
+    const res = await axiosInstance.post<PostComment>(`/api/post/${postId}/comments/`, commentData);
     return { postId, comment: res.data };
   } catch (err: any) {
     return rejectWithValue(err.response?.data?.detail || 'Ошибка создания комментария');
@@ -105,6 +114,30 @@ export const deletePost = createAsyncThunk<number, number>(
     }
   }
 );
+
+export const updateComment = createAsyncThunk<
+  { postId: number; comment: PostComment },
+  { postId: number; commentId: number; commentData: Partial<PostComment> }
+>('posts/updateComment', async ({ postId, commentId, commentData }, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.put<PostComment>(`/api/post/${postId}/comments/${commentId}/`, commentData);
+    return { postId, comment: res.data };
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.detail || 'Ошибка редактирования комментария');
+  }
+});
+
+export const deleteComment = createAsyncThunk<
+  { postId: number; commentId: number },
+  { postId: number; commentId: number }
+>('posts/deleteComment', async ({ postId, commentId }, { rejectWithValue }) => {
+  try {
+    await axiosInstance.delete(`/api/post/${postId}/comments/${commentId}/`);
+    return { postId, commentId };
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.detail || 'Ошибка удаления комментария');
+  }
+});
 
 const postsSlice = createSlice({
   name: 'posts',
@@ -138,7 +171,13 @@ const postsSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchComments.fulfilled, (state, action) => {
-        state.comments[action.payload.postId] = action.payload.comments;
+        const { postId, comments, next, offset } = action.payload;
+        if (offset === 0) {
+          state.comments[postId] = comments;
+        } else {
+          state.comments[postId] = [...(state.comments[postId] || []), ...comments];
+        }
+        state.commentsNext[postId] = next || null;
       })
       .addCase(createComment.fulfilled, (state, action) => {
         const { postId, comment } = action.payload;
@@ -171,9 +210,23 @@ const postsSlice = createSlice({
         if (state.post && state.post.author.id === updatedUser.id) {
           state.post = { ...state.post, author: updatedUser };
         }
+      })
+      .addCase(updateComment.fulfilled, (state, action) => {
+        const { postId, comment } = action.payload;
+        state.comments[postId] = (state.comments[postId] || []).map((c) =>
+          c.id === comment.id ? comment : c
+        );
+      })
+      .addCase(deleteComment.fulfilled, (state, action) => {
+        const { postId, commentId } = action.payload;
+        state.comments[postId] = (state.comments[postId] || []).filter((c) => c.id !== commentId);
+        const post = state.posts.find((p) => p.id === postId);
+        if (post && post.comments_count > 0) post.comments_count -= 1;
+        if (state.post && state.post.id === postId && state.post.comments_count > 0) state.post.comments_count -= 1;
       });
-  },
-});
+
+        },
+      });
 
 export default postsSlice.reducer;
 export const { clearPost } = postsSlice.actions;

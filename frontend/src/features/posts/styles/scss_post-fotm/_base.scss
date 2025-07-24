@@ -1,7 +1,7 @@
-// frontend/src/features/ads/styles/scss_ads-form/_base.scss
-.ads-form {
+.create-edit-container {
   @include input-form;
 }
+
 
 .ads-form__heading {
   @include form-heading;
