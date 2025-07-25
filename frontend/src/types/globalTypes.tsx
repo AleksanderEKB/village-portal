@@ -37,13 +37,12 @@ export interface Advertisement {
   images: AdvertisementImage[];
 }
 
-export interface PostComment {
+export interface Comment {
     id: number;
     body: string;
     author: number | UserWithAvatar;
     post: number;
     created_at?: string;
-    updated?: string;
 }
 
 export interface Post {

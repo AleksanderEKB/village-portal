@@ -79,8 +79,8 @@ const PostActions: React.FC<PostActionsProps> = ({
 
   const isOwner = (comment: PostComment) => {
     if (!user) return false;
-    if (typeof comment.author !== "number") {
-      return user.id === comment.author.id || user.id === post.author.id;
+    if (typeof comment.author !== "number" && comment.author.id) {
+      return user.id === comment.author.id;
     }
     return false;
   };

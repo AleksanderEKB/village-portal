@@ -10,6 +10,8 @@ from comment.serializers import CommentSerializer
 from auth.permissions import UserPermission
 from rest_framework.pagination import LimitOffsetPagination
 
+from ads.permissions import IsOwnerOrReadOnly
+
 class CommentPagination(LimitOffsetPagination):
     default_limit = 4
     max_limit = 20
@@ -20,6 +22,7 @@ class CommentViewSet(AbstractViewSet):
     permission_classes = (UserPermission,)
     serializer_class = CommentSerializer
     pagination_class = CommentPagination
+    permission_classes = (IsOwnerOrReadOnly,)
 
 
     def get_queryset(self):

@@ -28,13 +28,13 @@ class CommentSerializer(AbstractSerializer):
     def update(self, instance, validated_data):
         request = self.context.get('request')
         user = request.user if request else None
-        # Только автор может редактировать body
         if user and user != instance.author:
-            validated_data.pop('body', None)
+            raise ValidationError("Вы не являетесь автором этого комментария.")
         if not instance.edited:
             validated_data['edited'] = True
         instance = super().update(instance, validated_data)
-        return instance
+        
+        return super().update(instance, validated_data)
 
     
     class Meta:
