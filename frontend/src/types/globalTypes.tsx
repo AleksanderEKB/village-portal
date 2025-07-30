@@ -37,7 +37,7 @@ export interface Advertisement {
   images: AdvertisementImage[];
 }
 
-export interface Comment {
+export interface PostComment {
     id: number;
     body: string;
     author: number | UserWithAvatar;
@@ -63,7 +63,7 @@ export interface PostExtended extends Post {
 
 export interface PostState {
     post: Post | null;
-    comments: Record<number, Comment[]>;
+    comments: Record<number, PostComment[]>;
     error: string | null;
     loading: boolean;
 }

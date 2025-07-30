@@ -1,9 +1,8 @@
-// frontend/src/features/posts/components/PostPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../../app/hook';
-import { fetchPostById } from '../postsSlice';
+import { fetchPostById, deletePost } from '../postsSlice';
 import PostCard from './PostCard';
 import type { RootState } from '../../../app/store';
 
@@ -14,8 +13,8 @@ const PostPage: React.FC = () => {
     const post = useSelector((state: RootState) => state.posts.post);
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
     const user = useSelector((state: RootState) => state.auth.user);
-    const [commentTexts, setCommentTexts] = useState<Record<string, string>>({});
-    const [showComments, setShowComments] = useState<Record<string, boolean>>({});
+    const [commentTexts, setCommentTexts] = useState<Record<number, string>>({});
+    const [showComments, setShowComments] = useState<Record<number, boolean>>({});
 
     useEffect(() => {
         if (postId) {
@@ -25,6 +24,11 @@ const PostPage: React.FC = () => {
             navigate('/');
         }
     }, [dispatch, postId, navigate]);
+
+    const handleDeletePostClick = (id: number) => {
+        dispatch(deletePost(id));
+        navigate('/'); // после удаления редирект на главную
+    };
 
     if (!post) return <p>Загрузка...</p>;
 
@@ -38,6 +42,8 @@ const PostPage: React.FC = () => {
                 setShowComments={setShowComments}
                 commentTexts={commentTexts}
                 setCommentTexts={setCommentTexts}
+                showEditDeleteButtons={true}
+                handleDeletePostClick={handleDeletePostClick}
             />
         </div>
     );

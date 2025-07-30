@@ -8,6 +8,8 @@ import type { RootState, AppDispatch } from '../../../app/store';
 import '../styles.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'react-toastify/dist/ReactToastify.css';
+import feedStyles from '../styles/feed.module.scss';
+import '../styles.scss';
 
 
 const PostFeed: React.FC = () => {
@@ -21,25 +23,35 @@ const PostFeed: React.FC = () => {
     useEffect(() => { dispatch(fetchPosts()); }, [dispatch]);
 
     return (
-        <div className="posts-feed">
+        <div className={feedStyles.feedContainer}>
             <h1>Лента постов</h1>
-            {isAuthenticated && (
-                <Link to="/create-post" className="func-btn-1">
-                    Создать пост
-                </Link>
-            )}
-            {posts.map(post => (
-                <PostCard
-                    key={post.id}
-                    post={post}
-                    isAuthenticated={isAuthenticated}
-                    user={user}
-                    showComments={showComments}
-                    setShowComments={setShowComments}
-                    commentTexts={commentTexts}
-                    setCommentTexts={setCommentTexts}
-                />
-            ))}
+            <div className={feedStyles.feedContent}>
+                {isAuthenticated && (
+                    <div className={feedStyles.centerBtn}>
+                        <Link to="/create-post" className={feedStyles.grayBtn}>
+                            Создать пост
+                        </Link>
+                    </div>
+                )}
+                {/* Потом сделать {loading && <div>Загрузка...</div>}
+                {error && <div className="error">{error}</div>} */}
+                <div className={feedStyles.feedGrid}>
+                    {posts.map(post => (
+                        <div className={feedStyles.feedCard}>
+                            <PostCard
+                                key={post.id}
+                                post={post}
+                                isAuthenticated={isAuthenticated}
+                                user={user}
+                                showComments={showComments}
+                                setShowComments={setShowComments}
+                                commentTexts={commentTexts}
+                                setCommentTexts={setCommentTexts}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };

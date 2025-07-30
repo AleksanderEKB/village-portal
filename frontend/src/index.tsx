@@ -13,9 +13,8 @@ import Header from './features/header/components/Header';
 import HamburgerMenu from './features/menu/components/HamburgerMenu';
 import NewsPage from './features/news/components/newsesPage';
 import PrivateRoute from './features/shared/components/PrivateRoute';
-import CreatePost from './features/posts/components/CreatePost';
+import PostForm from './features/posts/components/PostForm';
 import PostFeed from './features/posts/components/PostFeed';
-import EditPost from './features/posts/components/EditPost';
 import PostPage from './features/posts/components/PostPage';
 import AdsFeed from './features/ads/components/AdsFeed';
 import SocialComponent from './features/info/components/inform';
@@ -64,9 +63,8 @@ const Main: React.FC = () => {
         <Route path="/news" element={<NewsPage />} />
         <Route path="/posts" element={<PostFeed />} />
         <Route path="/post/:postId" element={<PostPage />} />
-        <Route path="/create-post" element={<PrivateRoute><CreatePost /></PrivateRoute>} />
-        <Route path="/edit-post/:postId" element={<PrivateRoute><EditPost /></PrivateRoute>} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/create-post" element={<PrivateRoute><PostForm mode="create" /></PrivateRoute>} />
+        <Route path="/edit-post/:postId" element={<PrivateRoute><PostForm mode="edit" /></PrivateRoute>} />        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile/:userId" element={<UserProfileView />} />
         <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />

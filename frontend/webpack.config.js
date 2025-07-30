@@ -1,3 +1,4 @@
+console.log('WEBPACK CONFIG IS USED');
 const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -22,12 +23,32 @@ module.exports = {
           loader: "babel-loader"
         }
       },
+      // CSS
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
       },
+      // SCSS Modules
+      {
+        test: /\.module\.s[ac]ss$/i,
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              modules: {
+                exportLocalsConvention: "camelCase",
+              },
+              esModule: true, // <-- этого достаточно для ESM импорта
+            }
+          },
+          "sass-loader"
+        ]
+      },
+      // Обычные SCSS (не модули)
       {
         test: /\.s[ac]ss$/i,
+        exclude: /\.module\.s[ac]ss$/i,
         use: [
           "style-loader",
           "css-loader",

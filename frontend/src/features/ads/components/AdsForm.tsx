@@ -71,6 +71,8 @@ const AdsForm: React.FC = () => {
     }));
   };
 
+  
+
   function getInputValidationClass(field: string) {
     if (validationErrors[field]) return 'input-error';
     if (
@@ -94,7 +96,9 @@ const AdsForm: React.FC = () => {
 
   return (
     <>
-      <h1 className="ads-form__heading">Форма подачи объявления</h1>
+      <h1 className="ads-form__heading">
+        {slug ? "Редактирование объявления" : "Создание объявления"}
+      </h1>
       <form className="ads-form" onSubmit={handleSubmit} encType="multipart/form-data">
         <CustomSelect
           name="category"
@@ -171,7 +175,7 @@ const AdsForm: React.FC = () => {
             ref={mainImageInputRef}
           />
           <label htmlFor="main-img-upload" className="upload-btn">
-            {(form.main_image || form.main_image_url) ? 'Изменить' : 'Добавить основное изображение'}
+            {(form.main_image || form.main_image_url) ? 'Изменить изображение' : 'Добавить основное изображение'}
           </label>
         </div>
         {(form.main_image || form.main_image_url) && (

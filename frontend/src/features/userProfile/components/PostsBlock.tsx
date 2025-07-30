@@ -37,17 +37,9 @@ const PostsBlock: React.FC<PostsBlockProps> = ({
         setShowComments={setShowComments}
         commentTexts={commentTexts}
         setCommentTexts={setCommentTexts}
-      >
-        <hr />
-        <Link to={`/edit-post/${post.id}`} className="func-btn-1">Редактировать</Link>
-        <button
-          onClick={() => handleDeletePostClick(post.id)}
-          className="delete-btn"
-        >
-          Удалить
-        </button>
-        <hr />
-      </PostCard>
+        showEditDeleteButtons={true}
+        handleDeletePostClick={handleDeletePostClick}
+      />
     ))}
   </div>
 );

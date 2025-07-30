@@ -1,4 +1,5 @@
 // frontend/src/features/posts/components/PostActions.tsx
+
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../../app/hook';
@@ -19,7 +20,7 @@ interface PostActionsProps {
   showComments: Record<number, boolean>;
   setShowComments: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
   commentTexts: Record<number, string>;
-  setCommentTexts: React.Dispatch<React.SetStateAction<Record<number, string>>>;
+  setCommentTexts: React.Dispatch<React.SetStateAction<Record<number, string>>>; 
 }
 
 const PostActions: React.FC<PostActionsProps> = ({
@@ -107,7 +108,8 @@ const PostActions: React.FC<PostActionsProps> = ({
     }
   };
 
-  // ---
+  // --- Ссылки на редактирование/создание ---
+  const isPostAuthor = user?.id === post.author.id;
 
   return (
     <div>
@@ -123,7 +125,24 @@ const PostActions: React.FC<PostActionsProps> = ({
           </p>
         </div>
         <p className='time-elapsed'>{formatTimeElapsed(post.created_at)}</p>
+
+        {/* Ссылки на создание или редактирование поста */}
+        {isPostAuthor && (
+          <div className="post-actions-links">
+            <Link to={`/edit-post/${post.id}`} className="post-action-link">
+              Редактировать пост
+            </Link>
+          </div>
+        )}
+        {!isPostAuthor && isAuthenticated && (
+          <div className="post-actions-links">
+            <Link to="/create-post" className="post-action-link">
+              Создать новый пост
+            </Link>
+          </div>
+        )}
       </div>
+
       {showComments[post.id] && (
         <div className="comments-section">
           <div className="comments-list">
