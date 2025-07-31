@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import PostActions from './PostActions';
 import type { PostExtended, UserWithAvatar } from '../../../types/globalTypes';
-import styles from '../styles/feed.module.scss';
+import cardStyles from '../styles/card.module.scss';
 import '../styles.scss';
 
 interface PostCardProps {
@@ -34,20 +34,20 @@ const PostCard: React.FC<PostCardProps> = ({
   const isOwner = isAuthenticated && user && user.id === post.author.id;
 
   return (
-    <div className='post-feed' key={post.id}>
-      <Link to={`/profile/${post.author.id}`} className='user-info'>
+    <div className={cardStyles.cardContent} key={post.id}>
+      <Link to={`/profile/${post.author.id}`} className={cardStyles.userInfo}>
         {post.author.avatar && (
           <img
             src={post.author.avatar}
             alt="Аватар"
-            className='post-feed-avatar-img'
+            className={cardStyles.cardContentAvatarImg}
           />
         )}
-        <p className="post-feed-username">{post.author.username}</p>
+        <p className={cardStyles.userName}>{post.author.username}</p>
       </Link>
-      <Link to={`/post/${post.id}`} className="post-link">
-        {post.image && <img src={post.image} alt="Пост изображение" className="post-feed-image" />}
-        <p className="feed-post-body">{post.body}</p>
+      <Link to={`/post/${post.id}`} className={cardStyles.postLink}>
+        {post.image && <img src={post.image} alt="Пост изображение" className={cardStyles.postFeedImg} />}
+        <p className={cardStyles.feedPostBody}>{post.body}</p>
       </Link>
       <PostActions
         post={post}
@@ -62,10 +62,10 @@ const PostCard: React.FC<PostCardProps> = ({
       {showEditDeleteButtons && isOwner && (
         <>
           <hr />
-          <Link to={`/edit-post/${post.id}`} className="func-btn-1">Редактировать</Link>
+          <Link to={`/edit-post/${post.id}`} className={cardStyles.greyBtn}>Редактировать</Link>
           <button
             onClick={() => handleDeletePostClick && handleDeletePostClick(post.id)}
-            className="delete-btn"
+            className={cardStyles.greyBtn}
           >
             Удалить
           </button>

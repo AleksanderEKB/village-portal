@@ -12,6 +12,7 @@ import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 import { PostExtended, UserWithAvatar, PostComment } from '../../../types/globalTypes';
 import { toast } from 'react-toastify';
 import '../../shared/styles/general.scss';
+import actionStyles from '../styles/actions.module.scss';
 
 interface PostActionsProps {
   post: PostExtended;
@@ -150,7 +151,7 @@ const PostActions: React.FC<PostActionsProps> = ({
               <div key={comment.id} className="comment" style={{ animationDelay: `${index * 0.1}s` }}>
                 <Link to={`/profile/${typeof comment.author !== "number" ? comment.author.id : comment.author}`} className="post-feed-header" style={{ textDecoration: 'none', color: 'inherit' }}>
                   {typeof comment.author !== 'number' && comment.author.avatar && (
-                    <img src={comment.author.avatar} alt="Аватар" className='post-feed-avatar-img' />
+                    <img src={comment.author.avatar} alt="Аватар" className={actionStyles.postFeedImg} />
                   )}
                   <p>{typeof comment.author !== 'number' ? comment.author.username : 'Пользователь'}</p>
                 </Link>
