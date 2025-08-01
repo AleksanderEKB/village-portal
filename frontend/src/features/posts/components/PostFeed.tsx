@@ -9,7 +9,6 @@ import '../styles.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import feedStyles from '../styles/feed.module.scss';
-import '../styles.scss';
 
 
 const PostFeed: React.FC = () => {

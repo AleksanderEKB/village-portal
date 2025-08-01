@@ -5,6 +5,7 @@ import { useAppDispatch } from '../../../app/hook';
 import { fetchPostById, deletePost } from '../postsSlice';
 import PostCard from './PostCard';
 import type { RootState } from '../../../app/store';
+import pageStyles from '../styles/page.module.scss';
 
 const PostPage: React.FC = () => {
     const { postId } = useParams<{ postId?: string }>();
@@ -33,18 +34,20 @@ const PostPage: React.FC = () => {
     if (!post) return <p>Загрузка...</p>;
 
     return (
-        <div className='posts-feed'>
-            <PostCard
-                post={post}
-                isAuthenticated={isAuthenticated}
-                user={user}
-                showComments={showComments}
-                setShowComments={setShowComments}
-                commentTexts={commentTexts}
-                setCommentTexts={setCommentTexts}
-                showEditDeleteButtons={true}
-                handleDeletePostClick={handleDeletePostClick}
-            />
+        <div className={pageStyles.postPage}>
+            <div className={pageStyles.test}>
+                <PostCard
+                    post={post}
+                    isAuthenticated={isAuthenticated}
+                    user={user}
+                    showComments={showComments}
+                    setShowComments={setShowComments}
+                    commentTexts={commentTexts}
+                    setCommentTexts={setCommentTexts}
+                    showEditDeleteButtons={true}
+                    handleDeletePostClick={handleDeletePostClick}
+                />
+            </div>
         </div>
     );
 };

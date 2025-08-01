@@ -1,9 +1,99 @@
 @use '../../shared/styles/mixins/main-mixins' as mixins;
 
-.postFeedImg {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-right: 10px;  
+.postActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: mixins.$font-general;
+
+    .likeComments {
+        display: flex;
+        align-items: center;
+    }
+
+    .heartIcon {
+        font-size: 1.6rem;
+        color: mixins.$heart;
+        margin-right: .4rem;
+
+        &.liked {
+            color: red;
+        }
+    }
+
+    .likeCount {
+        @include mixins.postCount;
+        margin-left: .1rem;
+    }
+
+    .commentsCount {
+        @include mixins.postCount;
+        margin-left: .6rem;
+    }
+
+
+    .commentsIcon {
+        margin-left: 1.3rem;
+        font-size: 1.3rem;
+        color: mixins.$light;
+    }
+}
+
+.commentSection {
+    .commentList {
+
+        .comment {
+            border-radius: 34px 0px 34px 0px;
+            border: 1px solid mixins.$light;
+            margin-bottom: 1rem;
+            padding: 5px;
+            animation: fadeIn 0.5s ease-in-out;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .postFeedHeader {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .postAvatarImg {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 10px;  
+        }
+    }
+
+    .addComment {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        textarea {
+            flex: 1;
+            margin-right: 0.5rem;
+            resize: none;
+        }
+
+        .fa-play {
+            font-size: 2.3rem;
+            color: mixins.$white;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+    }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

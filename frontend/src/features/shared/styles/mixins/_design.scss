@@ -11,3 +11,9 @@
     flex-direction: column;
     min-width: 0;
 }
+
+@mixin postCount {
+    font-size: 1.2rem;
+    color: variables.$heart;
+    font-family: exo2;
+}

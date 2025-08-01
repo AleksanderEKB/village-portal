@@ -7,8 +7,8 @@ import { RootState } from '../../../app/store';
 import { PostExtended, User } from '../../../types/globalTypes';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import '../styles/scss_post-fotm/main.scss';
-import styles from '../styles/scss_post-fotm/post-form.module.scss';
+import '../styles/scss_post-form/main.scss';
+
 
 interface PostFormProps {
   mode: 'create' | 'edit';
@@ -27,6 +27,18 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBody(e.target.value);
+
+    // Авто-рост
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'; // Сбросить высоту
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  };
+
   // Для режима редактирования — загрузить пост
   useEffect(() => {
     if (mode === 'edit' && postId) {
@@ -38,6 +50,13 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
         });
     }
   }, [mode, postId]);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  }, [body]);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -110,13 +129,17 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
           </div>
         )}
         <form onSubmit={handleSubmit} encType="multipart/form-data">
+        {/* сделать чтобы формат ввода совпадал с форматом вывода  */}
           <textarea
+            ref={textareaRef}
             name="body"
             value={body}
             placeholder="Введите текст"
-            onChange={(e) => setBody(e.target.value)}
+            onChange={handleTextareaChange}
             required
+            style={{ resize: 'none', overflow: 'hidden' }} // Отключить ручное изменение размера
           />
+
           <div className="createpost-input-container">
             <p>Загрузить изображение для поста</p>
             <input

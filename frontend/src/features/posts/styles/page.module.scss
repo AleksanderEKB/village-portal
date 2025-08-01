@@ -1,0 +1,17 @@
+@use '../../shared/styles/mixins/main-mixins' as mixins;
+
+.postPage {
+    max-width: 650px;
+    margin: 50px auto;
+    padding: 20px;
+    background: mixins.$main-bg;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+
+    .test {
+        border: 1px solid #ddd;
+        border-radius: 0.75rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        padding: 1.25rem;
+    }
+}

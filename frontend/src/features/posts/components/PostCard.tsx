@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import PostActions from './PostActions';
 import type { PostExtended, UserWithAvatar } from '../../../types/globalTypes';
 import cardStyles from '../styles/card.module.scss';
-import '../styles.scss';
+
 
 interface PostCardProps {
   post: PostExtended;

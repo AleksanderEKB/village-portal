@@ -9,9 +9,8 @@ import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import { RootState } from '../../../app/store';
 import { fetchComments, createComment, likePost, updateComment, deleteComment } from '../postsSlice';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
-import { PostExtended, UserWithAvatar, PostComment } from '../../../types/globalTypes';
+import { PostExtended, UserWithAvatar, PostComment, PostAction } from '../../../types/globalTypes';
 import { toast } from 'react-toastify';
-import '../../shared/styles/general.scss';
 import actionStyles from '../styles/actions.module.scss';
 
 interface PostActionsProps {
@@ -114,30 +113,30 @@ const PostActions: React.FC<PostActionsProps> = ({
 
   return (
     <div>
-      <div className='post-actions'>
-        <div className="like-comments">
-          <p className='like' onClick={handleLike}>
-            <i className={`fas fa-heart heart-icon ${post.liked ? 'liked' : ''}`}></i>
-            <span className="like-count">{post.likes_count}</span>
+      <div className={actionStyles.postActions}>
+        <div className={actionStyles.likeComments}>
+          <p onClick={handleLike}>
+            <i className={`fas fa-heart ${actionStyles.heartIcon} ${post.liked ? actionStyles.liked : ''}`} />
+            <span className={actionStyles.likeCount}>{post.likes_count}</span>
           </p>
-          <p className='comments' onClick={handleShowCommentsClick}>
-            <i className="fas fa-comments comments-icon"></i>
-            <span className="comments-count">{post.comments_count}</span>
+          <p onClick={handleShowCommentsClick}>
+            <i className={`fas fa-comments ${actionStyles.commentsIcon}`}></i>
+            <span className={actionStyles.commentsCount}>{post.comments_count}</span>
           </p>
         </div>
         <p className='time-elapsed'>{formatTimeElapsed(post.created_at)}</p>
 
         {/* Ссылки на создание или редактирование поста */}
         {isPostAuthor && (
-          <div className="post-actions-links">
-            <Link to={`/edit-post/${post.id}`} className="post-action-link">
+          <div>
+            <Link to={`/edit-post/${post.id}`}>
               Редактировать пост
             </Link>
           </div>
         )}
         {!isPostAuthor && isAuthenticated && (
-          <div className="post-actions-links">
-            <Link to="/create-post" className="post-action-link">
+          <div>
+            <Link to="/create-post">
               Создать новый пост
             </Link>
           </div>
@@ -145,13 +144,13 @@ const PostActions: React.FC<PostActionsProps> = ({
       </div>
 
       {showComments[post.id] && (
-        <div className="comments-section">
-          <div className="comments-list">
+        <div className={actionStyles.commentSection}>
+          <div className={actionStyles.commentList}>
             {comments[post.id] && comments[post.id].map((comment: PostComment, index: number) => (
-              <div key={comment.id} className="comment" style={{ animationDelay: `${index * 0.1}s` }}>
-                <Link to={`/profile/${typeof comment.author !== "number" ? comment.author.id : comment.author}`} className="post-feed-header" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div key={comment.id} className={actionStyles.comment} style={{ animationDelay: `${index * 0.1}s` }}>
+                <Link to={`/profile/${typeof comment.author !== "number" ? comment.author.id : comment.author}`} className={actionStyles.postFeedHeader} style={{ textDecoration: 'none', color: 'inherit' }}>
                   {typeof comment.author !== 'number' && comment.author.avatar && (
-                    <img src={comment.author.avatar} alt="Аватар" className={actionStyles.postFeedImg} />
+                    <img src={comment.author.avatar} alt="Аватар" className={actionStyles.postAvatarImg} />
                   )}
                   <p>{typeof comment.author !== 'number' ? comment.author.username : 'Пользователь'}</p>
                 </Link>
@@ -168,7 +167,7 @@ const PostActions: React.FC<PostActionsProps> = ({
                   <>
                     <p>{comment.body}</p>
                     {isOwner(comment) && (
-                      <div className="comment-actions">
+                      <div className={actionStyles.commentActions}>
                         <button onClick={() => handleEditStart(comment)}>✎</button>
                         <button onClick={() => handleDelete(comment)}>🗑</button>
                       </div>
@@ -179,7 +178,7 @@ const PostActions: React.FC<PostActionsProps> = ({
             ))}
           </div>
           {isAuthenticated && user && (
-            <div className="add-comment">
+            <div className={"add-comment"}>
               <textarea
                 value={commentTexts[post.id] || ''}
                 onChange={(e) => handleCommentInputChange(e.target.value)}
