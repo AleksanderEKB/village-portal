@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../../app/hook';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { RootState } from '../../../app/store';
 import { fetchComments, createComment, likePost, updateComment, deleteComment } from '../postsSlice';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
@@ -124,10 +124,10 @@ const PostActions: React.FC<PostActionsProps> = ({
             <span className={actionStyles.commentsCount}>{post.comments_count}</span>
           </p>
         </div>
-        <p className='time-elapsed'>{formatTimeElapsed(post.created_at)}</p>
+        <p className={actionStyles.timeElapsed}>{formatTimeElapsed(post.created_at)}</p>
 
         {/* Ссылки на создание или редактирование поста */}
-        {isPostAuthor && (
+        {/* {isPostAuthor && (
           <div>
             <Link to={`/edit-post/${post.id}`}>
               Редактировать пост
@@ -140,7 +140,7 @@ const PostActions: React.FC<PostActionsProps> = ({
               Создать новый пост
             </Link>
           </div>
-        )}
+        )} */}
       </div>
 
       {showComments[post.id] && (
@@ -168,8 +168,12 @@ const PostActions: React.FC<PostActionsProps> = ({
                     <p>{comment.body}</p>
                     {isOwner(comment) && (
                       <div className={actionStyles.commentActions}>
-                        <button onClick={() => handleEditStart(comment)}>✎</button>
-                        <button onClick={() => handleDelete(comment)}>🗑</button>
+                        <button className={actionStyles.editBtn} onClick={() => handleEditStart(comment)}>
+                          <FontAwesomeIcon className={actionStyles.editIcon} icon={faPenToSquare}/>
+                        </button>
+                        <button className={actionStyles.editBtn} onClick={() => handleDelete(comment)}>
+                          <FontAwesomeIcon className={actionStyles.editIcon} icon={faTrash} />
+                        </button>
                       </div>
                     )}
                   </>

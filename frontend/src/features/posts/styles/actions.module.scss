@@ -37,6 +37,10 @@
         font-size: 1.3rem;
         color: mixins.$light;
     }
+
+    .timeElapsed {
+        @include mixins.greyBtn;
+    }
 }
 
 .commentSection {
@@ -67,14 +71,35 @@
         }
     }
 
+    .commentActions {
+        display: flex;
+        justify-content: flex-end;
+        gap: .5rem;
+        align-items: center;
+        padding-right: 1rem;
+        }
+
+        .editBtn {
+        background: none;
+        border: none;
+        padding: 0.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        }
+
+        .editIcon {
+        color: #fff;
+        font-size: 1.4rem;
+        }
     .addComment {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: .5rem;
 
         textarea {
             flex: 1;
-            margin-right: 0.5rem;
+            margin-right: .5rem;
             resize: none;
         }
 

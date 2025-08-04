@@ -3,6 +3,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { Advertisement } from '../../../../types/globalTypes';
+import '../../../shared/styles/general.scss';
 
 interface Props {
   location: Advertisement['location'];
