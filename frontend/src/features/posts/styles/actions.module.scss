@@ -31,7 +31,6 @@
         margin-left: .6rem;
     }
 
-
     .commentsIcon {
         margin-left: 1.3rem;
         font-size: 1.3rem;
@@ -45,6 +44,18 @@
 
 .commentSection {
     .commentList {
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.5s, transform 0.5s;
+
+        &.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        &.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
 
         .comment {
             border-radius: 34px 0px 34px 0px;
@@ -54,6 +65,11 @@
             animation: fadeIn 0.5s ease-in-out;
             opacity: 0;
             animation-fill-mode: forwards;
+
+            &.fadeOut {
+                animation: fadeOut 0.5s ease-in-out;
+                animation-fill-mode: forwards;
+            }
         }
 
         .postFeedHeader {
@@ -69,6 +85,11 @@
             border-radius: 50%;
             margin-right: 10px;  
         }
+
+        .commentBody {
+            white-space: pre-line;
+            word-break: break-word;
+        }
     }
 
     .commentActions {
@@ -76,22 +97,23 @@
         justify-content: flex-end;
         gap: .5rem;
         align-items: center;
-        padding-right: 1rem;
-        }
+        padding: 0 1rem .4rem 0;
+    }
 
-        .editBtn {
+    .actionBtn {
         background: none;
         border: none;
-        padding: 0.2rem;
+        padding: .2rem;
         cursor: pointer;
         display: flex;
         align-items: center;
-        }
+    }
 
-        .editIcon {
+    .actionIcon {
         color: #fff;
         font-size: 1.4rem;
-        }
+    }
+
     .addComment {
         display: flex;
         align-items: center;
@@ -101,9 +123,10 @@
             flex: 1;
             margin-right: .5rem;
             resize: none;
+            border-radius: .4rem;
         }
 
-        .fa-play {
+        .playIcon {
             font-size: 2.3rem;
             color: mixins.$white;
             cursor: pointer;
@@ -120,5 +143,16 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
   }
 }

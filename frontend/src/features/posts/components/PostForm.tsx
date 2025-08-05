@@ -9,7 +9,6 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../styles/scss_post-form/main.scss';
 
-
 interface PostFormProps {
   mode: 'create' | 'edit';
 }
@@ -26,27 +25,25 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  // Автоматический рост textarea
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setBody(e.target.value);
-
-    // Авто-рост
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; // Сбросить высоту
+      textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
   };
 
-  // Для режима редактирования — загрузить пост
+  // Загрузка поста при редактировании
   useEffect(() => {
     if (mode === 'edit' && postId) {
       axiosInstance.get<PostExtended>(`/api/post/${postId}/`)
         .then(res => {
           setBody(res.data.body);
           setCurrentImage(res.data.image ?? null);
-          setImagePreview(res.data.image ?? null); // Для превью при редактировании
+          setImagePreview(res.data.image ?? null);
         });
     }
   }, [mode, postId]);
@@ -94,7 +91,6 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
       }
       navigate('/profile');
     } catch (error) {
-      // обработать ошибку
       console.error(error);
     } finally {
       setLoading(false);
@@ -106,7 +102,6 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
     setFileName('Файл не выбран');
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
-    // Если редактируем, и удаляем текущее изображение
     if (mode === 'edit') setCurrentImage(null);
   };
 
@@ -129,7 +124,6 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
           </div>
         )}
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-        {/* сделать чтобы формат ввода совпадал с форматом вывода  */}
           <textarea
             ref={textareaRef}
             name="body"
@@ -137,7 +131,7 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
             placeholder="Введите текст"
             onChange={handleTextareaChange}
             required
-            style={{ resize: 'none', overflow: 'hidden' }} // Отключить ручное изменение размера
+            style={{ resize: 'none', overflow: 'hidden' }}
           />
 
           <div className="createpost-input-container">
@@ -153,10 +147,9 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
             <label htmlFor="file-input" className="createpost-input-label">Выбрать файл</label>
             <span className="file-chosen">{fileName}</span>
           </div>
-          {/* Если редактирование и есть текущее изображение, но нет нового файла */}
           {mode === 'edit' && currentImage && !image && !imagePreview && (
             <div className="current-image-preview">
-              <img src={currentImage} alt="Текущее изображение" style={{maxWidth: 200}} />
+              <img src={currentImage} alt="Текущее изображение" style={{ maxWidth: 200 }} />
               <button type="button" onClick={() => {
                 setCurrentImage(null);
                 setImagePreview(null);

@@ -1,16 +1,10 @@
-// frontend/src/features/posts/components/PostActions.tsx
-
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useAppDispatch } from '../../../app/hook';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { RootState } from '../../../app/store';
-import { fetchComments, createComment, likePost, updateComment, deleteComment } from '../postsSlice';
+import { PostExtended, UserWithAvatar, PostComment } from '../../../types/globalTypes';
+import { usePostActions } from '../hooks/usePostActions';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
-import { PostExtended, UserWithAvatar, PostComment, PostAction } from '../../../types/globalTypes';
-import { toast } from 'react-toastify';
 import actionStyles from '../styles/actions.module.scss';
 
 interface PostActionsProps {
@@ -20,96 +14,33 @@ interface PostActionsProps {
   showComments: Record<number, boolean>;
   setShowComments: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
   commentTexts: Record<number, string>;
-  setCommentTexts: React.Dispatch<React.SetStateAction<Record<number, string>>>; 
+  setCommentTexts: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }
 
-const PostActions: React.FC<PostActionsProps> = ({
-  post,
-  isAuthenticated,
-  user,
-  showComments,
-  setShowComments,
-  commentTexts,
-  setCommentTexts,
-}) => {
-  const dispatch = useAppDispatch();
-  const comments = useSelector((state: RootState) => state.posts.comments);
-  const commentsNext = useSelector((state: RootState) => state.posts.commentsNext);
+const PostActions: React.FC<PostActionsProps> = (props) => {
+  const {
+    comments,
+    commentsNext,
+    visibleComments,
+    isHiding,
+    editingCommentId,
+    editCommentText,
+    fadingComments,
+    commentTextareaRef,
+    handleLike,
+    handleShowCommentsClick,
+    handleCommentTextareaChange,
+    handleCommentSubmit,
+    handleLoadMore,
+    isOwner,
+    handleEditStart,
+    handleEditSave,
+    handleEditCancel,
+    handleDelete,
+    setEditCommentText,
+  } = usePostActions(props);
 
-  const handleLike = () => {
-    if (!isAuthenticated || !user) {
-      alert('Хочешь лайкнуть — авторизуйся или зарегистрируйся!');
-      return;
-    }
-    if (user.id === post.author.id) {
-      toast.error('Свои посты не лайкаем');
-      return;
-    }
-    dispatch(likePost({ postId: post.id, isLiked: !!post.liked }));
-  };
-
-  const handleShowCommentsClick = () => {
-    if (!showComments[post.id]) {
-      dispatch(fetchComments({ postId: post.id, offset: 0 }));
-    }
-    setShowComments((prev) => ({ ...prev, [post.id]: !prev[post.id] }));
-  };
-
-  const handleCommentInputChange = (value: string) => {
-    setCommentTexts((prev) => ({ ...prev, [post.id]: value }));
-  };
-
-  const handleCommentSubmit = () => {
-    if (!isAuthenticated || !user) return;
-    const text = commentTexts[post.id];
-    if (text && text.trim()) {
-      dispatch(createComment({ postId: post.id, commentData: { body: text, author: user.id, post: post.id } }));
-      setCommentTexts((prev) => ({ ...prev, [post.id]: '' }));
-    }
-  };
-
-  const handleLoadMore = () => {
-    const currentComments = comments[post.id] || [];
-    const offset = currentComments.length;
-    dispatch(fetchComments({ postId: post.id, offset }));
-  };
-
-  // --- Новое для редактирования/удаления ---
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
-  const [editCommentText, setEditCommentText] = useState<string>('');
-
-  const isOwner = (comment: PostComment) => {
-    if (!user) return false;
-    if (typeof comment.author !== "number" && comment.author.id) {
-      return user.id === comment.author.id;
-    }
-    return false;
-  };
-
-  const handleEditStart = (comment: PostComment) => {
-    setEditingCommentId(comment.id);
-    setEditCommentText(comment.body);
-  };
-
-  const handleEditSave = (comment: PostComment) => {
-    dispatch(updateComment({ postId: post.id, commentId: comment.id, commentData: { body: editCommentText } }));
-    setEditingCommentId(null);
-    setEditCommentText('');
-  };
-
-  const handleEditCancel = () => {
-    setEditingCommentId(null);
-    setEditCommentText('');
-  };
-
-  const handleDelete = (comment: PostComment) => {
-    if (window.confirm('Удалить комментарий?')) {
-      dispatch(deleteComment({ postId: post.id, commentId: comment.id }));
-    }
-  };
-
-  // --- Ссылки на редактирование/создание ---
-  const isPostAuthor = user?.id === post.author.id;
+  const { post, isAuthenticated, user, showComments, commentTexts } = props;
 
   return (
     <div>
@@ -125,29 +56,25 @@ const PostActions: React.FC<PostActionsProps> = ({
           </p>
         </div>
         <p className={actionStyles.timeElapsed}>{formatTimeElapsed(post.created_at)}</p>
-
-        {/* Ссылки на создание или редактирование поста */}
-        {/* {isPostAuthor && (
-          <div>
-            <Link to={`/edit-post/${post.id}`}>
-              Редактировать пост
-            </Link>
-          </div>
-        )}
-        {!isPostAuthor && isAuthenticated && (
-          <div>
-            <Link to="/create-post">
-              Создать новый пост
-            </Link>
-          </div>
-        )} */}
       </div>
 
-      {showComments[post.id] && (
+      {visibleComments && (
         <div className={actionStyles.commentSection}>
-          <div className={actionStyles.commentList}>
+          <div
+            className={`
+              ${actionStyles.commentList}
+              ${showComments[post.id] && !isHiding ? actionStyles.visible : actionStyles.hidden}
+            `}
+          >
             {comments[post.id] && comments[post.id].map((comment: PostComment, index: number) => (
-              <div key={comment.id} className={actionStyles.comment} style={{ animationDelay: `${index * 0.1}s` }}>
+              <div
+                key={comment.id}
+                className={`
+                  ${actionStyles.comment}
+                  ${fadingComments.includes(comment.id) ? actionStyles.fadeOut : ''}
+                `}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
                 <Link to={`/profile/${typeof comment.author !== "number" ? comment.author.id : comment.author}`} className={actionStyles.postFeedHeader} style={{ textDecoration: 'none', color: 'inherit' }}>
                   {typeof comment.author !== 'number' && comment.author.avatar && (
                     <img src={comment.author.avatar} alt="Аватар" className={actionStyles.postAvatarImg} />
@@ -165,14 +92,14 @@ const PostActions: React.FC<PostActionsProps> = ({
                   </>
                 ) : (
                   <>
-                    <p>{comment.body}</p>
+                    <p className={actionStyles.commentBody}>{comment.body}</p>
                     {isOwner(comment) && (
                       <div className={actionStyles.commentActions}>
-                        <button className={actionStyles.editBtn} onClick={() => handleEditStart(comment)}>
-                          <FontAwesomeIcon className={actionStyles.editIcon} icon={faPenToSquare}/>
+                        <button className={actionStyles.actionBtn} onClick={() => handleEditStart(comment)}>
+                          <FontAwesomeIcon className={actionStyles.actionIcon} icon={faPenToSquare}/>
                         </button>
-                        <button className={actionStyles.editBtn} onClick={() => handleDelete(comment)}>
-                          <FontAwesomeIcon className={actionStyles.editIcon} icon={faTrash} />
+                        <button className={actionStyles.actionBtn} onClick={() => handleDelete(comment)}>
+                          <FontAwesomeIcon className={actionStyles.actionIcon} icon={faTrash} />
                         </button>
                       </div>
                     )}
@@ -182,14 +109,17 @@ const PostActions: React.FC<PostActionsProps> = ({
             ))}
           </div>
           {isAuthenticated && user && (
-            <div className={"add-comment"}>
+            <div className={actionStyles.addComment}>
               <textarea
+                ref={commentTextareaRef}
                 value={commentTexts[post.id] || ''}
-                onChange={(e) => handleCommentInputChange(e.target.value)}
-                placeholder="Написать комментарий"
+                onChange={handleCommentTextareaChange}
+                placeholder="Введите текст комментария"
+                required
+                style={{ resize: 'none', overflow: 'hidden' }}
               />
               <p onClick={handleCommentSubmit}>
-                <FontAwesomeIcon icon={faPlay} />
+                <FontAwesomeIcon icon={faPlay} className={actionStyles.playIcon} />
               </p>
             </div>
           )}

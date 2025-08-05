@@ -49,6 +49,8 @@
         color: mixins.$light;
         border-top: .15rem solid #006363;
         border-bottom: .15rem solid #006363;
+        white-space: pre-line;
+        word-break: break-word;
     }
 
     .greyBtn {
