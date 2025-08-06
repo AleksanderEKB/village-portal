@@ -1,18 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { PostExtended, UserWithAvatar, PostComment } from '../../../types/globalTypes';
+import React, { useState, useEffect } from 'react';
+import { PostExtended, UserWithAvatar } from '../../../types/globalTypes';
 import { usePostActions } from '../hooks/usePostActions';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 import actionStyles from '../styles/actions.module.scss';
+import PostCommentsModal from './PostCommentsModal';
 
 interface PostActionsProps {
   post: PostExtended;
   isAuthenticated: boolean;
   user: UserWithAvatar | null;
-  showComments: Record<number, boolean>;
-  setShowComments: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
   commentTexts: Record<number, string>;
   setCommentTexts: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }
@@ -21,26 +17,27 @@ const PostActions: React.FC<PostActionsProps> = (props) => {
   const {
     comments,
     commentsNext,
-    visibleComments,
-    isHiding,
-    editingCommentId,
-    editCommentText,
-    fadingComments,
-    commentTextareaRef,
     handleLike,
-    handleShowCommentsClick,
-    handleCommentTextareaChange,
     handleCommentSubmit,
     handleLoadMore,
-    isOwner,
-    handleEditStart,
-    handleEditSave,
-    handleEditCancel,
-    handleDelete,
+    handleCommentTextareaChange,
     setEditCommentText,
   } = usePostActions(props);
 
-  const { post, isAuthenticated, user, showComments, commentTexts } = props;
+  const { post } = props;
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const commentList = comments[post.id] || [];
+  const commentsNextUrl = commentsNext[post.id] || null;
+  const commentText = props.commentTexts[post.id] || '';
+
+  // Загружаем комментарии при первом открытии модалки
+  useEffect(() => {
+    if (modalOpen && commentList.length === 0) {
+      handleLoadMore();
+    }
+    // eslint-disable-next-line
+  }, [modalOpen]);
 
   return (
     <div>
@@ -50,7 +47,7 @@ const PostActions: React.FC<PostActionsProps> = (props) => {
             <i className={`fas fa-heart ${actionStyles.heartIcon} ${post.liked ? actionStyles.liked : ''}`} />
             <span className={actionStyles.likeCount}>{post.likes_count}</span>
           </p>
-          <p onClick={handleShowCommentsClick}>
+          <p onClick={() => setModalOpen(true)}>
             <i className={`fas fa-comments ${actionStyles.commentsIcon}`}></i>
             <span className={actionStyles.commentsCount}>{post.comments_count}</span>
           </p>
@@ -58,75 +55,24 @@ const PostActions: React.FC<PostActionsProps> = (props) => {
         <p className={actionStyles.timeElapsed}>{formatTimeElapsed(post.created_at)}</p>
       </div>
 
-      {visibleComments && (
-        <div className={actionStyles.commentSection}>
-          <div
-            className={`
-              ${actionStyles.commentList}
-              ${showComments[post.id] && !isHiding ? actionStyles.visible : actionStyles.hidden}
-            `}
-          >
-            {comments[post.id] && comments[post.id].map((comment: PostComment, index: number) => (
-              <div
-                key={comment.id}
-                className={`
-                  ${actionStyles.comment}
-                  ${fadingComments.includes(comment.id) ? actionStyles.fadeOut : ''}
-                `}
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <Link to={`/profile/${typeof comment.author !== "number" ? comment.author.id : comment.author}`} className={actionStyles.postFeedHeader} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  {typeof comment.author !== 'number' && comment.author.avatar && (
-                    <img src={comment.author.avatar} alt="Аватар" className={actionStyles.postAvatarImg} />
-                  )}
-                  <p>{typeof comment.author !== 'number' ? comment.author.username : 'Пользователь'}</p>
-                </Link>
-                {editingCommentId === comment.id ? (
-                  <>
-                    <textarea
-                      value={editCommentText}
-                      onChange={e => setEditCommentText(e.target.value)}
-                    />
-                    <button onClick={() => handleEditSave(comment)}>Сохранить</button>
-                    <button onClick={handleEditCancel}>Отмена</button>
-                  </>
-                ) : (
-                  <>
-                    <p className={actionStyles.commentBody}>{comment.body}</p>
-                    {isOwner(comment) && (
-                      <div className={actionStyles.commentActions}>
-                        <button className={actionStyles.actionBtn} onClick={() => handleEditStart(comment)}>
-                          <FontAwesomeIcon className={actionStyles.actionIcon} icon={faPenToSquare}/>
-                        </button>
-                        <button className={actionStyles.actionBtn} onClick={() => handleDelete(comment)}>
-                          <FontAwesomeIcon className={actionStyles.actionIcon} icon={faTrash} />
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-          {isAuthenticated && user && (
-            <div className={actionStyles.addComment}>
-              <textarea
-                ref={commentTextareaRef}
-                value={commentTexts[post.id] || ''}
-                onChange={handleCommentTextareaChange}
-                placeholder="Введите текст комментария"
-                required
-                style={{ resize: 'none', overflow: 'hidden' }}
-              />
-              <p onClick={handleCommentSubmit}>
-                <FontAwesomeIcon icon={faPlay} className={actionStyles.playIcon} />
-              </p>
-            </div>
-          )}
-          {(commentsNext[post.id]) && (
-            <button className="load-more-btn" onClick={handleLoadMore}>Показать ещё</button>
-          )}
-        </div>
+      {modalOpen && (
+        <PostCommentsModal
+          post={post}
+          isAuthenticated={props.isAuthenticated}
+          user={props.user}
+          comments={commentList}
+          commentsNext={commentsNextUrl}
+          onClose={() => setModalOpen(false)}
+          commentText={commentText}
+          setCommentText={text => props.setCommentTexts(prev => ({ ...prev, [post.id]: text }))}
+          handleLike={handleLike}
+          handleCommentTextareaChange={e => props.setCommentTexts(prev => ({ ...prev, [post.id]: e.target.value }))}
+          handleCommentSubmit={handleCommentSubmit}
+          handleLoadMore={handleLoadMore}
+          liked={!!post.liked}
+          likesCount={post.likes_count ?? 0}
+          commentsCount={post.comments_count ?? 0}
+        />
       )}
     </div>
   );

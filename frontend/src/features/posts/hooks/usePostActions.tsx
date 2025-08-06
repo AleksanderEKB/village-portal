@@ -1,25 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
+// frontend/src/features/posts/hooks/usePostActions.tsx
+import { useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hook';
 import { fetchComments, createComment, likePost, updateComment, deleteComment } from '../postsSlice';
 import { PostExtended, UserWithAvatar, PostComment } from '../../../types/globalTypes';
 import { toast } from 'react-toastify';
 
-const ANIMATION_DURATION = 500;
-
 export const usePostActions = ({
   post,
   isAuthenticated,
   user,
-  showComments,
-  setShowComments,
   commentTexts,
   setCommentTexts,
 }: {
   post: PostExtended;
   isAuthenticated: boolean;
   user: UserWithAvatar | null;
-  showComments: Record<number, boolean>;
-  setShowComments: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
   commentTexts: Record<number, string>;
   setCommentTexts: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }) => {
@@ -27,42 +22,8 @@ export const usePostActions = ({
   const comments = useAppSelector(state => state.posts.comments);
   const commentsNext = useAppSelector(state => state.posts.commentsNext);
 
-  // --- UI состояние для анимаций
-  const [visibleComments, setVisibleComments] = useState(showComments[post.id]);
-  const [isHiding, setIsHiding] = useState(false);
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
-  const [editCommentText, setEditCommentText] = useState('');
-  const [fadingComments, setFadingComments] = useState<number[]>([]);
+  // Для auto-resize textarea, если понадобится
   const commentTextareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  // --- Эффекты для плавности
-  useEffect(() => {
-    if (showComments[post.id]) {
-      setVisibleComments(true);
-      setIsHiding(false);
-    } else if (visibleComments) {
-      setIsHiding(true);
-      setTimeout(() => {
-        setVisibleComments(false);
-        setIsHiding(false);
-      }, ANIMATION_DURATION);
-    }
-    // eslint-disable-next-line
-  }, [showComments[post.id]]);
-
-  useEffect(() => {
-    if (commentTextareaRef.current) {
-      commentTextareaRef.current.style.height = 'auto';
-      commentTextareaRef.current.style.height = commentTextareaRef.current.scrollHeight + 'px';
-    }
-  }, [commentTexts[post.id]]);
-
-  useEffect(() => {
-    if (isHiding && comments[post.id]) {
-      setFadingComments(comments[post.id].map((c: PostComment) => c.id));
-      setTimeout(() => setFadingComments([]), ANIMATION_DURATION);
-    }
-  }, [isHiding, comments, post.id]);
 
   // --- Обработчики
   const handleLike = () => {
@@ -77,15 +38,16 @@ export const usePostActions = ({
     dispatch(likePost({ postId: post.id, isLiked: !!post.liked }));
   };
 
-  const handleShowCommentsClick = () => {
-    if (!showComments[post.id]) {
-      dispatch(fetchComments({ postId: post.id, offset: 0 }));
-    }
-    setShowComments((prev) => ({ ...prev, [post.id]: !prev[post.id] }));
-  };
-
   const handleCommentInputChange = (value: string) => {
     setCommentTexts((prev) => ({ ...prev, [post.id]: value }));
+  };
+
+  const handleCommentTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleCommentInputChange(e.target.value);
+    if (commentTextareaRef.current) {
+      commentTextareaRef.current.style.height = 'auto';
+      commentTextareaRef.current.style.height = commentTextareaRef.current.scrollHeight + 'px';
+    }
   };
 
   const handleCommentSubmit = () => {
@@ -103,6 +65,11 @@ export const usePostActions = ({
     dispatch(fetchComments({ postId: post.id, offset }));
   };
 
+  // --- Редактирование/удаление комментария (если нужно)
+  const [editingCommentId, setEditingCommentId] = [null, () => {}];
+  const [editCommentText, setEditCommentText] = ['', () => {}];
+
+  // --- isOwner для комментариев
   const isOwner = (comment: PostComment) => {
     if (!user) return false;
     if (typeof comment.author !== "number" && comment.author.id) {
@@ -111,56 +78,27 @@ export const usePostActions = ({
     return false;
   };
 
-  const handleEditStart = (comment: PostComment) => {
-    setEditingCommentId(comment.id);
-    setEditCommentText(comment.body);
-  };
-
-  const handleEditSave = (comment: PostComment) => {
-    dispatch(updateComment({ postId: post.id, commentId: comment.id, commentData: { body: editCommentText } }));
-    setEditingCommentId(null);
-    setEditCommentText('');
-  };
-
-  const handleEditCancel = () => {
-    setEditingCommentId(null);
-    setEditCommentText('');
-  };
-
-  const handleDelete = (comment: PostComment) => {
-    if (window.confirm('Удалить комментарий?')) {
-      dispatch(deleteComment({ postId: post.id, commentId: comment.id }));
-    }
-  };
-
-  const handleCommentTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    handleCommentInputChange(e.target.value);
-    if (commentTextareaRef.current) {
-      commentTextareaRef.current.style.height = 'auto';
-      commentTextareaRef.current.style.height = commentTextareaRef.current.scrollHeight + 'px';
-    }
-  };
+  // --- Редактирование, если нужно
+  const handleEditStart = (comment: PostComment) => {};
+  const handleEditSave = (comment: PostComment) => {};
+  const handleEditCancel = () => {};
+  const handleDelete = (comment: PostComment) => {};
 
   return {
     comments,
     commentsNext,
-    visibleComments,
-    isHiding,
-    editingCommentId,
-    editCommentText,
-    fadingComments,
-    commentTextareaRef,
     handleLike,
-    handleShowCommentsClick,
-    handleCommentInputChange,
     handleCommentSubmit,
     handleLoadMore,
+    handleCommentTextareaChange,
+    setEditCommentText,
+    editingCommentId,
+    editCommentText,
     isOwner,
     handleEditStart,
     handleEditSave,
     handleEditCancel,
     handleDelete,
-    handleCommentTextareaChange,
-    setEditCommentText,
+    commentTextareaRef,
   };
 };
