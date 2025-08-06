@@ -1,4 +1,3 @@
-// frontend/src/features/posts/postsSlice.tsx
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '../../axiosInstance';
 import { PostExtended, PostComment, UserWithAvatar } from '../../types/globalTypes';
@@ -36,17 +35,19 @@ const initialState: PostsState = {
   previous: null,
 };
 
-export const fetchPosts = createAsyncThunk<PostsApiResponse, { limit?: number; offset?: number } | void>(
-  'posts/fetchPosts',
-  async (params, { rejectWithValue }) => {
-    try {
-      const res = await axiosInstance.get<PostsApiResponse>('/api/post/', { params });
-      return res.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.detail || 'Ошибка загрузки постов');
-    }
+// Главный fetchPosts — теперь обязательно limit/offset!
+export const fetchPosts = createAsyncThunk<
+  PostsApiResponse,
+  { limit?: number; offset?: number },
+  { rejectValue: string }
+>('posts/fetchPosts', async (params, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get<PostsApiResponse>('/api/post/', { params });
+    return res.data;
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.detail || 'Ошибка загрузки постов');
   }
-);
+});
 
 export const fetchPostById = createAsyncThunk<PostExtended, string>(
   'posts/fetchPostById',
@@ -77,7 +78,6 @@ export const fetchComments = createAsyncThunk<
     }
   }
 );
-
 
 export const createComment = createAsyncThunk<
   { postId: number; comment: PostComment },
@@ -156,7 +156,12 @@ const postsSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
-        state.posts = action.payload.results;
+        // !!! Главный блок: если offset == 0 — перезаписываем, иначе добавляем!
+        if (!action.meta.arg.offset || action.meta.arg.offset === 0) {
+          state.posts = action.payload.results;
+        } else {
+          state.posts = [...state.posts, ...action.payload.results];
+        }
         state.count = action.payload.count;
         state.next = action.payload.next;
         state.previous = action.payload.previous;
@@ -224,9 +229,8 @@ const postsSlice = createSlice({
         if (post && post.comments_count > 0) post.comments_count -= 1;
         if (state.post && state.post.id === postId && state.post.comments_count > 0) state.post.comments_count -= 1;
       });
-
-        },
-      });
+  },
+});
 
 export default postsSlice.reducer;
 export const { clearPost } = postsSlice.actions;

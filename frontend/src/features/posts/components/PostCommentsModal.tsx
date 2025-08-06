@@ -5,7 +5,7 @@ import { faTimes, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import type { PostExtended, UserWithAvatar, PostComment } from '../../../types/globalTypes';
 import modalStyles from '../styles/commentsModal.module.scss';
-import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
+
 
 interface PostCommentsModalProps {
   post: PostExtended;
@@ -33,7 +33,7 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
   commentsNext,
   onClose,
   commentText,
-  setCommentText,
+  // setCommentText,
   handleLike,
   handleCommentTextareaChange,
   handleCommentSubmit,

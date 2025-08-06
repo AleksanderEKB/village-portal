@@ -20,8 +20,6 @@ const PostActions: React.FC<PostActionsProps> = (props) => {
     handleLike,
     handleCommentSubmit,
     handleLoadMore,
-    handleCommentTextareaChange,
-    setEditCommentText,
   } = usePostActions(props);
 
   const { post } = props;

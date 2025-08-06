@@ -20,9 +20,9 @@
   color: #eee;
   border-radius: 20px;
   width: 96vw;
-  max-width: 520px;
-  min-height: 400px;
-  max-height: 80vh;
+  max-width: 40rem;
+  min-height: 25rem;
+  max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 10px 32px 2px #19193966;
   position: relative;
@@ -97,9 +97,10 @@
   background: #272738;
   border-radius: 12px;
   padding: 10px 15px;
-  min-height: 44px;
   opacity: 0;
   animation: fadeInComment 0.55s forwards;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
 @keyframes fadeInComment {

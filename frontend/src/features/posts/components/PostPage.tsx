@@ -1,4 +1,3 @@
-// frontend/src/features/posts/components/PostPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -29,14 +28,14 @@ const PostPage: React.FC = () => {
 
     const handleDeletePostClick = (id: number) => {
         dispatch(deletePost(id));
-        navigate('/'); // после удаления редирект на главную
+        navigate('/');
     };
 
     if (!post) return <p>Загрузка...</p>;
 
     return (
         <div className={pageStyles.postPage}>
-            <div className={pageStyles.test}>
+            <div className={pageStyles.postPageContent}>
                 <PostCard
                     post={post}
                     isAuthenticated={isAuthenticated}
@@ -47,6 +46,7 @@ const PostPage: React.FC = () => {
                     setCommentTexts={setCommentTexts}
                     showEditDeleteButtons={true}
                     handleDeletePostClick={handleDeletePostClick}
+                    imageMode="page"
                 />
             </div>
         </div>

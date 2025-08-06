@@ -1,10 +1,8 @@
-// frontend/src/features/posts/components/PostCard.tsx
 import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import PostActions from './PostActions';
 import type { PostExtended, UserWithAvatar } from '../../../types/globalTypes';
 import cardStyles from '../styles/card.module.scss';
-
 
 interface PostCardProps {
   post: PostExtended;
@@ -17,19 +15,19 @@ interface PostCardProps {
   children?: ReactNode;
   handleDeletePostClick?: (id: number) => void;
   showEditDeleteButtons?: boolean;
+  imageMode?: 'feed' | 'page';
 }
 
 const PostCard: React.FC<PostCardProps> = ({
   post,
   isAuthenticated,
   user,
-  showComments,
-  setShowComments,
   commentTexts,
   setCommentTexts,
   children,
   handleDeletePostClick,
   showEditDeleteButtons = false,
+  imageMode = 'feed',
 }) => {
   const isOwner = isAuthenticated && user && user.id === post.author.id;
 
@@ -46,15 +44,31 @@ const PostCard: React.FC<PostCardProps> = ({
         <p className={cardStyles.userName}>{post.author.username}</p>
       </Link>
       <Link to={`/post/${post.id}`} className={cardStyles.postLink}>
-        {post.image && <img src={post.image} alt="Пост изображение" className={cardStyles.postFeedImg} />}
+        {post.image && (
+          <div
+            className={
+              imageMode === 'feed'
+                ? cardStyles.postImageWrapperFeed
+                : cardStyles.postImageWrapperPage
+            }
+          >
+            <img
+              src={post.image}
+              alt="Пост изображение"
+              className={
+                imageMode === 'feed'
+                  ? cardStyles.postFeedImg
+                  : cardStyles.postPageImg
+              }
+            />
+          </div>
+        )}
         <p className={cardStyles.feedPostBody}>{post.body}</p>
       </Link>
       <PostActions
         post={post}
         isAuthenticated={isAuthenticated}
         user={user}
-        showComments={showComments}
-        setShowComments={setShowComments}
         commentTexts={commentTexts}
         setCommentTexts={setCommentTexts}
       />

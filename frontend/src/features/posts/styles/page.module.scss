@@ -2,13 +2,13 @@
 
 .postPage {
     max-width: 650px;
-    margin: 50px auto;
-    padding: 20px;
+    margin: 3.125rem auto;
+    padding: 1.25rem;
     background: mixins.$main-bg;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    border-radius: 8px;
+    border-radius: .5rem;
 
-    .test {
+    .postPageContent {
         border: 1px solid #ddd;
         border-radius: 0.75rem;
         box-shadow: 0 2px 10px rgba(0,0,0,0.07);

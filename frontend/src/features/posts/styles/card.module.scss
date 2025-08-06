@@ -1,59 +1,99 @@
 @use '../../shared/styles/mixins/main-mixins' as mixins;
 
 .cardContent {
-    font-family: mixins.$font-general;
+  font-family: mixins.$font-general;
+  
 
-    .cardContentAvatarImg {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        border-radius: 50%;
-        margin-right: 10px;        
-    }
+  .cardContentAvatarImg {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 10px;        
+  }
 
-    .userInfo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 0.5rem;
-        text-decoration: none;
-        color: inherit;
-    }
+  .userInfo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0.5rem;
+      text-decoration: none;
+      color: inherit;
+  }
 
-    .userName {
-        font-size: 1rem;
-        font-weight: 500;
-        color: #000000;
-    }
+  .userName {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #000000;
+  }
 
-    .postLink {
-        text-decoration: none;
-        color: inherit;
-    }
+  .postLink {
+      text-decoration: none;
+      color: inherit;
+  }
 
-    .postFeedImg {
-        max-width: 100%;
-        height: auto;
-        background: mixins.$secondary-light;
-        display: block;
-        margin: 0 auto;
-        box-shadow: 0px -5px 21px 5px rgba(0,0,0,0.38);
-    }
+  // FEED IMAGE STYLES
+  .postImageWrapperFeed {
+      width: 100%;
+      aspect-ratio: 1/1;
+      margin-bottom: 0.7rem;
+      overflow: hidden;
+      border-radius: 0.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: mixins.$secondary-light;
+  }
 
-    .feedPostBody {
-        margin: .6rem 0;
-        font-family: exo2;
-        font-size: 1rem;
-        text-align: justify;
-        padding: 0.3rem 0.2rem;
-        color: mixins.$light;
-        border-top: .15rem solid #006363;
-        border-bottom: .15rem solid #006363;
-        white-space: pre-line;
-        word-break: break-word;
-    }
+  .postFeedImg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      border-radius: 0.4rem;
+      box-shadow: 0px -5px 21px 5px rgba(0,0,0,0.38);
+      background: mixins.$secondary-light;
+  }
 
-    .greyBtn {
-        @include mixins.greyBtn;
-    }
+  // PAGE IMAGE STYLES
+.postImageWrapperPage {
+    width: 100%;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.7rem;
+    overflow: hidden;
+    border-radius: 0.4rem;
+    background: mixins.$secondary-light;
+}
+
+.postPageImg {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    border-radius: 0.4rem;
+    box-shadow: 0px -5px 21px 5px rgba(0,0,0,0.38);
+    background: mixins.$secondary-light;
+}
+
+  .feedPostBody {
+      margin: .6rem 0;
+      font-family: exo2;
+      font-size: 1rem;
+      text-align: justify;
+      padding: 0.3rem 0.2rem;
+      color: mixins.$light;
+      border-top: .15rem solid #006363;
+      border-bottom: .15rem solid #006363;
+      white-space: pre-line;
+      word-break: break-word;
+  }
+
+  .greyBtn {
+      @include mixins.greyBtn;
+  }
 }
