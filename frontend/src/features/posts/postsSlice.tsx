@@ -146,8 +146,12 @@ const postsSlice = createSlice({
     clearPost(state) {
       state.post = null;
     },
+    clearCommentsForPost(state, action: PayloadAction<number>) {
+      delete state.comments[action.payload];
+      delete state.commentsNext[action.payload];
+    },
     setCommentText(state, action: PayloadAction<{ postId: number; text: string }>) {
-      // Не используется — реализуй при необходимости
+      // Не используется — реализовать при необходимости
     },
   },
   extraReducers: (builder) => {
@@ -221,7 +225,7 @@ const postsSlice = createSlice({
         state.comments[postId] = (state.comments[postId] || []).map((c) =>
           c.id === comment.id ? comment : c
         );
-      })
+      })  
       .addCase(deleteComment.fulfilled, (state, action) => {
         const { postId, commentId } = action.payload;
         state.comments[postId] = (state.comments[postId] || []).filter((c) => c.id !== commentId);
@@ -233,4 +237,4 @@ const postsSlice = createSlice({
 });
 
 export default postsSlice.reducer;
-export const { clearPost } = postsSlice.actions;
+export const { clearPost, clearCommentsForPost } = postsSlice.actions;

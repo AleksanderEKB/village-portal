@@ -1,5 +1,4 @@
-// frontend/src/features/posts/hooks/usePostActions.tsx
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hook';
 import { fetchComments, createComment, likePost, updateComment, deleteComment } from '../postsSlice';
 import { PostExtended, UserWithAvatar, PostComment } from '../../../types/globalTypes';
@@ -24,6 +23,10 @@ export const usePostActions = ({
 
   // Для auto-resize textarea, если понадобится
   const commentTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // --- Редактирование/удаление комментария
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editCommentText, setEditCommentText] = useState<string>('');
 
   // --- Обработчики
   const handleLike = () => {
@@ -65,10 +68,6 @@ export const usePostActions = ({
     dispatch(fetchComments({ postId: post.id, offset }));
   };
 
-  // --- Редактирование/удаление комментария (если нужно)
-  const [editingCommentId, setEditingCommentId] = [null, () => {}];
-  const [editCommentText, setEditCommentText] = ['', () => {}];
-
   // --- isOwner для комментариев
   const isOwner = (comment: PostComment) => {
     if (!user) return false;
@@ -78,11 +77,33 @@ export const usePostActions = ({
     return false;
   };
 
-  // --- Редактирование, если нужно
-  const handleEditStart = (comment: PostComment) => {};
-  const handleEditSave = (comment: PostComment) => {};
-  const handleEditCancel = () => {};
-  const handleDelete = (comment: PostComment) => {};
+  const handleEditStart = (comment: PostComment) => {
+    setEditingCommentId(comment.id);
+    setEditCommentText(comment.body);
+  };
+
+  const handleEditSave = (comment: PostComment) => {
+    if (editCommentText.trim()) {
+      dispatch(updateComment({ postId: post.id, commentId: comment.id, commentData: { body: editCommentText } }));
+      setEditingCommentId(null);
+      setEditCommentText('');
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditingCommentId(null);
+    setEditCommentText('');
+  };
+
+  const handleDelete = (comment: PostComment) => {
+    if (window.confirm('Удалить комментарий?')) {
+      dispatch(deleteComment({ postId: post.id, commentId: comment.id }));
+      if (editingCommentId === comment.id) {
+        setEditingCommentId(null);
+        setEditCommentText('');
+      }
+    }
+  };
 
   return {
     comments,

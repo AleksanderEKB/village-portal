@@ -1,9 +1,12 @@
+// frontend/src/features/posts/components/PostActions.tsx
 import React, { useState, useEffect } from 'react';
 import { PostExtended, UserWithAvatar } from '../../../types/globalTypes';
 import { usePostActions } from '../hooks/usePostActions';
 import { formatTimeElapsed } from '../../shared/utils/formatTimeElapsed';
 import actionStyles from '../styles/actions.module.scss';
 import PostCommentsModal from './PostCommentsModal';
+import { useAppDispatch } from '../../../app/hook';
+import { clearCommentsForPost } from '../postsSlice';
 
 interface PostActionsProps {
   post: PostExtended;
@@ -20,10 +23,21 @@ const PostActions: React.FC<PostActionsProps> = (props) => {
     handleLike,
     handleCommentSubmit,
     handleLoadMore,
+    handleCommentTextareaChange,
+    setEditCommentText,
+    editingCommentId,
+    editCommentText,
+    isOwner,
+    handleEditStart,
+    handleEditSave,
+    handleEditCancel,
+    handleDelete,
   } = usePostActions(props);
 
   const { post } = props;
   const [modalOpen, setModalOpen] = useState(false);
+
+  const dispatch = useAppDispatch();
 
   const commentList = comments[post.id] || [];
   const commentsNextUrl = commentsNext[post.id] || null;
@@ -36,6 +50,12 @@ const PostActions: React.FC<PostActionsProps> = (props) => {
     }
     // eslint-disable-next-line
   }, [modalOpen]);
+
+  // Обработчик закрытия модалки
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    dispatch(clearCommentsForPost(post.id));
+  };
 
   return (
     <div>
@@ -60,13 +80,24 @@ const PostActions: React.FC<PostActionsProps> = (props) => {
           user={props.user}
           comments={commentList}
           commentsNext={commentsNextUrl}
-          onClose={() => setModalOpen(false)}
+          onClose={handleCloseModal}
           commentText={commentText}
-          setCommentText={text => props.setCommentTexts(prev => ({ ...prev, [post.id]: text }))}
+          setCommentText={(text) => props.setCommentTexts((prev) => ({ ...prev, [post.id]: text }))} // Прокидываем setCommentText
           handleLike={handleLike}
-          handleCommentTextareaChange={e => props.setCommentTexts(prev => ({ ...prev, [post.id]: e.target.value }))}
+          handleCommentTextareaChange={(e) =>
+            props.setCommentTexts((prev) => ({ ...prev, [post.id]: e.target.value })) // Обработчик изменения текста комментария
+          }
           handleCommentSubmit={handleCommentSubmit}
           handleLoadMore={handleLoadMore}
+          editingCommentId={editingCommentId}
+          editCommentText={editCommentText}
+          setEditCommentText={setEditCommentText}
+          isOwner={isOwner}
+          handleEditStart={handleEditStart}
+          handleEditSave={handleEditSave}
+          handleEditCancel={handleEditCancel}
+          handleDelete={handleDelete}
+
           liked={!!post.liked}
           likesCount={post.likes_count ?? 0}
           commentsCount={post.comments_count ?? 0}
