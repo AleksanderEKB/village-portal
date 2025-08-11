@@ -1,0 +1,22 @@
+@use '../../shared/styles/mixins/main-mixins' as mixins;
+
+
+.postFormHeading {
+  @include mixins.form-heading;
+}
+
+.createEditContainer {
+  @include mixins.input-form;
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    @include mixins.inputs-areas;
+    min-height: 5rem;
+    margin-top: 0;
+  }
+}
+
+.mainImagePreview {
+    @include mixins.mainImagePreview
+}

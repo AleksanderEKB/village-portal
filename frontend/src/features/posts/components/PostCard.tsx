@@ -1,3 +1,4 @@
+// frontend/src/features/posts/components/PostCard.tsx
 import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import PostActions from './PostActions';

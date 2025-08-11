@@ -1,0 +1,7 @@
+@use '../variables';
+
+@mixin mainImagePreview {
+    position: relative;
+    margin: 10px 0 15px 0;
+    display: inline-block;
+}

@@ -17,3 +17,38 @@
     color: variables.$heart;
     font-family: exo2;
 }
+
+@mixin form-heading {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-family: variables.$font-section;
+}
+
+@mixin input-form {
+    max-width: 520px;
+    margin: 40px auto 1rem auto;
+    padding: 32px 28px 30px 28px;
+    background: #273636;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px 0 rgba(105, 48, 48, 0.07);
+    font-family: variables.$font-general;
+    border: solid 1px #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+@mixin inputs-areas {
+    font-family: variables.$font-general;
+    box-sizing: border-box;
+    background: #d4d4d2;
+    width: 100%;
+    font-size: 1rem;
+    padding: 1rem;
+    margin-top: 2.2rem;
+    border: 1.5px solid #bbb;
+    border-radius: 8px;
+    transition: border 0.2s, box-shadow 0.2s;
+    outline: none;
+}

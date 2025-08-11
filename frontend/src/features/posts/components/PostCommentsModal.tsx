@@ -1,3 +1,4 @@
+// frontend/src/features/posts/components/PostCommentModal.tsx
 import React, { useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faPlay, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -58,6 +59,18 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
+  // === [auto-resize хук] ===
+  const editTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const editBlockRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (editingCommentId && editTextareaRef.current) {
+      // Обновляем высоту textarea под контент
+      editTextareaRef.current.style.height = 'auto';
+      editTextareaRef.current.style.height = editTextareaRef.current.scrollHeight + 'px';
+    }
+  }, [editCommentText, editingCommentId]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -67,6 +80,25 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [onClose]);
+
+  useEffect(() => {
+    const handleClickOutsideEdit = (event: MouseEvent) => {
+      if (
+        editBlockRef.current &&
+        !editBlockRef.current.contains(event.target as Node)
+      ) {
+        handleEditCancel();
+      }
+    };
+
+    if (editingCommentId !== null) {
+      document.addEventListener('mousedown', handleClickOutsideEdit);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideEdit);
+    };
+  }, [editingCommentId, handleEditCancel]);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -129,12 +161,15 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
               </div>
 
               {editingCommentId === comment.id ? (
-                <div className={modalStyles.editBlock}>
+                <div className={modalStyles.editBlock} ref={editBlockRef}>
                   <textarea
+                    ref={editTextareaRef}
                     value={editCommentText}
                     onChange={e => setEditCommentText(e.target.value)}
                     className={modalStyles.editTextarea}
                     autoFocus
+                    rows={1}
+                    style={{ overflow: 'hidden' }}
                   />
                   <div className={modalStyles.editBtns}>
                     <button onClick={() => handleEditSave(comment)} className={modalStyles.saveBtn}>Сохранить</button>
@@ -163,7 +198,7 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
               style={{ resize: 'none', overflow: 'hidden' }}
             />
             <button onClick={handleCommentSubmit} className={modalStyles.sendBtn}>
-              <FontAwesomeIcon icon={faPlay} />
+              <FontAwesomeIcon icon={faPlay} className={modalStyles.playIcon} />
             </button>
           </div>
         )}

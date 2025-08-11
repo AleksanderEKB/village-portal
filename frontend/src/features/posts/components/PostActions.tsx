@@ -53,6 +53,7 @@ const PostActions: React.FC<PostActionsProps> = (props) => {
 
   // Обработчик закрытия модалки
   const handleCloseModal = () => {
+    handleEditCancel();
     setModalOpen(false);
     dispatch(clearCommentsForPost(post.id));
   };
