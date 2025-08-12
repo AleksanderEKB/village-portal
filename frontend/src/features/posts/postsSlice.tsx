@@ -1,3 +1,4 @@
+// frontend/src/features/posts/postSlice.tsx
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axiosInstance from '../../axiosInstance';
 import { PostExtended, PostComment, UserWithAvatar } from '../../types/globalTypes';
@@ -156,16 +157,18 @@ const postsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPosts.pending, (state) => {
-        state.loading = true;
-      })
       .addCase(fetchPosts.fulfilled, (state, action) => {
-        // !!! Главный блок: если offset == 0 — перезаписываем, иначе добавляем!
-        if (!action.meta.arg.offset || action.meta.arg.offset === 0) {
+        // ⚠️ раньше было: if (!action.meta.arg.offset || action.meta.arg.offset === 0) { ... }
+        // meta.arg может быть undefined, поэтому читаем безопасно:
+        const metaArg = (action.meta?.arg as { offset?: number } | undefined) ?? undefined;
+        const offset = typeof metaArg?.offset === 'number' ? metaArg.offset : 0;
+
+        if (offset === 0) {
           state.posts = action.payload.results;
         } else {
           state.posts = [...state.posts, ...action.payload.results];
         }
+
         state.count = action.payload.count;
         state.next = action.payload.next;
         state.previous = action.payload.previous;

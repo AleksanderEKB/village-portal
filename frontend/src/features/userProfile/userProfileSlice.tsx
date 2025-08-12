@@ -195,7 +195,11 @@ const userProfileSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUserAdsPaginated.fulfilled, (state, action) => {
-        if (action.meta.arg.offset === 0) {
+        // ⚠️ раньше: if (action.meta.arg.offset === 0) { ... }
+        const metaArg = (action.meta?.arg as { offset?: number } | undefined) ?? undefined;
+        const offset = typeof metaArg?.offset === 'number' ? metaArg.offset : 0;
+
+        if (offset === 0) {
           state.ads = action.payload.results;
         } else {
           state.ads = [...state.ads, ...action.payload.results];
