@@ -23,7 +23,6 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
 
   const [body, setBody] = useState<string>('');
   const [image, setImage] = useState<File | null>(null);
-  // const [fileName, setFileName] = useState<string>('Файл не выбран');
   const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -32,7 +31,9 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
 
-  // Автоматический рост textarea
+  // мемо-проверка, можно ли сабмитить
+  const isSubmitDisabled = loading || Object.keys(validationErrors).length > 0;
+
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setBody(e.target.value);
     if (textareaRef.current) {
@@ -41,7 +42,6 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
     }
   };
 
-  // Загрузка поста при редактировании
   useEffect(() => {
     if (mode === 'edit' && postId) {
       axiosInstance.get<PostExtended>(`/api/post/${postId}/`)
@@ -60,7 +60,6 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
     }
   }, [body]);
 
-  // Очистка ObjectURL при размонтировании/смене файла
   useEffect(() => {
     return () => {
       if (objectUrlRef.current) {
@@ -73,45 +72,49 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
 
-    // Сразу сбрасываем превью прошлого файла
     if (objectUrlRef.current) {
       URL.revokeObjectURL(objectUrlRef.current);
       objectUrlRef.current = null;
     }
 
-    // Валидация типа файла
     if (file && !isImageFile(file)) {
       toast.error('Файл не является изображением');
       setValidationErrors(prev => ({ ...prev, image: 'Файл не является изображением' }));
-      // Не сохраняем плохой файл
       if (fileInputRef.current) fileInputRef.current.value = '';
       setImage(null);
-      // setFileName('Файл не выбран');
       setImagePreview(null);
       return;
     }
 
-    // Ок, это картинка или очистка
     setValidationErrors(prev => ({ ...prev, image: undefined }));
     setImage(file);
-    // setFileName(file ? file.name : 'Файл не выбран');
 
     if (file) {
       const url = URL.createObjectURL(file);
       objectUrlRef.current = url;
       setImagePreview(url);
-      // При выборе нового файла отключаем текущее серверное изображение
       setCurrentImage(null);
     } else {
       setImagePreview(null);
     }
   };
 
+  // авто-валидация на каждый ввод/изменение картинки/режима
+  useEffect(() => {
+    const errs = validatePostForm({
+      body,
+      image,
+      isEdit: mode === 'edit',
+      hasExistingImage: !!currentImage,
+    });
+    setValidationErrors(errs);
+  }, [body, image, currentImage, mode]);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user) return;
 
-    // Компонуем значения и валидируем
+    // Актуализируем валидацию перед сабмитом
     const errors = validatePostForm({
       body,
       image,
@@ -119,7 +122,6 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
       hasExistingImage: !!currentImage
     });
     setValidationErrors(errors);
-
     if (Object.keys(errors).length > 0) return;
 
     setLoading(true);
@@ -131,7 +133,6 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
       if (image) {
         formData.append('image', image);
       } else if (mode === 'edit' && !currentImage) {
-        // явное удаление
         formData.append('image', '');
       }
 
@@ -159,28 +160,30 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
       objectUrlRef.current = null;
     }
     setImage(null);
-    // setFileName('Файл не выбран');
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
     if (mode === 'edit') setCurrentImage(null);
     setValidationErrors(prev => ({ ...prev, image: undefined }));
   };
 
+  const hasAnyImage = Boolean(image || imagePreview || currentImage);
+  const fileLabelText = hasAnyImage ? 'Изменить изображение' : 'Выбрать изображение';
+
   return (
     <>
       <h1 className={formStyles.postFormHeading}>{mode === 'create' ? 'Новый пост' : 'Редактировать пост'}</h1>
       <div className={formStyles.createEditContainer}>
         {imagePreview && (
-          <div className="main-image-preview">
+          <div className={formStyles.mainImagePreview}>
             <img src={imagePreview} alt="Превью" />
             <button
               type="button"
               onClick={handleRemoveImage}
               aria-label="Удалить"
               title="Удалить"
-              className="remove-image-btn"
+              className={formStyles.removeImageBtn}
             >
-              <FontAwesomeIcon className="icon-remove" icon={faCircleXmark} />
+              <FontAwesomeIcon className={formStyles.iconRemove} icon={faCircleXmark} />
             </button>
           </div>
         )}
@@ -198,10 +201,10 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
             aria-describedby={validationErrors.body ? 'post-body-error' : undefined}
           />
           {validationErrors.body && (
-            <div id="post-body-error" className="form-field-error">{validationErrors.body}</div>
+              <div id="post-body-error" className={formStyles.formFieldError}>{validationErrors.body}</div>
           )}
 
-          <div className="createpost-input-container">
+          <div className={formStyles.postInputContainer}>
             <input
               id="file-input"
               type="file"
@@ -212,8 +215,11 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
               aria-invalid={!!validationErrors.image}
               aria-describedby={validationErrors.image ? 'post-image-error' : undefined}
             />
-            <label htmlFor="file-input" className="createpost-input-label">Выбрать изображение</label>
-            {/* <span className="file-chosen">{fileName}</span> */}
+            <div className={formStyles.centerBtn}>
+              <label htmlFor="file-input" className={formStyles.createEditInputLabel}>
+                {fileLabelText}
+              </label>
+            </div>
             {validationErrors.image && (
               <div id="post-image-error" className="form-field-error">{validationErrors.image}</div>
             )}
@@ -222,18 +228,28 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
           {mode === 'edit' && currentImage && !image && !imagePreview && (
             <div className="current-image-preview">
               <img src={currentImage} alt="Текущее изображение" style={{ maxWidth: 200 }} />
-              <button type="button" onClick={() => {
-                setCurrentImage(null);
-                setImagePreview(null);
-              }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentImage(null);
+                  setImagePreview(null);
+                }}
+              >
                 Удалить изображение
               </button>
             </div>
           )}
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Отправка...' : (mode === 'create' ? 'Создать' : 'Сохранить')}
-          </button>
+          <div className={formStyles.centerBtn}>
+            <button
+              className={formStyles.createSaveBtn}
+              type="submit"
+              disabled={isSubmitDisabled}
+              aria-disabled={isSubmitDisabled}
+            >
+              {loading ? 'Отправка...' : (mode === 'create' ? 'Создать' : 'Сохранить')}
+            </button>
+          </div>
         </form>
       </div>
     </>

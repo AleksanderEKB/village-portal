@@ -41,7 +41,7 @@ const PostFeed: React.FC = () => {
             <div className={feedStyles.feedContent}>
                 {isAuthenticated && (
                     <div className={feedStyles.centerBtn}>
-                        <Link to="/create-post" className={feedStyles.grayBtn}>
+                        <Link to="/create-post" className={feedStyles.greyBtn}>
                             Создать пост
                         </Link>
                     </div>

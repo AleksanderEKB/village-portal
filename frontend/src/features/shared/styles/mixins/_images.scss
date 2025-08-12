@@ -1,7 +1,51 @@
+// frontend/src/features/shared/styles/mixins/_images.scss
 @use '../variables';
 
 @mixin mainImagePreview {
     position: relative;
     margin: 10px 0 15px 0;
     display: inline-block;
+
+    img, .no-image {
+      width: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1.5px solid #ccc;
+      display: block;
+      background: #f3f3f3;
+    }
+
+    .no-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+    }
+
+    .removeImageBtn {
+      position: absolute;
+      right: -1.4rem;
+      top: -1.4rem;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+    .iconRemove {
+        color: #ff0000;
+        font-size: 2rem;
+        transition: color 0.15s;
+        pointer-events: none;
+    }
+
+        &:hover .iconRemove,
+        &:focus .iconRemove {
+            color: #b80000;
+        }
+    }
 }
+

@@ -1,3 +1,4 @@
+// frontend/src/features/posts/styles/form.module.scss
 @use '../../shared/styles/mixins/main-mixins' as mixins;
 
 
@@ -15,8 +16,43 @@
     min-height: 5rem;
     margin-top: 0;
   }
+
+  .centerBtn {
+    @include mixins.centerBtn;
+  }
+
+  .formFieldError {
+    @include mixins.formError;
+    margin-top: .3rem;
+  }
+
+}
+
+.createSaveBtn {
+  @include mixins.greyBtn;
+  font-family: inherit;
+  &:hover {cursor: pointer;}
+
+    &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    filter: grayscale(100%);
+  }
 }
 
 .mainImagePreview {
     @include mixins.mainImagePreview
+}
+
+.postInputContainer {
+  .centerBtn {
+    @include mixins.centerBtn;
+  }
+
+  .createEditInputLabel{
+    @include mixins.greyBtn;
+      &:hover {cursor: pointer;}
+  }
+  
 }

@@ -1,0 +1,11 @@
+@use '../variables';
+
+@mixin formError {
+    text-align: center;
+    color: #e9ec09;
+    font-size: .97rem;
+    margin-top: -.7rem;
+    padding: .188rem .625rem;
+    border-radius: 0 7px 7px 0;
+
+}
