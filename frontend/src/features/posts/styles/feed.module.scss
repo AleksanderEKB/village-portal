@@ -44,5 +44,30 @@
         @include mixins.feedCard;
     }
 
+}
 
+.feedPostBody {
+  margin: .6rem 0;
+  font-size: 1rem;
+  text-align: justify;
+  padding: .5rem 1rem;
+  color: #fff;
+  filter: brightness(150%);
+  white-space: pre-line; // базовое поведение на странице поста
+  word-break: break-word;
+  border-top: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(to left, #006363, #fff) 1;
+}
+
+/**
+ * Модификатор для ленты: всегда одна строка + троеточие,
+ * каретка не переносится, высота фиксирована на высоту строки.
+ */
+.feedPostBodyOneLine {
+  white-space: nowrap;      // одна строка
+  overflow: hidden;         // обрезаем лишнее
+  text-overflow: ellipsis;  // троеточие
+  line-height: 1.2;         // контролируем высоту строки
+  min-height: 1.2em;        // фиксируем высоту под единый вид карточек
 }

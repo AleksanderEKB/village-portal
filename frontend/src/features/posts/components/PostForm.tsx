@@ -1,3 +1,4 @@
+// frontend/src/features/posts/components/PostForm.tsx
 import React, { ChangeEvent, FormEvent, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { toast } from 'react-toastify';
 import { PostFormValidationErrors } from '../utils/validatePostForm';
 import formStyles from '../styles/form.module.scss';
-
 import { usePostLoader } from '../hooks/usePostLoader';
 import { useAutoResizeTextarea } from '../hooks/useAutoResizeTextarea';
 import { useImagePreview } from '../hooks/useImagePreview';
@@ -70,8 +70,8 @@ const PostForm: React.FC<PostFormProps> = ({ mode }) => {
     onSuccess: () => {
       navigate('/profile');
     },
-    onError: () => {
-      toast.error('Ошибка отправки формы');
+    onError: (message?: string) => {
+      toast.error(message ?? 'Ошибка отправки формы');
     },
   });
 

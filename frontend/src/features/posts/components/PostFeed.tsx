@@ -1,3 +1,4 @@
+// frontend/src/features/posts/components/PostFeed.tsx
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -8,7 +9,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import feedStyles from '../styles/feed.module.scss';
 
-import '../styles.scss'; // потом убрать
 
 const ITEMS_PER_PAGE = 4;
 
@@ -71,7 +71,7 @@ const PostFeed: React.FC = () => {
                 {posts.length < (count || 0) && (
                     <div className={feedStyles.centerBtn}>
                         <button
-                            className={feedStyles.grayBtn}
+                            className={feedStyles.greyBtn}
                             onClick={handleShowMore}
                             disabled={loading}
                         >

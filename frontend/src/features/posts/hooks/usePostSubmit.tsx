@@ -1,3 +1,4 @@
+// frontend/src/features/posts/hooks/usePostSubmit.tsx
 import { useState } from 'react';
 import { PostFormValidationErrors } from '../utils/validatePostForm';
 import { createPost, updatePost } from '../utils/postsApi';
@@ -14,8 +15,19 @@ type Args = {
   onStart?: () => void;
   onValidate: (errors: PostFormValidationErrors) => boolean;
   onSuccess?: () => void;
-  onError?: () => void;
+  onError?: (message?: string) => void; // <-- пробрасываем текст ошибки
 };
+
+function pickMessageFromData(data: any): string | undefined {
+  if (!data) return undefined;
+  if (typeof data === 'string') return data;
+  if (typeof data.detail === 'string') return data.detail;
+  if (typeof data.error === 'string') return data.error;
+  if (Array.isArray(data.non_field_errors) && data.non_field_errors.length) {
+    return String(data.non_field_errors[0]);
+  }
+  return undefined;
+}
 
 export function usePostSubmit({
   mode,
@@ -55,9 +67,33 @@ export function usePostSubmit({
         await updatePost(postId, formData);
       }
       onSuccess?.();
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      onError?.();
+
+      let message: string | undefined;
+
+      // Axios-стек
+      if (e?.response) {
+        message = pickMessageFromData(e.response.data);
+        if (!message && typeof e.response.status === 'number') {
+          if (e.response.status === 429) {
+            message = 'Не больше 5 постов в минуту';
+          }
+        }
+      } else if (typeof Response !== 'undefined' && e instanceof Response) {
+        // Fetch-стек: e — сам Response
+        try {
+          const data = await e.clone().json();
+          message = pickMessageFromData(data);
+        } catch {
+          // игнорируем ошибки парсинга
+        }
+        if (!message && e.status === 429) {
+          message = 'Не больше 5 постов в минуту';
+        }
+      }
+
+      onError?.(message);
     } finally {
       setLoadingSubmit(false);
     }

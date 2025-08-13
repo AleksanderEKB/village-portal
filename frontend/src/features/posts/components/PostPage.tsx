@@ -27,9 +27,12 @@ const PostPage: React.FC = () => {
     }, [dispatch, postId, navigate]);
 
     const handleDeletePostClick = (id: number) => {
-        dispatch(deletePost(id));
-        navigate('/');
+        if (window.confirm('Удалить пост?')) {
+            dispatch(deletePost(id));
+            navigate('/');
+        }
     };
+
 
     if (!post) return <p>Загрузка...</p>;
 

@@ -39,6 +39,9 @@
 
     .timeElapsed {
         @include mixins.greyBtn;
+        border: none;
+        background: none;
+        margin: 0;
     }
 }
 

@@ -11,6 +11,7 @@
     border-radius: .4em;
     background: variables.$grey-gradient;
     text-decoration: none;
+    &:hover {cursor: pointer;}
 }
 
 @mixin centerBtn {
@@ -18,4 +19,22 @@
     justify-content: center;
     margin-top: 1.5rem;
     margin-bottom: 1.2rem;
+}
+
+@mixin actionBtn {
+    background: none;
+    border: none;
+    padding: 3px 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #c3cff9;
+    border-radius: 7px;
+    transition: background 0.16s, color 0.16s;
+}
+
+@mixin iconActions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
 }

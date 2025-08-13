@@ -1,8 +1,11 @@
 // frontend/src/features/posts/components/PostCard.tsx
 import React, { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PostActions from './PostActions';
 import type { PostExtended, UserWithAvatar } from '../../../types/globalTypes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
+
 import cardStyles from '../styles/card.module.scss';
 
 interface PostCardProps {
@@ -43,6 +46,8 @@ const PostCard: React.FC<PostCardProps> = ({
   const postImageClass =
     imageMode === 'feed' ? cardStyles.postFeedImg : cardStyles.postPageImg;
 
+  const navigate = useNavigate();
+
   return (
     <div className={cardStyles.cardContent} key={post.id}>
       <Link to={`/profile/${post.author.id}`} className={cardStyles.userInfo}>
@@ -70,14 +75,23 @@ const PostCard: React.FC<PostCardProps> = ({
             onError={(e) => {
               const img = e.currentTarget as HTMLImageElement;
               if (img.src !== DEFAULT_POST_IMAGE) {
-                img.onerror = null; // предотвращаем цикл
+                img.onerror = null;
                 img.src = DEFAULT_POST_IMAGE;
               }
             }}
           />
         </div>
 
-        <p className={cardStyles.feedPostBody}>{post.body}</p>
+        <p
+          className={
+            imageMode === 'feed'
+              ? `${cardStyles.feedPostBody} ${cardStyles.feedPostBodyOneLine}`
+              : cardStyles.feedPostBody
+          }
+          title={post.body} // чтобы при наведении видеть полный текст
+        >
+          {post.body}
+        </p>
       </Link>
 
       <PostActions
@@ -93,15 +107,23 @@ const PostCard: React.FC<PostCardProps> = ({
       {showEditDeleteButtons && isOwner && (
         <>
           <hr />
-          <Link to={`/edit-post/${post.id}`} className={cardStyles.greyBtn}>
-            Редактировать
-          </Link>
-          <button
-            onClick={() => handleDeletePostClick && handleDeletePostClick(post.id)}
-            className={cardStyles.greyBtn}
-          >
-            Удалить
-          </button>
+          <div className={cardStyles.postActions}>
+            <button
+              type="button"
+              className={cardStyles.actionBtn}
+              onClick={() => navigate(`/edit-post/${post.id}`)}
+              title="Редактировать"
+            >
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </button>
+            <button
+              onClick={() => handleDeletePostClick && handleDeletePostClick(post.id)}
+              className={cardStyles.actionBtn}
+              title="Удалить"
+            >
+              <FontAwesomeIcon icon={faTrash} />
+            </button>
+          </div>
           <hr />
         </>
       )}
