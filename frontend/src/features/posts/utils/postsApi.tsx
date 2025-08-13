@@ -1,3 +1,4 @@
+// frontend/src/features/posts/utils/postApi.tsx
 import axiosInstance from '../../../axiosInstance';
 import { PostExtended } from '../../../types/globalTypes';
 

@@ -178,7 +178,10 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
                 </div>
               ) : (
                 <div className={modalStyles.commentBodyBlock}>
-                  <div className={modalStyles.commentBody}>{comment.body}</div>
+                  <div
+                    className={modalStyles.commentBody}
+                    dangerouslySetInnerHTML={{ __html: comment.body }}
+                  />
                 </div>
               )}
             </div>

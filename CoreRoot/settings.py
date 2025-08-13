@@ -1,3 +1,4 @@
+# CoreRoot/settings.py
 from pathlib import Path
 from .secrets import *
 from datetime import timedelta
@@ -134,6 +135,14 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'PAGE_SIZE': 4,
+    # Включаем троттлинг по скоупам
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    # Лимиты для скоупов
+    'DEFAULT_THROTTLE_RATES': {
+        'comment-create': '5/min',  # не более 5 созданий комментариев в минуту
+    },
 }
 
 

@@ -6,7 +6,7 @@ from backend.serializers import UserSerializer
 from post.models import Post
 from backend.models import User
 from comment.models import Comment
-from .utils import validate_image_upload, delete_file_safely, sanitize_html  # ← добавили
+from .utils import validate_image_upload, delete_file_safely, sanitize_html
 
 class PostSerializer(AbstractSerializer):
     author = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='public_id')

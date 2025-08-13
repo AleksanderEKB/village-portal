@@ -23,7 +23,7 @@ const PostActions: React.FC<PostActionsProps> = (props) => {
     handleLike,
     handleCommentSubmit,
     handleLoadMore,
-    handleCommentTextareaChange,
+    // handleCommentTextareaChange,
     setEditCommentText,
     editingCommentId,
     editCommentText,
