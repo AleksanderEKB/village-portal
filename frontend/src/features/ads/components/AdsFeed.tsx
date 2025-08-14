@@ -8,7 +8,10 @@ import { Link } from 'react-router-dom';
 import AdPriceBlock from './AdInfoBlock/AdPrice';
 import AdCategory from './AdInfoBlock/AdCategory';
 import AdTitleDate from './AdInfoBlock/AdTitle';
+import AdUserInfo from '../components/AdInfoBlock/AdUserInfo';
+import AdCardLink from '../components/AdInfoBlock/AdCardLink';
 import '../styles/scss_feed/main.scss';
+import adsFeedStyles from '../styles/adsFeed.module.scss';
 
 export const getDefaultCategoryImage = (category: AdsCategory | string) =>
   `/media/default/${category}.webp`;
@@ -31,11 +34,11 @@ const AdsFeed: React.FC = () => {
   };
 
   return (
-    <div className="ads-feed-container">
+    <div className={adsFeedStyles.adsFeedContainer}>
       <h1>Объявления</h1>
-      <div className='ads-content'>
+      <div className={adsFeedStyles.adsContent}>
         {isAuthenticated && (
-          <div className='center-btn-1'>
+          <div className="center-btn-1">
             <Link to="/ads/create-ads" className="func-btn-1">
               Создать объявление
             </Link>
@@ -44,50 +47,20 @@ const AdsFeed: React.FC = () => {
         {loading && <div>Загрузка...</div>}
         {error && <div className="error">{error}</div>}
 
-        <div className="ads-grid">
+        <div className={adsFeedStyles.adsGrid}>
           {ads.map(ad => (
-            <div className="ads-card" key={ad.id}>
-              <Link to={`/profile/${ad.user.id}`} className="ads-user-info">
-                <img
-                  src={ad.user.avatar}
-                  alt={ad.user.username}
-                  className="ads-user-avatar"
-                  onError={e => {
-                    (e.currentTarget as HTMLImageElement).src = '/media/default/avatar.webp';
-                  }}
-                />
-                <span className="ads-user-name">{ad.user.username}</span>
-              </Link>
-              <Link
-                to={`/ads/${ad.slug}/`}
-                key={ad.id}
-                className="ads-card-link"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                {ad.main_image ? (
-                  <div className="ads-main-image-wrapper">
-                    <img src={ad.main_image} alt={ad.title} className="ads-main-image" />
-                  </div>
-                ) : (
-                  <div className="ads-main-image-wrapper">
-                    <img
-                      src={getDefaultCategoryImage(ad.category)}
-                      alt={ad.category}
-                      className="ads-main-image"
-                      style={{ opacity: 0.7 }}
-                    />
-                  </div>
-                )}
+            <div className={adsFeedStyles.adsCard} key={ad.id}>
+              <AdUserInfo user={ad.user} />
+              <AdCardLink ad={ad}>
                 <AdCategory category={ad.category} />
                 <hr />
                 <AdTitleDate title={ad.title} />
-                <hr/>
+                <hr />
                 <AdPriceBlock price={ad.price} />
-              </Link>
+              </AdCardLink>
             </div>
           ))}
         </div>
-
         {ads.length < (count || 0) && (
           <div className="center-btn-2">
             <button className="func-btn-1" onClick={handleShowMore} disabled={loading}>

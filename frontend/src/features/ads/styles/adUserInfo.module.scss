@@ -1,0 +1,14 @@
+@use '../../shared/styles/mixins/main-mixins' as mixins;
+
+    .adsUserInfo {
+        @include mixins.userInfo;
+    }
+    
+    .avatar {
+        @include mixins.avatar;
+    }
+
+    .userName {
+        @include mixins.userName;
+    }
+

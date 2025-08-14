@@ -1,0 +1,83 @@
+@use '../../shared/styles/mixins/main-mixins' as mixins;
+
+.adsFeedContainer {
+    margin: 1rem 0.5rem 1rem 0.5rem;
+    padding: 1rem 0.5rem 0 0.5rem;
+    max-width: 1920px;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 9px 0px black;
+    font-family: mixins.$font-general;
+
+    h1 {
+        text-align: center;
+        font-family: mixins.$font-section;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #ddd;
+        opacity: 0.6;
+    }
+
+    .adsContent {
+        margin: 1rem .5rem;
+        padding-bottom: 1rem;
+    }
+
+    .error {
+        color: #e00;
+        margin-bottom: 1rem;
+    }
+
+    .adsGrid {
+        display: grid;
+        grid-gap: 2rem;
+        grid-template-columns: repeat(4, 1fr);
+
+        @media (max-width: 1023px) {
+        grid-template-columns: repeat(2, 1fr);
+        }
+        @media (max-width: 699px) {
+        grid-template-columns: 1fr;
+        }
+
+        .adsCard {
+            @include mixins.feedCard;
+
+            .ads-description {
+                font-size: 1rem;
+                color: #444;
+                margin-bottom: .3rem;
+                flex: 1;
+            }
+
+            .item-right {
+                margin-left: auto;
+                display: block;
+                text-align: right;
+            }
+
+            .ads-price {
+                // @include mixins.grey;
+                font-size: 1.1rem;
+            }
+            .ads-location {
+                font-size: .97rem;
+                color: #888;
+            }
+            .ads-contact {
+                font-size: .93rem;
+                color: #666;
+                display: flex;
+                flex-direction: column;
+            }
+            .ads-date {
+                font-size: .85rem;
+                color: #bbb;
+                margin-top: auto;
+                align-self: flex-end; 
+                text-align: right;
+            }
+        }
+    }
+}
