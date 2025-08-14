@@ -5,6 +5,8 @@ import { faTimes, faPlay, faPenToSquare, faTrash } from '@fortawesome/free-solid
 import { Link } from 'react-router-dom';
 import type { PostExtended, UserWithAvatar, PostComment } from '../../../types/globalTypes';
 import modalStyles from '../styles/commentsModal.module.scss';
+import { toast } from 'react-toastify';
+import { extractHttpError } from '../../shared/utils/httpError';
 
 interface PostCommentsModalProps {
   post: PostExtended;
@@ -17,7 +19,8 @@ interface PostCommentsModalProps {
   setCommentText: (value: string) => void;
   handleLike: () => void;
   handleCommentTextareaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  handleCommentSubmit: () => void;
+  // позволяем возвращать Promise, чтобы можно было await/try-catch внутри компонента
+  handleCommentSubmit: () => Promise<any> | void;
   handleLoadMore: () => void;
   editingCommentId: number | null;
   editCommentText: string;
@@ -40,7 +43,7 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
   commentsNext,
   onClose,
   commentText,
-  setCommentText,
+  // setCommentText,
   handleLike,
   handleCommentTextareaChange,
   handleCommentSubmit,
@@ -104,6 +107,22 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = 'auto'; };
   }, []);
+
+  const onSendClick = async () => {
+    try {
+      const maybePromise = handleCommentSubmit();
+      if (maybePromise && typeof (maybePromise as Promise<any>).then === 'function') {
+        await (maybePromise as Promise<any>);
+      }
+    } catch (e) {
+      const { status, message } = extractHttpError(e);
+      if (status === 429) {
+        // Уже показали глобально в axios интерсепторе
+        return;
+      }
+      toast.error(message ?? 'Ошибка отправки комментария');
+    }
+  };
 
   return (
     <div className={modalStyles.modalBackdrop}>
@@ -200,7 +219,7 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
               required
               style={{ resize: 'none', overflow: 'hidden' }}
             />
-            <button onClick={handleCommentSubmit} className={modalStyles.sendBtn}>
+            <button onClick={onSendClick} className={modalStyles.sendBtn}>
               <FontAwesomeIcon icon={faPlay} className={modalStyles.playIcon} />
             </button>
           </div>

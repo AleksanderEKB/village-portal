@@ -1,6 +1,7 @@
+// frontend/src/features/posts/hooks/usePostLoader.tsx
 import { useEffect, useState } from 'react';
-import axiosInstance from '../../../axiosInstance';
-import { PostExtended } from '../../../types/globalTypes';
+import { apiFetchPost } from '../utils/postsApi';
+import type { PostExtended } from '../../../types/globalTypes';
 
 type Args = {
   mode: 'create' | 'edit';
@@ -18,12 +19,12 @@ export function usePostLoader({ mode, postId }: Args) {
 
     let isMounted = true;
     setLoading(true);
-    axiosInstance
-      .get<PostExtended>(`/api/post/${postId}/`)
-      .then((res) => {
+    apiFetchPost(postId)
+      .then((data: PostExtended) => {
         if (!isMounted) return;
-        setBody(res.data.body);
-        setCurrentImage(res.data.image ?? null);
+        setBody(data.body);
+        setCurrentImage(data.image ?? null);
+        setInitialDataLoaded(true);
       })
       .finally(() => {
         if (isMounted) setLoading(false);

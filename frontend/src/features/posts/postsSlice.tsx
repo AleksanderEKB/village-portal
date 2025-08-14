@@ -1,16 +1,23 @@
 // frontend/src/features/posts/postSlice.tsx
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axiosInstance from '../../axiosInstance';
-import { PostExtended, PostComment, UserWithAvatar } from '../../types/globalTypes';
+import type { PostExtended, PostComment, UserWithAvatar } from '../../types/globalTypes';
 import { updateUserProfile } from '../userProfile/userProfileSlice';
 
-// Тип ответа API с пагинацией
-export type PostsApiResponse = {
-  results: PostExtended[];
-  count: number;
-  next: string | null;
-  previous: string | null;
-};
+// Инкапсулированные API
+import {
+  apiFetchPosts,
+  apiFetchPost,
+  apiDeletePost,
+  apiLikePost,
+  apiRemoveLike,
+  type PostsApiResponse,
+} from './utils/postsApi';
+import {
+  apiFetchComments,
+  apiCreateComment,
+  apiUpdateComment,
+  apiDeleteComment,
+} from './utils/commentsApi';
 
 export interface PostsState {
   posts: PostExtended[];
@@ -36,109 +43,115 @@ const initialState: PostsState = {
   previous: null,
 };
 
-// Главный fetchPosts — теперь обязательно limit/offset!
+// === Thunks ===
+
 export const fetchPosts = createAsyncThunk<
   PostsApiResponse,
   { limit?: number; offset?: number },
   { rejectValue: string }
 >('posts/fetchPosts', async (params, { rejectWithValue }) => {
   try {
-    const res = await axiosInstance.get<PostsApiResponse>('/api/post/', { params });
-    return res.data;
+    const data = await apiFetchPosts(params);
+    return data;
   } catch (err: any) {
-    return rejectWithValue(err.response?.data?.detail || 'Ошибка загрузки постов');
+    return rejectWithValue(err?.response?.data?.detail || 'Ошибка загрузки постов');
   }
 });
 
-export const fetchPostById = createAsyncThunk<PostExtended, string>(
+export const fetchPostById = createAsyncThunk<PostExtended, string, { rejectValue: string }>(
   'posts/fetchPostById',
   async (id, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get<PostExtended>(`/api/post/${id}/`);
-      return res.data;
+      const data = await apiFetchPost(id);
+      return data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.detail || 'Ошибка загрузки поста');
+      return rejectWithValue(err?.response?.data?.detail || 'Ошибка загрузки поста');
     }
   }
 );
 
 export const fetchComments = createAsyncThunk<
   { postId: number; comments: PostComment[]; next?: string | null; offset: number },
-  { postId: number; limit?: number; offset?: number }
->(
-  'posts/fetchComments',
-  async ({ postId, limit = 4, offset = 0 }, { rejectWithValue }) => {
-    try {
-      const res = await axiosInstance.get<{ results: PostComment[]; next: string | null }>(
-        `/api/post/${postId}/comments/`,
-        { params: { limit, offset } }
-      );
-      return { postId, comments: res.data.results, next: res.data.next, offset };
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.detail || 'Ошибка загрузки комментариев');
-    }
-  }
-);
-
-export const createComment = createAsyncThunk<
-  { postId: number; comment: PostComment },
-  { postId: number; commentData: Partial<PostComment> }
->('posts/createComment', async ({ postId, commentData }, { rejectWithValue }) => {
+  { postId: number; limit?: number; offset?: number },
+  { rejectValue: string }
+>('posts/fetchComments', async ({ postId, limit = 4, offset = 0 }, { rejectWithValue }) => {
   try {
-    const res = await axiosInstance.post<PostComment>(`/api/post/${postId}/comments/`, commentData);
-    return { postId, comment: res.data };
+    const data = await apiFetchComments(postId, { limit, offset });
+    return { postId, comments: data.results, next: data.next, offset };
   } catch (err: any) {
-    return rejectWithValue(err.response?.data?.detail || 'Ошибка создания комментария');
+    return rejectWithValue(err?.response?.data?.detail || 'Ошибка загрузки комментариев');
   }
 });
 
-export const likePost = createAsyncThunk<{ postId: number; isLiked: boolean }, { postId: number; isLiked: boolean }>(
-  'posts/likePost',
-  async ({ postId, isLiked }) => {
-    if (isLiked) {
-      await axiosInstance.post(`/api/post/${postId}/remove_like/`);
-    } else {
-      await axiosInstance.post(`/api/post/${postId}/like/`);
-    }
-    return { postId, isLiked };
+export const createComment = createAsyncThunk<
+  { postId: number; comment: PostComment },
+  { postId: number; commentData: Partial<PostComment> },
+  { rejectValue: string }
+>('posts/createComment', async ({ postId, commentData }, { rejectWithValue }) => {
+  try {
+    const comment = await apiCreateComment(postId, commentData);
+    return { postId, comment };
+  } catch (err: any) {
+    return rejectWithValue(err?.response?.data?.detail || 'Ошибка создания комментария');
   }
-);
-
-export const deletePost = createAsyncThunk<number, number>(
-  'posts/deletePost',
-  async (postId, { rejectWithValue }) => {
-    try {
-      await axiosInstance.delete(`/api/post/${postId}/`);
-      return postId;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.detail || 'Ошибка удаления поста');
-    }
-  }
-);
+});
 
 export const updateComment = createAsyncThunk<
   { postId: number; comment: PostComment },
-  { postId: number; commentId: number; commentData: Partial<PostComment> }
+  { postId: number; commentId: number; commentData: Partial<PostComment> },
+  { rejectValue: string }
 >('posts/updateComment', async ({ postId, commentId, commentData }, { rejectWithValue }) => {
   try {
-    const res = await axiosInstance.put<PostComment>(`/api/post/${postId}/comments/${commentId}/`, commentData);
-    return { postId, comment: res.data };
+    const comment = await apiUpdateComment(postId, commentId, commentData);
+    return { postId, comment };
   } catch (err: any) {
-    return rejectWithValue(err.response?.data?.detail || 'Ошибка редактирования комментария');
+    return rejectWithValue(err?.response?.data?.detail || 'Ошибка редактирования комментария');
   }
 });
 
 export const deleteComment = createAsyncThunk<
   { postId: number; commentId: number },
-  { postId: number; commentId: number }
+  { postId: number; commentId: number },
+  { rejectValue: string }
 >('posts/deleteComment', async ({ postId, commentId }, { rejectWithValue }) => {
   try {
-    await axiosInstance.delete(`/api/post/${postId}/comments/${commentId}/`);
+    await apiDeleteComment(postId, commentId);
     return { postId, commentId };
   } catch (err: any) {
-    return rejectWithValue(err.response?.data?.detail || 'Ошибка удаления комментария');
+    return rejectWithValue(err?.response?.data?.detail || 'Ошибка удаления комментария');
   }
 });
+
+export const likePost = createAsyncThunk<
+  { postId: number; isLiked: boolean },
+  { postId: number; isLiked: boolean },
+  { rejectValue: string }
+>('posts/likePost', async ({ postId, isLiked }, { rejectWithValue }) => {
+  try {
+    if (isLiked) {
+      await apiRemoveLike(postId);
+    } else {
+      await apiLikePost(postId);
+    }
+    return { postId, isLiked };
+  } catch (err: any) {
+    return rejectWithValue(err?.response?.data?.detail || 'Ошибка изменения лайка');
+  }
+});
+
+export const deletePost = createAsyncThunk<number, number, { rejectValue: string }>(
+  'posts/deletePost',
+  async (postId, { rejectWithValue }) => {
+    try {
+      await apiDeletePost(postId);
+      return postId;
+    } catch (err: any) {
+      return rejectWithValue(err?.response?.data?.detail || 'Ошибка удаления поста');
+    }
+  }
+);
+
+// === Slice ===
 
 const postsSlice = createSlice({
   name: 'posts',
@@ -157,9 +170,11 @@ const postsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchPosts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchPosts.fulfilled, (state, action) => {
-        // ⚠️ раньше было: if (!action.meta.arg.offset || action.meta.arg.offset === 0) { ... }
-        // meta.arg может быть undefined, поэтому читаем безопасно:
         const metaArg = (action.meta?.arg as { offset?: number } | undefined) ?? undefined;
         const offset = typeof metaArg?.offset === 'number' ? metaArg.offset : 0;
 
@@ -178,9 +193,17 @@ const postsSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(fetchPostById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchPostById.fulfilled, (state, action) => {
         state.post = action.payload;
         state.loading = false;
+      })
+      .addCase(fetchPostById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) ?? 'Ошибка загрузки поста';
       })
       .addCase(fetchComments.fulfilled, (state, action) => {
         const { postId, comments, next, offset } = action.payload;
@@ -228,13 +251,15 @@ const postsSlice = createSlice({
         state.comments[postId] = (state.comments[postId] || []).map((c) =>
           c.id === comment.id ? comment : c
         );
-      })  
+      })
       .addCase(deleteComment.fulfilled, (state, action) => {
         const { postId, commentId } = action.payload;
         state.comments[postId] = (state.comments[postId] || []).filter((c) => c.id !== commentId);
         const post = state.posts.find((p) => p.id === postId);
         if (post && post.comments_count > 0) post.comments_count -= 1;
-        if (state.post && state.post.id === postId && state.post.comments_count > 0) state.post.comments_count -= 1;
+        if (state.post && state.post.id === postId && state.post.comments_count > 0) {
+          state.post.comments_count -= 1;
+        }
       });
   },
 });

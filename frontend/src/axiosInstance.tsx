@@ -3,6 +3,7 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
 import { toast, Id } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { pickMessageFromData } from './features/shared/utils/httpError';
 
 const API_BASE_URL: string = process.env.REACT_APP_API_URL || 'https://bobrovsky.online';
 
@@ -32,6 +33,7 @@ axiosInstance.interceptors.response.use(
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
         const refreshToken = localStorage.getItem('refresh_token');
 
+        // --- Глобальный refresh по 401 ---
         if (
             error.response &&
             error.response.status === 401 &&
@@ -47,7 +49,7 @@ axiosInstance.interceptors.response.use(
                 const { access } = response.data;
                 localStorage.setItem('access_token', access);
                 if (axiosInstance.defaults.headers) {
-                    axiosInstance.defaults.headers.Authorization = `Bearer ${access}`;
+                    (axiosInstance.defaults.headers as any).Authorization = `Bearer ${access}`;
                 }
                 if (originalRequest.headers) {
                     originalRequest.headers.Authorization = `Bearer ${access}`;
@@ -65,6 +67,16 @@ axiosInstance.interceptors.response.use(
                 }
             }
         }
+
+        // --- Глобальный перехват 429 (Throttle) ---
+        if (error.response?.status === 429) {
+            const serverMsg = pickMessageFromData(error.response.data);
+            // Если бекенд (DRF) вернул локализованный detail, отдадим его.
+            // Иначе — дефолтное русское сообщение.
+            const message = serverMsg ?? 'Слишком много запросов. Попробуйте позже.';
+            toast.error(message);
+        }
+
         return Promise.reject(error);
     }
 );
