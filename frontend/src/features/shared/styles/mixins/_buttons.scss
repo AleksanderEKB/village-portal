@@ -12,6 +12,7 @@
     background: variables.$grey-gradient;
     text-decoration: none;
     &:hover {cursor: pointer;}
+    font-family: variables.$font-general;
 }
 
 @mixin centerBtn {

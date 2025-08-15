@@ -1,11 +1,12 @@
 // frontend/src/features/posts/components/PostCommentModal.tsx
 import React, { useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faPlay, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faPlay, faPenToSquare, faTrash, faEllipsisVertical, faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import type { PostExtended, UserWithAvatar, PostComment } from '../../../types/globalTypes';
 import modalStyles from '../styles/commentsModal.module.scss';
 import { toast } from 'react-toastify';
+import CommentActionsMenu from "./CommentActionsMenu";
 import { extractHttpError } from '../../shared/utils/httpError';
 
 interface PostCommentsModalProps {
@@ -160,25 +161,13 @@ const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
                   <span>{typeof comment.author !== 'number' ? comment.author.username : 'Пользователь'}</span>
                 </Link>
                 {isOwner(comment) && (
-                  <div className={modalStyles.commentActions}>
-                    <button
-                      className={modalStyles.actionBtn}
-                      onClick={() => handleEditStart(comment)}
-                      title="Редактировать"
-                    >
-                      <FontAwesomeIcon icon={faPenToSquare} />
-                    </button>
-                    <button
-                      className={modalStyles.actionBtn}
-                      onClick={() => handleDelete(comment)}
-                      title="Удалить"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </div>
+                  <CommentActionsMenu
+                    comment={comment}
+                    onEdit={() => handleEditStart(comment)}
+                    onDelete={() => handleDelete(comment)}
+                  />
                 )}
               </div>
-
               {editingCommentId === comment.id ? (
                 <div className={modalStyles.editBlock} ref={editBlockRef}>
                   <textarea

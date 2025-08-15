@@ -1,0 +1,130 @@
+/* frontend/src/features/posts/styles/commentActionsMenu.module.scss */
+
+.actionsMenu {
+  position: relative;
+  display: inline-block;
+}
+
+.menuBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: #888;
+  padding: 0.2em 0.5em;
+  transition: color 0.2s ease;
+  z-index: 2;
+  position: relative;
+
+  &:hover {
+    color: #222;
+  }
+}
+
+:root {
+  --btn: 32px; /* размер кнопки */
+  --gap: 8px; /* зазор между иконками */
+  --offset: 10px; /* отступ от меню */
+}
+
+.menuActions {
+  pointer-events: none;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.25s ease;
+
+  &.open {
+    pointer-events: auto;
+    opacity: 1;
+  }
+}
+
+.actionBtn {
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: var(--btn);
+  height: var(--btn);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.5) rotate(-90deg);
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.5s cubic-bezier(0.4, 1.7, 0.7, 1),
+    opacity 0.3s ease;
+
+  &:hover {
+    background: #f1f1f1;
+    color: #444;
+    transform: translate(var(--tx, -50%), -50%) scale(1.06) rotate(12deg);
+  }
+}
+
+.menuActions.open .actionBtn {
+  opacity: 1;
+}
+
+/* Удаление — ближе к кнопке меню, влево, появляется первой */
+.menuActions.open .deleteBtn {
+  --tx: calc(-50% - var(--btn) - var(--offset));
+  transform: translate(var(--tx), -50%) scale(1) rotate(0deg);
+  transition-delay: 0ms;
+}
+
+/* Редактирование — дальше влево, появляется второй */
+.menuActions.open .editBtn {
+  --tx: calc(-50% - (2 * var(--btn)) - var(--offset) - var(--gap));
+  transform: translate(var(--tx), -50%) scale(1) rotate(0deg);
+  transition-delay: 40ms;
+}
+
+/* Закрытие — сначала уезжает редактирование, потом удаление */
+.menuActions:not(.open) .editBtn {
+  transform: translate(-50%, -50%) scale(0.5) rotate(-90deg);
+  opacity: 0;
+  transition-delay: 0ms;
+}
+
+.menuActions:not(.open) .deleteBtn {
+  transform: translate(-50%, -50%) scale(0.5) rotate(-90deg);
+  opacity: 0;
+  transition-delay: 40ms;
+}
+
+.editBtn {
+  color: #3887fe;
+}
+
+.deleteBtn {
+  color: #e04545;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menuActions {
+    transition: none;
+  }
+  .actionBtn {
+    transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  }
+  .menuActions.open .editBtn,
+  .menuActions.open .deleteBtn,
+  .menuActions:not(.open) .editBtn,
+  .menuActions:not(.open) .deleteBtn {
+    transform: translate(var(--tx, -50%), -50%);
+  }
+}

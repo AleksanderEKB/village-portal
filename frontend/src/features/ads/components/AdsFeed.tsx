@@ -38,14 +38,14 @@ const AdsFeed: React.FC = () => {
       <h1>Объявления</h1>
       <div className={adsFeedStyles.adsContent}>
         {isAuthenticated && (
-          <div className="center-btn-1">
-            <Link to="/ads/create-ads" className="func-btn-1">
+          <div className={adsFeedStyles.centerBtn}>
+            <Link to="/ads/create-ads" className={adsFeedStyles.greyBtn}>
               Создать объявление
             </Link>
           </div>
         )}
         {loading && <div>Загрузка...</div>}
-        {error && <div className="error">{error}</div>}
+        {error && <div className={adsFeedStyles.error}>{error}</div>}
 
         <div className={adsFeedStyles.adsGrid}>
           {ads.map(ad => (
@@ -62,8 +62,12 @@ const AdsFeed: React.FC = () => {
           ))}
         </div>
         {ads.length < (count || 0) && (
-          <div className="center-btn-2">
-            <button className="func-btn-1" onClick={handleShowMore} disabled={loading}>
+          <div className={adsFeedStyles.centerBtn}>
+            <button
+              className={adsFeedStyles.greyBtn}
+              onClick={handleShowMore}
+              disabled={loading}
+            >
               {loading ? 'Загрузка...' : 'Показать ещё'}
             </button>
           </div>

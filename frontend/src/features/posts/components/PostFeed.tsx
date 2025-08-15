@@ -36,7 +36,7 @@ const PostFeed: React.FC = () => {
     };
 
     return (
-        <div className={feedStyles.feedContainer}>
+        <div className={feedStyles.postFeedContainer}>
             <h1>Лента постов</h1>
             <div className={feedStyles.feedContent}>
                 {isAuthenticated && (
