@@ -68,6 +68,24 @@ export const fetchAdById = createAsyncThunk<
   }
 });
 
+/**
+ * Новый thunk для переключения статуса.
+ * Возвращает актуальное значение is_active с бэка.
+ */
+export const toggleAdStatus = createAsyncThunk<
+  { is_active: boolean },
+  { slug: string },
+  { rejectValue: string }
+>('ads/toggleAdStatus', async ({ slug }, { rejectWithValue }) => {
+  try {
+    // Совмещаем с вашим существующим маршрутом
+    const res = await axiosInstance.post<{ is_active: boolean }>(`/api/ads/${slug}/switch-status/`);
+    return { is_active: res.data.is_active };
+  } catch (err: any) {
+    return rejectWithValue(err.response?.data?.detail || 'Ошибка переключения статуса');
+  }
+});
+
 const adsSlice = createSlice({
   name: 'ads',
   initialState,
@@ -86,6 +104,22 @@ const adsSlice = createSlice({
     },
     removeAd(state, action: PayloadAction<number>) {
       state.ads = state.ads.filter(ad => ad.id !== action.payload);
+    },
+    /**
+     * Оптимистическое изменение статуса текущего объявления.
+     */
+    setCurrentAdActive(state, action: PayloadAction<boolean>) {
+      if (state.currentAd) {
+        state.currentAd.is_active = action.payload;
+      }
+      // По желанию можно синхронизировать этот же статус в списке ads:
+      const id = state.currentAd?.id;
+      if (id) {
+        const idx = state.ads.findIndex(a => a.id === id);
+        if (idx >= 0) {
+          state.ads[idx].is_active = action.payload;
+        }
+      }
     },
   },
   extraReducers: (builder) => {
@@ -122,9 +156,29 @@ const adsSlice = createSlice({
       .addCase(fetchAdById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      /**
+       * toggleAdStatus — не трогаем общий loading, чтобы не ронять лейаут.
+       * Доверяем ответу и аккуратно правим currentAd/ads.
+       */
+      .addCase(toggleAdStatus.fulfilled, (state, action) => {
+        if (state.currentAd) {
+          state.currentAd.is_active = action.payload.is_active;
+        }
+        const id = state.currentAd?.id;
+        if (id) {
+          const idx = state.ads.findIndex(a => a.id === id);
+          if (idx >= 0) {
+            state.ads[idx].is_active = action.payload.is_active;
+          }
+        }
+      })
+      .addCase(toggleAdStatus.rejected, (state, action) => {
+        // Ошибку можно сохранить, но UI уже откатил оптимистический апдейт в хуке
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { clearAds, setCurrentAd, addAd, removeAd } = adsSlice.actions;
+export const { clearAds, setCurrentAd, addAd, removeAd, setCurrentAdActive } = adsSlice.actions;
 export default adsSlice.reducer;

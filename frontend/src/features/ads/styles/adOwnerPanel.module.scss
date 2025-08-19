@@ -1,0 +1,37 @@
+@use '../../shared/styles/mixins/main-mixins' as mixins;
+
+
+.statusCircle {
+  margin-right: 8px;
+  &.statusActive {
+    color: green;
+  }
+  &.statusInactive {
+    color: red;
+  }
+}
+
+.statusWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px; // расстояние между кругом и текстом
+}
+
+.statusText {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+
+  &.active {
+    color: green;
+  }
+
+  &.inactive {
+    color: gray;
+  }
+}
+
+.panelActions {
+    @include mixins.iconActions;
+    justify-content: flex-end;
+}

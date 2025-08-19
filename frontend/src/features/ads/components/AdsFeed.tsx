@@ -1,5 +1,5 @@
 // frontend/src/features/ads/components/ads-feed.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../app/store';
 import { fetchAdsPaginated, clearAds } from '../adsSlice';
@@ -32,6 +32,9 @@ const AdsFeed: React.FC = () => {
     dispatch(fetchAdsPaginated({ limit: ITEMS_PER_PAGE, offset: ads.length }));
   };
 
+  // Показываем в общей ленте ТОЛЬКО активные объявления (включая автора)
+  const visibleAds = useMemo(() => ads.filter(a => a.is_active), [ads]);
+
   return (
     <div className={adsFeedStyles.adsFeedContainer}>
       <h1>Объявления</h1>
@@ -47,19 +50,33 @@ const AdsFeed: React.FC = () => {
         {error && <div className={adsFeedStyles.error}>{error}</div>}
 
         <div className={adsFeedStyles.adsGrid}>
+          {/* НОВОЕ: рендерим только активные */}
+          {visibleAds.map(ad => (
+            <div className={adsFeedStyles.adsCard} key={ad.id}>
+              <UserInfo user={ad.user} />
+              <AdCardLink ad={ad}>
+                <AdCategory category={ad.category} />
+                <AdTitleDate title={ad.title} />
+                <AdPriceBlock price={ad.price} />
+              </AdCardLink>
+            </div>
+          ))}
+
+          {/* СТАРОЕ (не удаляем по просьбе):
           {ads.map(ad => (
             <div className={adsFeedStyles.adsCard} key={ad.id}>
               <UserInfo user={ad.user} />
               <AdCardLink ad={ad}>
                 <AdCategory category={ad.category} />
-                {/* <hr /> */}
                 <AdTitleDate title={ad.title} />
-                {/* <hr /> */}
                 <AdPriceBlock price={ad.price} />
               </AdCardLink>
             </div>
           ))}
+          */}
         </div>
+
+        {/* Кнопка "Показать ещё" оставляем, чтобы пагинация продолжала вытягивать страницы с бэка */}
         {ads.length < (count || 0) && (
           <div className={adsFeedStyles.centerBtn}>
             <button

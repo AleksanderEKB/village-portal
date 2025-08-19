@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../app/hook';
-import { fetchAdById, removeAd } from '../adsSlice';
+import { fetchAdById, removeAd, setCurrentAd, setCurrentAdActive, toggleAdStatus } from '../adsSlice';
 import axiosInstance from '../../../axiosInstance';
 import { getDefaultCategoryImage } from '../utils/getDefaultCategoryImage';
 
@@ -53,16 +53,49 @@ export const useAdsPage = () => {
     }
   }, [galleryImages]);
 
+  /**
+   * ИДЕАЛЬНО: оптимистическое переключение статуса без размонтирования страницы.
+   * 1) Сразу меняем currentAd.is_active локально в сторе (optimistic).
+   * 2) Дергаем API /switch-status/.
+   * 3) При ошибке откатываемся к предыдущему значению и показываем алерт.
+   * 4) (Опционально) можно “мягко” рефрешнуть currentAd с бекенда, если нужен источник истины.
+   */
   const handleSwitchStatus = useCallback(async () => {
     if (!currentAd) return;
     setSwitchingStatus(true);
+
+    const prev = currentAd.is_active;
+    // оптимистическое обновление
+    dispatch(setCurrentAdActive(!prev));
+
     try {
-      await axiosInstance.post(`/api/ads/${currentAd.slug}/switch-status/`);
-      await dispatch(fetchAdById(currentAd.slug));
+      await dispatch(toggleAdStatus({ slug: currentAd.slug })).unwrap();
+      // Если важно подтянуть прочие поля (updated_at и пр.), можно сделать мягкий рефреш:
+      // await dispatch(fetchAdById(currentAd.slug));
+    } catch (e) {
+      // Откат при ошибке
+      dispatch(setCurrentAdActive(prev));
+      alert('Не удалось переключить статус');
     } finally {
       setSwitchingStatus(false);
     }
   }, [currentAd, dispatch]);
+
+  /**
+   * СТАРОЕ (не удаляем по просьбе):
+   * Полная перезагрузка объявления, из‑за которой страница прыгала вверх.
+   *
+   * const handleSwitchStatus = useCallback(async () => {
+   *   if (!currentAd) return;
+   *   setSwitchingStatus(true);
+   *   try {
+   *     await axiosInstance.post(`/api/ads/${currentAd.slug}/switch-status/`);
+   *     await dispatch(fetchAdById(currentAd.slug));
+   *   } finally {
+   *     setSwitchingStatus(false);
+   *   }
+   * }, [currentAd, dispatch]);
+   */
 
   return {
     slug,
