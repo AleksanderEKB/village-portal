@@ -2,6 +2,7 @@
 import React from 'react';
 import { ADS_CATEGORY_LABELS } from '../../utils/adsCategories';
 import { Advertisement } from '../../../../types/globalTypes';
+import adCategoryStyle from '../../styles/adCategory.module.scss';
 
 interface Props {
   category: Advertisement['category'];
@@ -9,7 +10,7 @@ interface Props {
 
 const AdCategory: React.FC<Props> = ({ category }) => (
     <div>
-        <span className="ads-category">{ADS_CATEGORY_LABELS[category] ?? category}</span>
+        <span className={adCategoryStyle.adsCategory}>{ADS_CATEGORY_LABELS[category] ?? category}</span>
     </div>
     
 );

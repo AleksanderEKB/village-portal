@@ -1,0 +1,13 @@
+@use '../../shared/styles/mixins/main-mixins' as mixins;
+
+
+.itemRight {
+    margin-left: auto;
+    display: block;
+    text-align: right;
+}
+
+.adsPrice {
+    @include mixins.greyBtn;
+    font-size: 1.1rem;
+  }

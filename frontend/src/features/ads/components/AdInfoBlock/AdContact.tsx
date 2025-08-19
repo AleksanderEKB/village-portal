@@ -3,15 +3,16 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { Advertisement } from '../../../../types/globalTypes';
+import adContactStyles from '../../styles/adInfoBlock.module.scss';
 
 interface Props {
   contact_phone: Advertisement['contact_phone'];
 }
 
 const AdContact_phone: React.FC<Props> = ({ contact_phone }) => (
-    <div className="ads-contact">
-        <FontAwesomeIcon className='contact' icon={faPhone} />
-        <span className="phone-number">{contact_phone}</span>
+    <div className={adContactStyles.adsContact}>
+        <FontAwesomeIcon className={adContactStyles.contact} icon={faPhone} />
+        <span className={adContactStyles.phoneNumber}>{contact_phone}</span>
     </div>
 );
 

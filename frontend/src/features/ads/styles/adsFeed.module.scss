@@ -17,8 +17,7 @@
     }
 
     .error {
-        color: #e00;
-        margin-bottom: 1rem;
+        @include mixins.errorLoad;
     }
 
     .adsGrid {

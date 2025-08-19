@@ -1,0 +1,6 @@
+@use '../../shared/styles/mixins/main-mixins' as mixins;
+
+
+.adsCategory {
+    @include mixins.greyBtn;
+}

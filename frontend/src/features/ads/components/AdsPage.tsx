@@ -7,8 +7,8 @@ import GalleryThumbnails from './GalleryThumbnails';
 import { useAdsPage } from '../hooks/useAdsPage';
 import AdOwnerPanel from './AdOwnerPanel';
 import AdDate from './AdInfoBlock/AdDate';
-
-import '../styles/scss_page/main.scss';
+import UserInfo from '../../shared/corpusculars/UserInfo/UserInfo';
+import adsPageStyles from '../styles/adsPage.module.scss';
 
 const AdsPage: React.FC = () => {
   const {
@@ -30,35 +30,24 @@ const AdsPage: React.FC = () => {
   } = useAdsPage();
 
   if (loading) return <div>Загрузка...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (error) return <div className={adsPageStyles.error}>{error}</div>;
   if (!ad) return <div>Объявление не найдено.</div>;
 
   return (
-    <div className="ads-page-container">
-      <div className="ads-card-page">
-        {/* USER INFO */}
-        <Link to={`/profile/${ad.user.id}`} className="ads-user-info">
-          <img
-            src={ad.user.avatar}
-            alt={ad.user.username}
-            className="ads-user-avatar"
-            onError={e => {
-              (e.currentTarget as HTMLImageElement).src = '/media/default/avatar.webp';
-            }}
-          />
-          <span className="ads-user-name">{ad.user.username}</span>
-        </Link>
-        <div className="ads-details">
+    <div className={adsPageStyles.adsPageContainer}>
+      <div className={adsPageStyles.adsCardPage}>
+        <UserInfo user={ad.user} />
+        <div className={adsPageStyles.adsDetails}>
           {/* MAIN IMAGE */}
           <div
-            className="ads-main-image-wrapper-page"
+            className={adsPageStyles.adsMainImageWrapperPage}
             style={{ cursor: galleryImages.length > 0 ? 'pointer' : 'default' }}
             onClick={handleMainImageClick}
           >
             <img
               src={ad.main_image || getDefaultCategoryImage(ad.category)}
               alt={ad.title}
-              className="ads-main-image"
+              className={adsPageStyles.adsMainImage}
               style={ad.main_image ? {} : { opacity: 0.7 }}
             />
           </div>

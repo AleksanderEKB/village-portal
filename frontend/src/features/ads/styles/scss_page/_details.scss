@@ -1,3 +1,4 @@
+// frontend/src/features/ads/styles/ssscss_page/_details.scss
 .ads-details {
   display: flex;
   flex-direction: row;
@@ -11,7 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: $main-bg;
+    // background: $main-bg;
 
     .ads-main-image {
       width: 100%;

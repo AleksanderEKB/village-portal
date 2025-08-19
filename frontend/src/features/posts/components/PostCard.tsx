@@ -5,6 +5,7 @@ import PostActions from './PostActions';
 import type { PostExtended, UserWithAvatar } from '../../../types/globalTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
+import UserInfo from '../../shared/corpusculars/UserInfo/UserInfo';
 
 import cardStyles from '../styles/card.module.scss';
 
@@ -50,22 +51,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   return (
     <div className={cardStyles.cardContent} key={post.id}>
-      <Link to={`/profile/${post.author.id}`} className={cardStyles.userInfo}>
-        <img
-          src={post.author.avatar || DEFAULT_AVATAR}
-          alt="Аватар"
-          className={cardStyles.cardContentAvatarImg}
-          onError={(e) => {
-            const img = e.currentTarget as HTMLImageElement;
-            if (img.src !== DEFAULT_AVATAR) {
-              img.onerror = null; // предотвращаем цикл
-              img.src = DEFAULT_AVATAR;
-            }
-          }}
-        />
-        <p className={cardStyles.userName}>{post.author.username}</p>
-      </Link>
-
+      <UserInfo user={post.author} />
       <Link to={`/post/${post.id}`} className={cardStyles.postLink}>
         <div className={postImageWrapperClass}>
           <img

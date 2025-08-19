@@ -3,13 +3,15 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoneyBill1 } from '@fortawesome/free-solid-svg-icons';
 import { Advertisement } from '../../../../types/globalTypes';
+import adPriceStyles from '../../styles/adPrice.module.scss';
+
 
 const AdPrice: React.FC<{ price?: Advertisement['price'] }> = ({ price }) => {
   if (!price) return null;
 
   return (
-    <div className='item-right'>
-      <span className="ads-price">
+    <div className={adPriceStyles.itemRight}>
+      <span className={adPriceStyles.adsPrice}>
         <FontAwesomeIcon className="icon-price" icon={faMoneyBill1} />
         {Number(price).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
       </span>

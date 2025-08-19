@@ -4,14 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { Advertisement } from '../../../../types/globalTypes';
 import '../../../shared/styles/general.scss';
+import adLocationStyles from '../../styles/adInfoBlock.module.scss';
 
 interface Props {
   location: Advertisement['location'];
 }
 
 const AdLocation: React.FC<Props> = ({ location }) => (
-  <div className="ads-location">
-    <FontAwesomeIcon className='location' icon={faLocationDot} />
+  <div className={adLocationStyles.adsLocation}>
+    <FontAwesomeIcon className={adLocationStyles.location} icon={faLocationDot} />
     {location}
   </div>
 );

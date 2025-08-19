@@ -49,3 +49,25 @@
     }
 }
 
+@mixin imageWraperFeed {
+    width: 100%;
+    aspect-ratio: 1/1;
+    margin-bottom: .7rem;
+    overflow: hidden;
+    border-radius: .4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: variables.$secondary-light;
+}
+
+@mixin feedImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    border-radius: .4rem;
+    box-shadow: 0px -5px 21px 5px rgba(0,0,0,0.38);
+    background: variables.$secondary-light;
+}

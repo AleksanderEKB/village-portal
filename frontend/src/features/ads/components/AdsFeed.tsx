@@ -8,9 +8,8 @@ import { Link } from 'react-router-dom';
 import AdPriceBlock from './AdInfoBlock/AdPrice';
 import AdCategory from './AdInfoBlock/AdCategory';
 import AdTitleDate from './AdInfoBlock/AdTitle';
-import AdUserInfo from '../components/AdInfoBlock/AdUserInfo';
+import UserInfo from '../../shared/corpusculars/UserInfo/UserInfo';
 import AdCardLink from '../components/AdInfoBlock/AdCardLink';
-import '../styles/scss_feed/main.scss';
 import adsFeedStyles from '../styles/adsFeed.module.scss';
 
 export const getDefaultCategoryImage = (category: AdsCategory | string) =>
@@ -50,12 +49,12 @@ const AdsFeed: React.FC = () => {
         <div className={adsFeedStyles.adsGrid}>
           {ads.map(ad => (
             <div className={adsFeedStyles.adsCard} key={ad.id}>
-              <AdUserInfo user={ad.user} />
+              <UserInfo user={ad.user} />
               <AdCardLink ad={ad}>
                 <AdCategory category={ad.category} />
-                <hr />
+                {/* <hr /> */}
                 <AdTitleDate title={ad.title} />
-                <hr />
+                {/* <hr /> */}
                 <AdPriceBlock price={ad.price} />
               </AdCardLink>
             </div>

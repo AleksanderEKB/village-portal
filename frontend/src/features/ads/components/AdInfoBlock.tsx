@@ -7,6 +7,7 @@ import AdLocation from './AdInfoBlock/AdLocation';
 import AdContact from './AdInfoBlock/AdContact';
 import AdTitle from './AdInfoBlock/AdTitle';
 import AdCategory from './AdInfoBlock/AdCategory';
+import adInfoBlockStyles from '../styles/adInfoBlock.module.scss';
 
 
 interface Props {
@@ -15,7 +16,11 @@ interface Props {
 }
 
 const AdInfoBlock: React.FC<Props> = ({ ad, desktop }) => (
-  <div className={`ads-info-block ${desktop ? 'info-block-desktop' : 'info-block-mobile'}`}>
+  <div
+    className={`${adInfoBlockStyles.adsInfoBlock} ${
+      desktop ? adInfoBlockStyles.infoBlockDesktop : adInfoBlockStyles.infoBlockMobile
+    }`}
+  >
     <AdCategory category={ad.category} />
     <AdTitle title={ad.title} />
     <hr />

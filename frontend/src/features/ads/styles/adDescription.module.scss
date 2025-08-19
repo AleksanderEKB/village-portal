@@ -1,0 +1,21 @@
+.adsDescription {
+  /* Адаптивная типографика: мягко уменьшаем шрифт на меньших ширинах */
+  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem);
+  line-height: 1.55;
+  margin-bottom: .3rem;
+  padding: 0 .5rem;
+  flex: 1;
+
+  /* Равномерное заполнение ширины колонки */
+  text-align: justify;
+  text-justify: inter-word;
+
+  /* Переносим длинные слова/URL, чтобы не ломать сетку */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  /* Чуть меньше межбуквенный зазор для плотного текста на узких экранах */
+  @media (max-width: 1024px) {
+    letter-spacing: 0.005em;
+  }
+}

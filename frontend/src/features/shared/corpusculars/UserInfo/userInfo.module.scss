@@ -1,6 +1,6 @@
-@use '../../shared/styles/mixins/main-mixins' as mixins;
+@use '../../styles/mixins/main-mixins' as mixins;
 
-    .adsUserInfo {
+    .UserInfo {
         @include mixins.userInfo;
     }
     
