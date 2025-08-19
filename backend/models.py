@@ -79,22 +79,3 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
         super().delete(*args, **kwargs)
 
     
-
-class News(models.Model):
-    title = models.CharField(max_length=100, verbose_name="Заголовок")
-    content = models.TextField(verbose_name="Содержание")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    image = models.ImageField(upload_to='img/', null=True, blank=True, verbose_name="Изображение")
-    slug = models.SlugField(unique=True, max_length=100, blank=True, verbose_name="Слаг")
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(unidecode(self.title))
-        super(News, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = "Новость"
-        verbose_name_plural = "Новости"

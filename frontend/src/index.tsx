@@ -11,7 +11,6 @@ import UserProfileView from './features/userProfile/components/UserProfileView';
 import store from './app/store';
 import Header from './features/header/components/Header';
 import HamburgerMenu from './features/menu/components/HamburgerMenu';
-import NewsPage from './features/news/components/newsesPage';
 import PrivateRoute from './features/shared/components/PrivateRoute';
 import PostForm from './features/posts/components/PostForm';
 import PostFeed from './features/posts/components/PostFeed';
@@ -60,7 +59,6 @@ const Main: React.FC = () => {
       {location.pathname === '/' && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/news" element={<NewsPage />} />
         <Route path="/posts" element={<PostFeed />} />
         <Route path="/post/:postId" element={<PostPage />} />
         <Route path="/create-post" element={<PrivateRoute><PostForm mode="create" /></PrivateRoute>} />

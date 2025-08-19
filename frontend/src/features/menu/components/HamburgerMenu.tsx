@@ -34,7 +34,6 @@ const HamburgerMenu: React.FC = () => {
         )}
         <Link to="/" onClick={toggleMenu}>Главная</Link>
         <Link to="/ads" onClick={toggleMenu}>Объявления</Link>
-        <Link to="/news" onClick={toggleMenu}>Новости</Link>
         <Link to="/info/social" onClick={toggleMenu}>Социальная информация</Link>
         <Link to="/posts" onClick={toggleMenu}>Лента постов</Link>
         {isAuthenticated ? (

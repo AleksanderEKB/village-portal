@@ -9,21 +9,6 @@ from abstract.views import AbstractViewSet
 from rest_framework.response import Response
 from rest_framework import status
 
-class NewsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = News.objects.all().order_by('-created_at')
-    serializer_class = NewsSerializer
-    lookup_field = 'slug'
-    permission_classes = (AllowAny,)
-
-    def get_object(self):
-        queryset = self.get_queryset()
-        slug = self.kwargs.get('slug')
-        return get_object_or_404(queryset, slug=slug)
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        return context
 
 class UserViewSet(AbstractViewSet):
     http_method_names = ('patch', 'get', 'delete')

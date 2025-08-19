@@ -1,7 +1,7 @@
 # backend/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import NewsViewSet, UserViewSet
+from .views import UserViewSet
 from auth.viewsets import RegisterViewSet, LoginViewSet, RefreshViewSet
 from post.views import PostViewSet
 from comment.views import CommentViewSet
@@ -11,7 +11,6 @@ from rest_framework_nested.routers import NestedDefaultRouter
 from ads.views import AdvertisementViewSet
 
 router = DefaultRouter()
-router.register(r'news', NewsViewSet, basename='news')
 router.register(r'user', UserViewSet, basename='user')
 router.register(r'auth/register', RegisterViewSet, basename='auth-register')
 router.register(r'auth/login', LoginViewSet, basename='auth-login')
