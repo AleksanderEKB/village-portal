@@ -1,37 +1,53 @@
 @use '../../shared/styles/mixins/main-mixins' as mixins;
 
 
-.statusCircle {
-  margin-right: 8px;
-  &.statusActive {
-    color: green;
-  }
-  &.statusInactive {
-    color: red;
-  }
+.ownerPanelWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: .8rem;
 }
 
 .statusWrapper {
   display: flex;
   align-items: center;
-  gap: 6px; // расстояние между кругом и текстом
+  gap: .4rem;
+  vertical-align: middle;
+}
+
+.statusCircle {
+  font-size: 1.5rem;
+  vertical-align: middle;
+  position: relative;
+  top: -.125rem;
+  border-radius: 50%;
+  &.statusActive {
+    color: #1eff00;
+    border: solid .15rem #ffffffa1;
+  }
+  &.statusInactive {
+    color: red;
+    border: solid .15rem #570000a1;
+  }
 }
 
 .statusText {
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 500;
   color: #333;
-
-  &.active {
-    color: green;
-  }
-
-  &.inactive {
-    color: gray;
-  }
+  line-height: 1;
+  display: flex;
+  align-items: center;
 }
+
 
 .panelActions {
     @include mixins.iconActions;
     justify-content: flex-end;
 }
+
+.actionBtn {
+  @include mixins.actionBtn;
+}
+

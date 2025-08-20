@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatTimeElapsed } from '../../../shared/utils/formatTimeElapsed';
 import { Advertisement } from '../../../../types/globalTypes';
+import adsDateStyles from '../../styles/adsDate.module.scss';
 
 interface Props {
   created_at: Advertisement['created_at'];
@@ -15,12 +16,12 @@ const AdDate: React.FC<Props> = ({ created_at, updated_at }) => {
   const wasUpdated = updated_at && !areDatesEqual(created_at, updated_at);
 
   return (
-    <div className="ads-date">
-      <span className="ads-date__created">
+    <div className={adsDateStyles.adsDate}>
+      <span className={adsDateStyles.adsDate__created}>
         Опубликовано {formatTimeElapsed(created_at)}
       </span>
       {wasUpdated && (
-      <span className="ads-date__updated">
+      <span className={adsDateStyles.adsDate__updated}>
         Изменено {formatTimeElapsed(updated_at)}
       </span>
       )}

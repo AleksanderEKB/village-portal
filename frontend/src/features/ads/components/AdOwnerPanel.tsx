@@ -1,4 +1,3 @@
-// frontend/src/features/ads/components/AdOwnerPanel.tsx
 import React from 'react';
 import '../styles/scss_page/main.scss';
 import type { Advertisement } from '../../../types/globalTypes';
@@ -29,58 +28,52 @@ const AdOwnerPanel: React.FC<AdOwnerPanelProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="ad-owner-panel">
-      {/* Кнопки действий справа */}
-      <div className="ad-actions">
-        {/* Индикатор статуса */}
-        <div className={adOwnerPanelStyles.statusWrapper}>
-          <FontAwesomeIcon
-            icon={faCircle}
-            className={`${adOwnerPanelStyles.statusCircle} ${
-              ad.is_active ? adOwnerPanelStyles.statusActive : adOwnerPanelStyles.statusInactive
-            }`}
-            title={ad.is_active ? 'Опубликовано' : 'Скрыто'}
-          />
-          <span className={adOwnerPanelStyles.statusText}>
-            {ad.is_active ? 'Опубликовано' : 'Скрыто'}
-          </span>
-        </div>
-
-        {/* Переключатель статуса */}
-        <div className={adOwnerPanelStyles.panelActions}>
-          <button
-            type="button"
-            className="action-btn"
-            title={ad.is_active ? 'Скрыть' : 'Опубликовать снова'}
-            onClick={onSwitchStatus}
-            disabled={switching}
-            aria-pressed={ad.is_active}
-            aria-label={ad.is_active ? 'Скрыть объявление' : 'Опубликовать объявление'}
-          >
-            <FontAwesomeIcon icon={ad.is_active ? faToggleOn : faToggleOff} />
-          </button>
-          {/* Редактировать */}
-          <button
-            type="button"
-            className="action-btn"
-            onClick={() => navigate(`/ads/${ad.slug}/edit`)}
-            title="Редактировать"
-            aria-label="Редактировать объявление"
-          >
-            <FontAwesomeIcon icon={faPenToSquare} />
-          </button>
-          {/* Удалить */}
-          <button
-            type="button"
-            className="action-btn action-delete"
-            onClick={onDelete}
-            title="Удалить"
-            aria-label="Удалить объявление"
-          >
-            <FontAwesomeIcon icon={faTrash} />
-          </button>
-                </div>
-        </div>
+    <div className={adOwnerPanelStyles.ownerPanelWrapper}>
+      {/* Левая часть — статус */}
+      <div className={adOwnerPanelStyles.statusWrapper}>
+        <FontAwesomeIcon
+          icon={faCircle}
+          className={`${adOwnerPanelStyles.statusCircle} ${
+            ad.is_active ? adOwnerPanelStyles.statusActive : adOwnerPanelStyles.statusInactive
+          }`}
+          title={ad.is_active ? 'Опубликовано' : 'Скрыто'}
+        />
+        <span className={adOwnerPanelStyles.statusText}>
+          {ad.is_active ? 'Опубликовано' : 'Скрыто'}
+        </span>
+      </div>
+      {/* Правая часть — действия */}
+      <div className={adOwnerPanelStyles.panelActions}>
+        <button
+          type="button"
+          className={adOwnerPanelStyles.actionBtn}
+          title={ad.is_active ? 'Скрыть' : 'Опубликовать снова'}
+          onClick={onSwitchStatus}
+          disabled={switching}
+          aria-pressed={ad.is_active}
+          aria-label={ad.is_active ? 'Скрыть объявление' : 'Опубликовать объявление'}
+        >
+          <FontAwesomeIcon icon={ad.is_active ? faToggleOn : faToggleOff} />
+        </button>
+        <button
+          type="button"
+          className={adOwnerPanelStyles.actionBtn}
+          onClick={() => navigate(`/ads/${ad.slug}/edit`)}
+          title="Редактировать"
+          aria-label="Редактировать объявление"
+        >
+          <FontAwesomeIcon icon={faPenToSquare} />
+        </button>
+        <button
+          type="button"
+          className={adOwnerPanelStyles.actionBtn}
+          onClick={onDelete}
+          title="Удалить"
+          aria-label="Удалить объявление"
+        >
+          <FontAwesomeIcon icon={faTrash} />
+        </button>
+      </div>
     </div>
   );
 };
