@@ -199,7 +199,6 @@ const AdsForm: React.FC = () => {
             validationError={validationErrors.images}
           />
         )}
-
         <AdditionalImagesList
           show={additionalImagesAllowed}
           serverImages={form.server_images}

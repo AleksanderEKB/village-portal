@@ -142,6 +142,7 @@ REST_FRAMEWORK = {
     # Лимиты для скоупов
     'DEFAULT_THROTTLE_RATES': {
         'comment-create': '5/min',  # не более 5 созданий комментариев в минуту
+        'ads-create': '5/min',
     },
 }
 

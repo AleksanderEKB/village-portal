@@ -3,12 +3,31 @@ from rest_framework import serializers
 from django.db import models
 from .models import Advertisement, AdvertisementImage, Category
 from backend.serializers import UserSerializer
+from common.sanitizers import sanitize_html, strip_all_html
+
+# --- Вспомогательное: санитизация текстовых полей ---
+def _sanitize_text_fields(data: dict) -> dict:
+    """
+    Чистим поля:
+      - title, location — полностью от HTML (strip_all_html)
+      - description — пропускаем через белый список (sanitize_html)
+    """
+    if 'title' in data and data['title'] is not None:
+        data['title'] = strip_all_html(str(data['title'])).strip()
+    if 'location' in data and data['location'] is not None:
+        data['location'] = strip_all_html(str(data['location'])).strip()
+    if 'description' in data and data['description'] is not None:
+        # разрешаем безопасный HTML в описании
+        data['description'] = sanitize_html(str(data['description'])).strip()
+    return data
 
 # Валидация изображений
 def validate_image(image):
-    if image.size > 5*1024*1024:
+    if image.size > 5 * 1024 * 1024:
         raise serializers.ValidationError("Максимальный размер изображения — 5Мб.")
-    if not image.content_type.startswith('image/'):
+    # У некоторых стораджей/клиентов content_type может отсутствовать — подстрахуемся
+    content_type = getattr(image, "content_type", "") or ""
+    if not content_type.startswith('image/'):
         raise serializers.ValidationError("Загружайте только изображения.")
 
 class AdvertisementImageSerializer(serializers.ModelSerializer):
@@ -38,6 +57,9 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     def validate(self, data):
         request = self.context.get('request')
 
+        # 🔒 Санитизация текстовых полей
+        data = _sanitize_text_fields(data)
+
         # Проверка для изображений
         if request and request.method in ['POST', 'PUT', 'PATCH']:
             images_data = request.FILES.getlist('images')
@@ -60,10 +82,12 @@ class AdvertisementSerializer(serializers.ModelSerializer):
 
         # Валидация телефона
         contact_phone = data.get('contact_phone')
-        if contact_phone and not contact_phone.isdigit():
-            raise serializers.ValidationError("Телефон должен содержать только цифры.")
-        if contact_phone and not (7 <= len(contact_phone) <= 15):
-            raise serializers.ValidationError("Номер телефона должен содержать от 7 до 15 цифр.")
+        if contact_phone:
+            phone = str(contact_phone)
+            if not phone.isdigit():
+                raise serializers.ValidationError("Телефон должен содержать только цифры.")
+            if not (7 <= len(phone) <= 15):
+                raise serializers.ValidationError("Номер телефона должен содержать от 7 до 15 цифр.")
 
         return data
 
@@ -95,19 +119,24 @@ class AdvertisementCreateSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
+        # 🔒 Санитизация текстовых полей
+        data = _sanitize_text_fields(data)
+
         contact_phone = data.get('contact_phone')
-        if contact_phone and not contact_phone.isdigit():
-            raise serializers.ValidationError("Телефон должен содержать только цифры.")
-        if contact_phone and not (7 <= len(contact_phone) <= 15):
-            raise serializers.ValidationError("Номер телефона должен содержать от 7 до 15 цифр.")
+        if contact_phone:
+            phone = str(contact_phone)
+            if not phone.isdigit():
+                raise serializers.ValidationError("Телефон должен содержать только цифры.")
+            if not (7 <= len(phone) <= 15):
+                raise serializers.ValidationError("Номер телефона должен содержать от 7 до 15 цифр.")
 
         request = self.context.get('request')
-        images = request.FILES.getlist('images')
+        images = request.FILES.getlist('images') if request else []
         if len(images) > 5:
             raise serializers.ValidationError('Можно добавить не более 5 изображений к одному объявлению.')
         for img in images:
             validate_image(img)
-        main_image = request.FILES.get('main_image')
+        main_image = request.FILES.get('main_image') if request else None
         if main_image:
             validate_image(main_image)
         # Проверка на совпадение имени основного и дополнительного изображения
@@ -125,7 +154,7 @@ class AdvertisementCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get('request')
-        images = request.FILES.getlist('images')
+        images = request.FILES.getlist('images') if request else []
         ad = Advertisement.objects.create(**validated_data)
         for i, image in enumerate(images):
             AdvertisementImage.objects.create(advertisement=ad, image=image, order=i)
