@@ -1,3 +1,4 @@
+// frontend/src/features/ads/components/CustomSelect.tsx
 import React, { useRef, useEffect, useState } from 'react';
 import type { AdsCategory } from '../../../types/globalTypes';
 

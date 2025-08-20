@@ -15,8 +15,17 @@ import {
 import { useAdForm } from '../utils/useAdsForm';
 import CustomSelect from './CustomSelect';
 import '../styles/scss_ads-form/main.scss';
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+// атомарные компоненты
+import AdsFormHeading from '../components/AtomicForm/AdsFormHeading';
+import FieldError from '../components/AtomicForm/FieldError';
+import TextInput from '../components/AtomicForm/TextInput';
+import TextArea from '../components/AtomicForm/TextArea';
+import PriceField from '../components/AtomicForm/PriceField';
+import MainImageUploader from '../components/AtomicForm/MainImageUploader';
+import AdditionalImagesUploader from '../components/AtomicForm/AdditionalImagesUploader';
+import AdditionalImagesList from '../components/AtomicForm/AdditionalImagesList';
+import SubmitButton from '../components/AtomicForm/SubmitButton';
 
 const AdsForm: React.FC = () => {
   const { slug } = useParams<{ slug?: string }>();
@@ -24,7 +33,9 @@ const AdsForm: React.FC = () => {
   const navigate = useNavigate();
 
   const currentAd = useSelector((state: RootState) => state.ads.currentAd);
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
 
   useEffect(() => {
     if (slug) dispatch(fetchAdById(slug));
@@ -59,47 +70,58 @@ const AdsForm: React.FC = () => {
   });
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, ''); // Оставляем только цифры
-    setForm(prev => ({ ...prev, contact_phone: value }));
+    const value = e.target.value.replace(/\D/g, '');
+    setForm((prev) => ({ ...prev, contact_phone: value }));
   };
 
-  const handleCategoryChange = ({ name, value }: { name: string; value: AdsCategory }) => {
-    setForm((prev: typeof form) => ({
+  const handleCategoryChange = ({
+    name,
+    value,
+  }: {
+    name: string;
+    value: AdsCategory;
+  }) => {
+    setForm((prev) => ({
       ...prev,
       [name]: value,
       images: allowAdditionalImages(value) ? prev.images : [],
     }));
   };
 
-  
-
   function getInputValidationClass(field: string) {
     if (validationErrors[field]) return 'input-error';
+    const val = form[field as keyof typeof form];
     if (
-      form[field as keyof typeof form] &&
-      typeof form[field as keyof typeof form] === 'string' &&
-      (form[field as keyof typeof form] as string).trim().length > 0 &&
+      val &&
+      typeof val === 'string' &&
+      (val as string).trim().length > 0 &&
       !validationErrors[field]
-    ) return 'input-success';
+    )
+      return 'input-success';
     return '';
   }
 
-  if (!isAuthenticated) return <div>Только для зарегистрированных пользователей</div>;
+  if (!isAuthenticated)
+    return <div>Только для зарегистрированных пользователей</div>;
 
   const showPriceInput = getPriceInputState(form.category);
   const pricePlaceholder = getPricePlaceholder(form.category);
   const titlePlaceholder = getTitlePlaceholder(form.category);
   const additionalImagesAllowed = allowAdditionalImages(form.category);
-  const mainImageInputRef = useRef<HTMLInputElement>(null);
-  const additionalImagesInputRef = useRef<HTMLInputElement>(null);
+  const mainImageInputRef = React.useRef<HTMLInputElement>(null);
+  const additionalImagesInputRef = React.useRef<HTMLInputElement>(null);
   const remainingImagesCount = Math.max(0, MAX_IMAGES - totalImagesCount);
+  const isEdit = !!slug;
 
   return (
     <>
-      <h1 className="ads-form__heading">
-        {slug ? "Редактирование объявления" : "Создание объявления"}
-      </h1>
-      <form className="ads-form" onSubmit={handleSubmit} encType="multipart/form-data">
+      <AdsFormHeading isEdit={isEdit} />
+
+      <form
+        className="ads-form"
+        onSubmit={handleSubmit}
+        encType="multipart/form-data"
+      >
         <CustomSelect
           name="category"
           value={form.category}
@@ -107,7 +129,7 @@ const AdsForm: React.FC = () => {
           onChange={handleCategoryChange}
         />
 
-        <input
+        <TextInput
           name="title"
           type="text"
           placeholder={titlePlaceholder}
@@ -116,9 +138,9 @@ const AdsForm: React.FC = () => {
           required
           className={getInputValidationClass('title')}
         />
-        {validationErrors.title && <div className="error">{validationErrors.title}</div>}
+        <FieldError message={validationErrors.title} />
 
-        <textarea
+        <TextArea
           name="description"
           placeholder="Описание"
           value={form.description}
@@ -126,23 +148,18 @@ const AdsForm: React.FC = () => {
           required
           className={getInputValidationClass('description')}
         />
-        {validationErrors.description && <div className="error">{validationErrors.description}</div>}
+        <FieldError message={validationErrors.description} />
 
-        {showPriceInput && (
-          <>
-            <input
-              name="price"
-              type="number"
-              placeholder={pricePlaceholder}
-              value={form.price}
-              onChange={handleChange}
-              className={getInputValidationClass('price')}
-            />
-            {validationErrors.price && <div className="error">{validationErrors.price}</div>}
-          </>
-        )}
+        <PriceField
+          show={showPriceInput}
+          value={form.price}
+          placeholder={pricePlaceholder}
+          onChange={handleChange}
+          className={getInputValidationClass('price')}
+          error={validationErrors.price}
+        />
 
-        <input
+        <TextInput
           name="location"
           type="text"
           placeholder="Город/Место"
@@ -150,9 +167,9 @@ const AdsForm: React.FC = () => {
           onChange={handleChange}
           className={getInputValidationClass('location')}
         />
-        {validationErrors.location && <div className="error">{validationErrors.location}</div>}
+        <FieldError message={validationErrors.location} />
 
-        <input
+        <TextInput
           name="contact_phone"
           type="text"
           placeholder="Телефон (только цифры)"
@@ -160,115 +177,44 @@ const AdsForm: React.FC = () => {
           onChange={handlePhoneChange}
           className={getInputValidationClass('contact_phone')}
         />
-        {validationErrors.contact_phone && <div className="error">{validationErrors.contact_phone}</div>}
+        <FieldError message={validationErrors.contact_phone} />
 
-        <div className="upload-btn-wrapper">
-          <input
-            type="file"
-            accept="image/*"
-            id="main-img-upload"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              handleMainImageChange(e);
-              if (mainImageInputRef.current) mainImageInputRef.current.value = '';
-            }}
-            ref={mainImageInputRef}
-          />
-          <label htmlFor="main-img-upload" className="upload-btn">
-            {(form.main_image || form.main_image_url) ? 'Изменить изображение' : 'Добавить основное изображение'}
-          </label>
-        </div>
-        {(form.main_image || form.main_image_url) && (
-          <div className="main-image-preview">
-            {form.main_image ? (
-              form.main_image.type?.startsWith('image/') ? (
-                <img
-                  src={URL.createObjectURL(form.main_image)}
-                  alt="Превью"
-                />
-              ) : (
-                <div className="no-image">Не изображение</div>
-              )
-            ) : (
-              <img src={form.main_image_url!} alt="Превью" />
-            )}
-            <button
-              type="button"
-              onClick={handleClearMainImage}
-              aria-label="Очистить основное изображение"
-              title="Очистить"
-              className="remove-image-btn"
-            >
-              <FontAwesomeIcon className="icon-remove" icon={faCircleXmark} />
-            </button>
-          </div>
-        )}
-        {validationErrors.main_image && <div className="error">{validationErrors.main_image}</div>}
+        <MainImageUploader
+          mainImageInputRef={mainImageInputRef}
+          form={{ main_image: form.main_image, main_image_url: form.main_image_url }}
+          onChange={handleMainImageChange}
+          onClear={handleClearMainImage}
+          validationError={validationErrors.main_image}
+        />
 
         {additionalImagesAllowed && (
-          <div className="upload-btn-wrapper">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              id="additional-img-upload"
-              style={{ display: "none" }}
-              onChange={(e) => {
-                handleImagesChange(e);
-                if (additionalImagesInputRef.current) additionalImagesInputRef.current.value = '';
-              }}
-              disabled={!form.main_image && !form.main_image_url || totalImagesCount >= MAX_IMAGES}
-              ref={additionalImagesInputRef}
-            />
-            <label htmlFor="additional-img-upload" className="upload-btn">
-              Дополнительные изображения (осталось {remainingImagesCount})
-            </label>
-          </div>
+          <AdditionalImagesUploader
+            inputRef={additionalImagesInputRef}
+            disabled={
+              (!form.main_image && !form.main_image_url) ||
+              totalImagesCount >= MAX_IMAGES
+            }
+            remaining={remainingImagesCount}
+            onChange={handleImagesChange}
+            validationError={validationErrors.images}
+          />
         )}
-        {validationErrors.images && <div className="error">{validationErrors.images}</div>}
 
-        {additionalImagesAllowed && (form.server_images.length > 0 || form.images.length > 0) && (
-          <div className="additional-images-list">
-            {form.server_images.map((img, idx) => (
-              <div className="img-thumb" key={img.id}>
-                <img
-                  src={img.image}
-                  alt={`image_${idx}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveServerImage(img.id)}
-                  aria-label="Удалить"
-                  className="remove-image-btn"
-                >
-                  <FontAwesomeIcon className="icon-remove" icon={faCircleXmark} />
-                </button>
-              </div>
-            ))}
-            {form.images.map((file, idx) => (
-              <div className="img-thumb" key={file.name + idx}>
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt={file.name}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(idx)}
-                  aria-label="Удалить"
-                  className="remove-image-btn"
-                >
-                  <FontAwesomeIcon className="icon-remove" icon={faCircleXmark} />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+        <AdditionalImagesList
+          show={additionalImagesAllowed}
+          serverImages={form.server_images}
+          images={form.images}
+          onRemoveServerImage={handleRemoveServerImage}
+          onRemoveImage={handleRemoveImage}
+        />
 
         {error && <div className="error">{error}</div>}
 
-        <button type="submit" disabled={loading || Object.keys(validationErrors).length > 0}>
-          {loading ? 'Отправка...' : (slug ? 'Сохранить' : 'Опубликовать')}
-        </button>
+        <SubmitButton
+          loading={loading}
+          disabled={loading || Object.keys(validationErrors).length > 0}
+          isEdit={isEdit}
+        />
       </form>
     </>
   );
