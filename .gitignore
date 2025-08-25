@@ -1,3 +1,4 @@
 bh_env/
 secrets.py
 __pycache__/
+manage.py
