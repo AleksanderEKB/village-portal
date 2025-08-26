@@ -1,4 +1,4 @@
-# auth/viewsets/login.py
+# core/auth/viewsets/login.py
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import AllowAny

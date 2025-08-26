@@ -1,0 +1,46 @@
+.header_root {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.header_image_container {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.header_image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-width: 100%;
+}
+
+
+.header_text {
+    position: absolute;
+    top: 4vw;
+    left: 4vw;
+    color: rgb(41, 63, 83);
+    text-shadow: 0 0 5px rgba(8, 151, 151, 0.7);
+    font-family: caveat;
+}
+
+.header_text h1 {
+    margin: 0;
+    font-size: 7vw;
+    text-shadow: 
+        0 0 5px #e972cf, 
+        0 0 10px #eb33bd, 
+        0 0 15px #e031e0, 
+        0 0 20px #e033e6, 
+        0 0 25px #e77cde, 
+        0 0 30px #eb6cc5, 
+        0 0 35px #dd7ac4;
+    filter: brightness(3); /* Увеличение яркости */
+}
+

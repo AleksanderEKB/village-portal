@@ -1,0 +1,73 @@
+/* src/features/nav/hamburger.module.scss */
+.hamburgerMenu {
+  position: relative;
+}
+
+.hamburgerIcon {
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1001;
+  background: transparent;
+  border: 0;
+  padding: 6px 8px;
+}
+
+.menuContent {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  background-color: #fff;
+  border-left: 1px solid #e5e5e5;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  padding-top: 64px; // небольшой отступ от верхнего края под иконку
+
+  a {
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #111;
+    border-bottom: 1px solid #f2f2f2;
+
+    &:hover {
+      background: #fafafa;
+    }
+  }
+}
+
+.open {
+  width: 260px;
+}
+
+.userGreeting {
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ececec;
+}
+
+.logoutBtn {
+  background: transparent;
+  border: 0;
+  text-align: left;
+  padding: 12px 16px;
+  cursor: pointer;
+  color: #c00;
+  border-bottom: 1px solid #f2f2f2;
+
+  &:hover {
+    background: #fff5f5;
+  }
+}

@@ -1,0 +1,20 @@
+@use './variables';
+
+/* Сброс */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Общие стили для body */
+body {
+    background: variables.$main-bg;
+    overflow-y: scroll; /* вертикальная прокрутка */
+    overflow-x: hidden; /* отключаем горизонтальную */
+    scrollbar-width: none; /* Firefox */
+}
+
+body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}

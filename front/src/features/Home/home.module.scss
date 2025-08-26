@@ -1,0 +1,10 @@
+@use '../shared/styles/variables';
+
+.test {
+   border: variables.$color-1 solid .5rem;
+}
+
+.test-2 {
+    margin-top: 1rem;
+    border: variables.$color-2 solid .5rem;
+}

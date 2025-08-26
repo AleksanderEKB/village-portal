@@ -1,4 +1,4 @@
-# auth/serializers/register.py
+# core/auth/serializers/register.py
 from rest_framework import serializers
 
 from core.user.serializers import UserSerializer
