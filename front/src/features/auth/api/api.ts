@@ -9,7 +9,7 @@ export async function apiLogin(dto: LoginDto): Promise<LoginResponse> {
 export async function apiRegister(dto: RegisterDto): Promise<LoginResponse> {
   const form = new FormData();
   form.append('email', dto.email);
-  form.append('username', dto.username);
+  // form.append('username', dto.username);
   form.append('first_name', dto.first_name);
   form.append('last_name', dto.last_name);
   form.append('password', dto.password);

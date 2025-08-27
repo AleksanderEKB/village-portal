@@ -1,8 +1,9 @@
+// front/src/features/auth/model/types.ts
 export type UUIDHex = string;
 
 export interface IUser {
   id: UUIDHex;           // public_id hex
-  username: string;
+  // username: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -28,7 +29,7 @@ export interface LoginDto {
 
 export interface RegisterDto {
   email: string;
-  username: string;
+  // username: string;
   first_name: string;
   last_name: string;
   password: string;

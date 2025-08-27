@@ -8,7 +8,7 @@ type SubmitParams = {
     email: string;
     password: string;
     confirmPassword: string;
-    username: string;
+    // username: string;
     first_name: string;
     last_name: string;
     avatar: File | null;
@@ -38,7 +38,7 @@ export function useAuthSubmit() {
     const res = await dispatch(
       registerThunk({
         email: fields.email,
-        username: fields.username,
+        // username: fields.username,
         first_name: fields.first_name,
         last_name: fields.last_name,
         password: fields.password,

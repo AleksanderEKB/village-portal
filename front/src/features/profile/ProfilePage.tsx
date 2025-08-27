@@ -46,7 +46,7 @@ const ProfilePage: React.FC = () => {
       <h1 className={styles.title}>Личный кабинет</h1>
       <div style={{ marginBottom: 16 }}>
         <div><b>Email:</b> {user.email}</div>
-        <div><b>Юзернейм:</b> {user.username}</div>
+        <div><b>Юзернейм:</b> {user.first_name}</div>
       </div>
 
       <form onSubmit={onSave}>

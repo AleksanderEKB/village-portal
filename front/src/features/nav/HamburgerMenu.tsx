@@ -42,7 +42,7 @@ const HamburgerMenu: React.FC = () => {
       <nav className={`${styles.menuContent} ${isOpen ? styles.open : ''}`} role="navigation">
         {isAuthenticated && user && (
           <div className={styles.userGreeting}>
-            Приветствую, {user.username ?? user.email ?? 'пользователь'}
+            Приветствую, {user.first_name ?? user.email ?? 'пользователь'}
           </div>
         )}
 
