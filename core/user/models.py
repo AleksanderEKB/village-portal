@@ -52,6 +52,9 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now_add=True)
+    is_email_verified = models.BooleanField(default=False)
+    email_verification_token = models.UUIDField(null=True, blank=True, default=None)
+    email_verification_sent = models.DateTimeField(null=True, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []  # ← username убран

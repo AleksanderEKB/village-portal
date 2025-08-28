@@ -4,12 +4,12 @@ import { useSelector } from 'react-redux';
 import { selectAuthError, selectAuthLoading } from '../model/selectors';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './auth.module.scss';
-
 import { useAuthForm } from '../hooks/useAuthForm';
 import { getInitialMode } from '../utils/getInitialMode';
 import { useAuthSubmit } from '../hooks/useAuthSubmit';
 import AvatarPreview from '../ui/Avatar/AvatarPreview';
 import Modal from '../ui/Clue/Modal';
+import { toast } from 'react-toastify';
 
 const strengthText: Record<'very-weak' | 'weak' | 'medium' | 'strong' | 'very-strong', string> = {
   'very-weak': 'Очень слабый',
@@ -72,7 +72,13 @@ const AuthPage: React.FC = () => {
       mode,
       fields,
       setLocalError,
-      onSuccess: () => navigate('/profile'),
+      onSuccess: () => {
+        toast.success(
+          "На ваш email отправлено письмо для подтверждения. Перейдите по ссылке из письма для активации аккаунта.",
+          { autoClose: 8000 }
+        );
+        navigate('/login');
+      },
     });
   };
 
@@ -267,7 +273,15 @@ const AuthPage: React.FC = () => {
                 id="avatar"
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleFieldChange('avatar', e.target.files?.[0] ?? null)}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  if (file && !file.type.startsWith('image/')) {
+                    toast.error('Файл не является изображением');
+                    e.target.value = '';
+                    return;
+                  }
+                  handleFieldChange('avatar', file);
+                }}
                 aria-invalid={!!errors.avatar}
                 aria-describedby={errors.avatar ? 'avatar-error' : undefined}
               />

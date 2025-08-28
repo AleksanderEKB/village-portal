@@ -171,3 +171,10 @@ SIMPLE_JWT = {
 
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'pankutak@yandex.ru'
+EMAIL_HOST_PASSWORD = 'kndtxtxqyqgyvrhz'
+DEFAULT_FROM_EMAIL = 'pankutak@yandex.ru'  # Можно любой, но лучше совпадающий с EMAIL_HOST_USER или доменом

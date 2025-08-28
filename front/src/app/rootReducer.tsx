@@ -3,8 +3,6 @@ import { combineReducers } from 'redux';
 import authReducer from '../features/auth/model/authSlice';
 
 
-
-
 const rootReducer = combineReducers({
     auth: authReducer,
 });

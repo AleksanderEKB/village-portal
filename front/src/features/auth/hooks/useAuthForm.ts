@@ -4,9 +4,11 @@ import {
   validateEmail,
   validateFirstName,
   validateLastName,
-  validatePassword,
-  type PasswordValidationResult,
 } from '../utils/validateAuthPage';
+import {
+  validatePassword,
+  type PasswordValidationResult
+} from '../utils/validatePassword';
 import { validateAvatar } from '../utils/validateAvatar';
 
 export type AuthFormFields = {

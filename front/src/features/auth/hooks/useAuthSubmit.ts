@@ -1,3 +1,4 @@
+// front/src/features/auth/hooks//useAuthSubmit.ts
 import { useCallback } from 'react';
 import { useAppDispatch } from '../../../app/hook';
 import { loginThunk, registerThunk } from '../model/authSlice';

@@ -1,5 +1,4 @@
 // front/src/features/auth/utils/validateAvatar.ts
-
 export function isImageFile(file: File | null): boolean {
   if (!file) return false;
   return file.type.startsWith('image/');

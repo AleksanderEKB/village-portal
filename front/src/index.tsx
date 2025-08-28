@@ -7,7 +7,6 @@ import store from "./app/store";
 import { useAppDispatch } from "./app/hook";
 import { hydrateFromStorage } from "./features/auth/model/authSlice";
 import "../src/features/shared/styles/global.scss";
-
 import AppLayout from "./layouts/AppLayout";
 import AuthLayout from "./layouts/AuthLayout";
 
@@ -26,6 +25,8 @@ const ProfilePage = React.lazy(() =>
 const PrivateRoute = React.lazy(() =>
   import(/* webpackChunkName: "private" */ "./features/auth/ui/PrivateRoute/PrivateRoute")
 );
+
+const EmailVerifyPage = React.lazy(() => import('./features/auth/Pages/EmailVerifyPage'));
 
 const ToastContainerLazy = React.lazy(() =>
   import(/* webpackChunkName: "toastify" */ "react-toastify").then((m) => ({
@@ -53,6 +54,7 @@ const Main: React.FC = () => {
         {/* Оба URL используют единый компонент с табами */}
         <Route path="/login" element={<AuthPage />} />
         <Route path="/register" element={<AuthPage />} />
+        <Route path="/verify-email/:token" element={<EmailVerifyPage />} />
 
         <Route
           path="/profile"
