@@ -17,6 +17,7 @@ export type AuthFormFields = {
   confirmPassword: string;
   first_name: string;
   last_name: string;
+  phone_number: string;
   avatar: File | null;
 };
 
@@ -24,6 +25,7 @@ export type AuthFormErrors = {
   email?: string;
   first_name?: string;
   last_name?: string;
+  phone_number?: string;
   password?: string;
   confirmPassword?: string;
   avatar?: string;
@@ -38,6 +40,7 @@ export function useAuthForm(initialMode: 'login' | 'register') {
     confirmPassword: '',
     first_name: '',
     last_name: '',
+    phone_number: '',
     avatar: null,
   });
 
@@ -131,6 +134,17 @@ export function useAuthForm(initialMode: 'login' | 'register') {
                     username: fields.email?.split('@')[0],
                   },
                 }).error ?? undefined
+              : undefined,
+        }));
+      }
+
+      if (field === 'phone_number') {
+        const valueStr = value as string;
+        setErrors((prev) => ({
+          ...prev,
+          phone_number:
+            mode === 'register' && valueStr && !/^\+?[0-9]{7,18}$/.test(valueStr)
+              ? 'Некорректный номер'
               : undefined,
         }));
       }

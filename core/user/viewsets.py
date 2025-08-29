@@ -22,3 +22,4 @@ class UserViewSet(AbstractViewSet):
         self.check_object_permissions(self.request, obj)
 
         return obj
+    

@@ -1,16 +1,20 @@
-# core/auth/serializers/login.py
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings
 from django.contrib.auth.models import update_last_login
-
+from rest_framework.exceptions import AuthenticationFailed
 from core.user.serializers import UserSerializer
-
 
 class LoginSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
-        data = super().validate(attrs)
+        try:
+            # Вызываем стандартную проверку
+            data = super().validate(attrs)
+        except AuthenticationFailed:
+            # Здесь перехватываем ошибку и заменяем стандартное сообщение
+            raise AuthenticationFailed("Неверный логин или пароль")
 
+        # Генерируем токены и возвращаем их
         refresh = self.get_token(self.user)
 
         data['user'] = UserSerializer(self.user).data

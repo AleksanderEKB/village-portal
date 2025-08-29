@@ -7,6 +7,7 @@ export interface IUser {
   first_name: string;
   last_name: string;
   email: string;
+  phone_number?: string | null;
   is_active: boolean;
   created: string;
   updated: string;
@@ -29,9 +30,9 @@ export interface LoginDto {
 
 export interface RegisterDto {
   email: string;
-  // username: string;
   first_name: string;
   last_name: string;
+  phone_number?: string | null;
   password: string;
   avatar?: File | null;
 }

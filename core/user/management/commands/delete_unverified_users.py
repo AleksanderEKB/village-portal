@@ -1,3 +1,4 @@
+# core/user/managment/commands/delete_unverified_users.py
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from core.user.models import User

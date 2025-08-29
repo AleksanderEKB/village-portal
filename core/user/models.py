@@ -1,10 +1,11 @@
 # core/user/models.py
 import uuid
 from django.db import models
-
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
+
+from phonenumber_field.modelfields import PhoneNumberField
 
 from core.abstract.models import AbstractManager, AbstractModel
 
@@ -46,6 +47,7 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(db_index=True, unique=True)
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
+    phone_number = PhoneNumberField(blank=True, null=True, unique=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -57,7 +59,7 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     email_verification_sent = models.DateTimeField(null=True, blank=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []  # ← username убран
+    REQUIRED_FIELDS = []
 
     objects = UserManager()
 

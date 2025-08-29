@@ -4,6 +4,8 @@ import { apiLogin, apiRegister, apiUpdateProfile } from '../api/api';
 import type { AuthState, LoginDto, RegisterDto, LoginResponse, IUser } from './types';
 import { pickMessageFromData } from '../../shared/utils/httpError';
 
+type RejectPayload = { status: number; data: any };
+
 const initialState: AuthState = {
   user: null,
   access: null,
@@ -13,41 +15,48 @@ const initialState: AuthState = {
   isAuthenticated: false,
 };
 
-export const loginThunk = createAsyncThunk<LoginResponse, LoginDto, { rejectValue: string }>(
+export const loginThunk = createAsyncThunk<LoginResponse, LoginDto, { rejectValue: RejectPayload }>(
   'auth/login',
   async (dto, { rejectWithValue }) => {
     try {
       const res = await apiLogin(dto);
       return res;
     } catch (e: any) {
-      const msg = pickMessageFromData(e?.response?.data) ?? 'Ошибка входа';
-      return rejectWithValue(msg);
+      const status = e?.response?.status ?? 0;
+      const data = e?.response?.data ?? { detail: 'Неизвестная ошибка' };
+      return rejectWithValue({ status, data });
     }
   }
 );
 
-export const registerThunk = createAsyncThunk<LoginResponse, RegisterDto, { rejectValue: string }>(
+export const registerThunk = createAsyncThunk<LoginResponse, RegisterDto, { rejectValue: RejectPayload }>(
   'auth/register',
   async (dto, { rejectWithValue }) => {
     try {
       const res = await apiRegister(dto);
       return res;
     } catch (e: any) {
-      const msg = pickMessageFromData(e?.response?.data) ?? 'Ошибка регистрации';
-      return rejectWithValue(msg);
+      const status = e?.response?.status ?? 0;
+      const data = e?.response?.data ?? { detail: 'Неизвестная ошибка' };
+      return rejectWithValue({ status, data });
     }
   }
 );
 
-export const updateProfileThunk = createAsyncThunk<IUser, { userId: string; payload: any }, { rejectValue: string }>(
+export const updateProfileThunk = createAsyncThunk<
+  IUser,
+  { userId: string; payload: any },
+  { rejectValue: RejectPayload }
+>(
   'auth/updateProfile',
   async ({ userId, payload }, { rejectWithValue }) => {
     try {
       const res = await apiUpdateProfile(userId, payload);
       return res;
     } catch (e: any) {
-      const msg = pickMessageFromData(e?.response?.data) ?? 'Не удалось обновить профиль';
-      return rejectWithValue(msg);
+      const status = e?.response?.status ?? 0;
+      const data = e?.response?.data ?? { detail: 'Не удалось обновить профиль' };
+      return rejectWithValue({ status, data });
     }
   }
 );
@@ -69,6 +78,16 @@ export const hydrateFromStorage = createAsyncThunk<{ access: string; refresh: st
   }
 );
 
+function extractErrorMessage(payload?: RejectPayload, fallback: string = 'Ошибка'): string {
+  if (!payload) return fallback;
+  const msg =
+    pickMessageFromData(payload.data) ??
+    (typeof payload.data === 'string' ? payload.data : null) ??
+    payload.data?.detail ??
+    payload.data?.message;
+  return msg || fallback;
+}
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -86,6 +105,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // LOGIN
       .addCase(loginThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -105,9 +125,10 @@ const authSlice = createSlice({
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload ?? 'Ошибка входа';
+        state.error = extractErrorMessage(action.payload ?? undefined, 'Ошибка входа');
       })
 
+      // REGISTER
       .addCase(registerThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -127,14 +148,16 @@ const authSlice = createSlice({
       })
       .addCase(registerThunk.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload ?? 'Ошибка регистрации';
+        state.error = extractErrorMessage(action.payload ?? undefined, 'Ошибка регистрации');
       })
 
+      // UPDATE PROFILE
       .addCase(updateProfileThunk.fulfilled, (state, action: PayloadAction<IUser>) => {
         state.user = action.payload;
         localStorage.setItem('user', JSON.stringify(action.payload));
       })
 
+      // HYDRATE
       .addCase(hydrateFromStorage.fulfilled, (state, action) => {
         if (!action.payload) return;
         const { access, refresh, user } = action.payload;

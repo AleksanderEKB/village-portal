@@ -73,12 +73,14 @@ const AuthPage: React.FC = () => {
       fields,
       setLocalError,
       onSuccess: () => {
-        toast.success(
-          "На ваш email отправлено письмо для подтверждения. Перейдите по ссылке из письма для активации аккаунта.",
-          { autoClose: 8000 }
-        );
-        navigate('/login');
-      },
+        if (mode === 'register') {
+          toast.success(
+            "На ваш email отправлено письмо для подтверждения. Перейдите по ссылке из письма для активации аккаунта.",
+            { autoClose: 8000 }
+          );
+        }
+        navigate('/profile');
+      }
     });
   };
 
@@ -173,6 +175,28 @@ const AuthPage: React.FC = () => {
               {touched.last_name && errors.last_name && (
                 <div id="lastName-error" className={styles.fieldError}>
                   {errors.last_name}
+                </div>
+              )}
+            </div>
+            <div className={styles.field}>
+              <label htmlFor="phoneNumber">Телефон</label>
+              <input
+                id="phoneNumber"
+                type="tel"
+                value={fields.phone_number}
+                onChange={(e) => handleFieldChange('phone_number', e.target.value)}
+                autoComplete="tel"
+                placeholder="+79991234567"
+                className={`${styles.input} ${
+                  touched.phone_number ? (errors.phone_number ? styles.inputError : styles.inputValid) : ''
+                }`}
+                onBlur={() => handleFieldChange('phone_number', fields.phone_number)}
+                aria-invalid={!!(touched.phone_number && errors.phone_number)}
+                aria-describedby={touched.phone_number && errors.phone_number ? 'phoneNumber-error' : undefined}
+              />
+              {touched.phone_number && errors.phone_number && (
+                <div id="phoneNumber-error" className={styles.fieldError}>
+                  {errors.phone_number}
                 </div>
               )}
             </div>

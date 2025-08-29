@@ -1,3 +1,4 @@
+// front/src/features/profile/ProfilePage.tsx
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hook';
 import { selectUser } from '../auth/model/selectors';
@@ -47,6 +48,7 @@ const ProfilePage: React.FC = () => {
       <div style={{ marginBottom: 16 }}>
         <div><b>Email:</b> {user.email}</div>
         <div><b>Юзернейм:</b> {user.first_name}</div>
+        <div><b>Телефон:</b> {user.phone_number ?? <span style={{ color: '#aaa' }}>не указан</span>}</div>
       </div>
 
       <form onSubmit={onSave}>
