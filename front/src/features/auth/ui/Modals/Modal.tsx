@@ -1,4 +1,4 @@
-// front/src/features/auth/ui/Modal/Modal.tsx
+// front/src/features/auth/ui/Modals/Modal.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import modalStyles from './modal.module.scss';
 
@@ -20,6 +20,12 @@ const Modal: React.FC<ModalProps> = ({
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const lastFocused = useRef<HTMLElement | null>(null);
 
+  // держим актуальную ссылку на onClose, чтобы не переинициализировать эффект
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   // Для управления анимацией появления/скрытия
   const [visible, setVisible] = useState(open);
   const [show, setShow] = useState(open);
@@ -27,22 +33,27 @@ const Modal: React.FC<ModalProps> = ({
   useEffect(() => {
     if (open) {
       setVisible(true);
-      setTimeout(() => setShow(true), 10); // запуск анимации (must be after render)
+      // запуск анимации (должен быть после рендера)
+      const t = setTimeout(() => setShow(true), 10);
+      return () => clearTimeout(t);
     } else if (animated && visible) {
       setShow(false); // запуск анимации скрытия
-      // После завершения анимации скрытия убираем из DOM
       const timeout = setTimeout(() => setVisible(false), 260); // 250ms + запас
       return () => clearTimeout(timeout);
     } else {
       setVisible(false);
       setShow(false);
     }
-  }, [open, animated]);
+  }, [open, animated]); // <— тут всё ок
 
   useEffect(() => {
     if (!visible) return;
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onCloseRef.current();
+        return;
+      }
       if (e.key === 'Tab' && dialogRef.current) {
         const focusables = Array.from(
           dialogRef.current.querySelectorAll<HTMLElement>(
@@ -66,22 +77,26 @@ const Modal: React.FC<ModalProps> = ({
 
     lastFocused.current = document.activeElement as HTMLElement | null;
     document.addEventListener('keydown', onKey);
+
+    // Фокусируем диалог ОДИН раз при открытии
     setTimeout(() => {
       dialogRef.current?.focus();
     }, 0);
+
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      document.body.style.overflow = prevOverflow;
       lastFocused.current?.focus();
     };
-  }, [visible, onClose]);
+  }, [visible]); // <— убрали onClose из зависимостей
 
   if (!visible) return null;
 
   const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) onClose();
+    if (e.target === e.currentTarget) onCloseRef.current();
   };
 
   return (
@@ -104,14 +119,14 @@ const Modal: React.FC<ModalProps> = ({
             type="button"
             className={modalStyles.close}
             aria-label="Закрыть подсказки"
-            onClick={onClose}
+            onClick={() => onCloseRef.current()}
           >
             ×
           </button>
         </div>
         <div className={modalStyles.body}>{children}</div>
         <div className={modalStyles.footer}>
-          <button type="button" onClick={onClose} className={modalStyles.primaryBtn}>
+          <button type="button" onClick={() => onCloseRef.current()} className={modalStyles.primaryBtn}>
             Понятно
           </button>
         </div>

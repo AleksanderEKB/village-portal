@@ -135,3 +135,33 @@
 .hintBad { color: #c62828; }
 .bullet { display: inline-block; width: 8px; height: 8px; border-radius: 999px; background: currentColor; margin-top: 7px; }
 
+
+/* стили для глазика */
+.passwordField {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 100%;
+    padding-right: 40px; // чтобы текст не налезал на иконку
+  }
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    color: #1f6feb;
+  }
+}

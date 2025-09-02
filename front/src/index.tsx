@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 import store from "./app/store";
 import { useAppDispatch } from "./app/hook";
 import { hydrateFromStorage } from "./features/auth/model/authSlice";
-import "../src/features/shared/styles/global.scss";
+import "./features/shared/styles/global.scss";
 import AppLayout from "./layouts/AppLayout";
 import AuthLayout from "./layouts/AuthLayout";
 
@@ -27,6 +27,10 @@ const PrivateRoute = React.lazy(() =>
 );
 
 const EmailVerifyPage = React.lazy(() => import('./features/auth/Pages/EmailVerifyPage'));
+
+const ResetPasswordPage = React.lazy(() =>
+  import(/* webpackChunkName: "reset-password" */ './features/auth/Pages/ResetPasswordPage')
+);
 
 const ToastContainerLazy = React.lazy(() =>
   import(/* webpackChunkName: "toastify" */ "react-toastify").then((m) => ({
@@ -55,6 +59,7 @@ const Main: React.FC = () => {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/register" element={<AuthPage />} />
         <Route path="/verify-email/:token" element={<EmailVerifyPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
         <Route
           path="/profile"

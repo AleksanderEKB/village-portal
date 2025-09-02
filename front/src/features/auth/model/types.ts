@@ -3,7 +3,6 @@ export type UUIDHex = string;
 
 export interface IUser {
   id: UUIDHex;           // public_id hex
-  // username: string;
   first_name: string;
   last_name: string;
   email: string;

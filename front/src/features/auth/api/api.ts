@@ -31,3 +31,16 @@ export async function apiUpdateProfile(userId: string, payload: Partial<Omit<IUs
   const { data } = await patchForm<IUser>(`/api/user/${userId}/`, form);
   return data;
 }
+
+
+// запрос письма для восстановления
+export async function apiRequestPasswordReset(email: string): Promise<{ detail: string }> {
+  const { data } = await postJson<{ detail: string }>('/api/auth/password-reset/', { email });
+  return data;
+}
+
+// подтверждение сброса по токену
+export async function apiConfirmPasswordReset(token: string, password: string): Promise<{ detail: string }> {
+  const { data } = await postJson<{ detail: string }>('/api/auth/password-reset/confirm/', { token, password });
+  return data;
+}

@@ -57,6 +57,8 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     is_email_verified = models.BooleanField(default=False)
     email_verification_token = models.UUIDField(null=True, blank=True, default=None)
     email_verification_sent = models.DateTimeField(null=True, blank=True)
+    password_reset_token = models.UUIDField(null=True, blank=True, default=None)
+    password_reset_sent = models.DateTimeField(null=True, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
