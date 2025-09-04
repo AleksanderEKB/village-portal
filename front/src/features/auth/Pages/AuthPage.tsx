@@ -19,6 +19,7 @@ import AvatarField from '../ui/Avatar/AvatarField';
 import AuthActions from '../ui/Actions/AuthActions';
 import PasswordHintsModal from '../ui/Modals/PasswordHintsModal';
 import ForgotPasswordModal from '../ui/Modals/ForgotPasswordModal';
+import { useAuthHandlers } from '../hooks/useAuthHandlers';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -47,59 +48,18 @@ const AuthPage: React.FC = () => {
   const [fpOpen, setFpOpen] = useState(false);
   const [fpEmail, setFpEmail] = useState('');
 
-  const switchTo = (m: 'login' | 'register') => {
-    setMode(m);
-    navigate(m === 'login' ? '/login' : '/register', { replace: true });
-    setLocalError(null);
-  };
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (mode === 'register') {
-      const firstError =
-        errors.email ||
-        errors.first_name ||
-        errors.last_name ||
-        errors.password ||
-        errors.confirmPassword ||
-        errors.avatar ||
-        passwordCheck.error;
-      if (firstError) {
-        setLocalError(firstError);
-        return;
-      }
-    }
-
-    submitAuth({
-      mode,
-      fields,
-      setLocalError,
-      onSuccess: () => {
-        if (mode === 'register') {
-          toast.success(
-            'На ваш email отправлено письмо для подтверждения. Перейдите по ссылке из письма для активации аккаунта.',
-            { autoClose: 8000 }
-          );
-        }
-        navigate('/profile');
-      },
-    });
-  };
-
-  const handleForgotPassword = async () => {
-    if (!fpEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fpEmail)) {
-      toast.error('Введите корректный email');
-      return;
-    }
-    try {
-      await apiRequestPasswordReset(fpEmail);
-      toast.success('Если такой email существует, мы отправили письмо со ссылкой для сброса.');
-      setFpOpen(false);
-    } catch {
-      toast.success('Если такой email существует, мы отправили письмо со ссылкой для сброса.');
-      setFpOpen(false);
-    }
-  };
+  // Extracted handlers
+  const { switchTo, onSubmit, handleForgotPassword } = useAuthHandlers({
+    mode,
+    setMode,
+    fields,
+    errors,
+    passwordCheck,
+    setLocalError,
+    submitAuth,
+    fpEmail,
+    setFpOpen,
+  });
 
   return (
     <div className={styles.formWrap}>

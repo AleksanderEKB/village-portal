@@ -20,6 +20,7 @@ export interface AuthState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  authLoaded: boolean;
 }
 
 export interface LoginDto {

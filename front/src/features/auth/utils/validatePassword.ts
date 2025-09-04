@@ -1,3 +1,4 @@
+// front/src/features/auth/utils/validatePassword.ts
 export type PasswordStrength = 'very-weak' | 'weak' | 'medium' | 'strong' | 'very-strong';
 
 export type PasswordHint = {

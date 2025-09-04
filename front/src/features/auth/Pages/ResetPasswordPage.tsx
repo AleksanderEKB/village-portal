@@ -5,6 +5,7 @@ import styles from './auth.module.scss';
 import { apiConfirmPasswordReset } from '../api/api';
 import { toast } from 'react-toastify';
 import { validatePassword } from '../utils/validatePassword';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const ResetPasswordPage: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -13,6 +14,10 @@ const ResetPasswordPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Показ/скрытие символов
+  const [showPw, setShowPw] = useState(false);
+  const [showPw2, setShowPw2] = useState(false);
 
   const pwdCheck = useMemo(
     () =>
@@ -60,32 +65,64 @@ const ResetPasswordPage: React.FC = () => {
       <form onSubmit={onSubmit} noValidate>
         <div className={styles.field}>
           <label htmlFor="newPassword">Новый пароль</label>
-          <input
-            id="newPassword"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-            required
-            className={`${styles.input} ${pwdCheck.error ? styles.inputError : ''}`}
-          />
-          {pwdCheck.error && <div className={styles.fieldError}>{pwdCheck.error}</div>}
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="confirmPassword">Повторите пароль</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            autoComplete="new-password"
-            required
-            className={`${styles.input} ${confirm && confirm !== password ? styles.inputError : ''}`}
-          />
-          {confirm && confirm !== password && (
-            <div className={styles.fieldError}>Пароли не совпадают</div>
+          <div className={styles.passwordField}>
+            <input
+              id="newPassword"
+              type={showPw ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              required
+              className={`${styles.input} ${pwdCheck.error ? styles.inputError : ''}`}
+              aria-invalid={!!pwdCheck.error}
+              aria-describedby={pwdCheck.error ? 'new-password-error' : undefined}
+            />
+            <button
+              type="button"
+              className={styles.eyeIcon}
+              onClick={() => setShowPw((v) => !v)}
+              aria-label="Показать/скрыть новый пароль"
+            >
+              {showPw ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          {pwdCheck.error && (
+            <div id="new-password-error" className={styles.fieldError}>
+              {pwdCheck.error}
+            </div>
           )}
         </div>
+
+        <div className={styles.field}>
+          <label htmlFor="confirmPassword">Повторите пароль</label>
+          <div className={styles.passwordField}>
+            <input
+              id="confirmPassword"
+              type={showPw2 ? 'text' : 'password'}
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              autoComplete="new-password"
+              required
+              className={`${styles.input} ${confirm && confirm !== password ? styles.inputError : ''}`}
+              aria-invalid={!!(confirm && confirm !== password)}
+              aria-describedby={confirm && confirm !== password ? 'confirm-password-error' : undefined}
+            />
+            <button
+              type="button"
+              className={styles.eyeIcon}
+              onClick={() => setShowPw2((v) => !v)}
+              aria-label="Показать/скрыть подтверждение пароля"
+            >
+              {showPw2 ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          {confirm && confirm !== password && (
+            <div id="confirm-password-error" className={styles.fieldError}>
+              Пароли не совпадают
+            </div>
+          )}
+        </div>
+
         <div className={styles.actions}>
           <button type="submit" disabled={loading}>
             {loading ? 'Сохраняем…' : 'Установить пароль'}

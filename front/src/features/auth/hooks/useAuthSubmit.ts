@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { useAppDispatch } from '../../../app/hook';
 import { loginThunk, registerThunk } from '../model/authSlice';
 
-type SubmitParams = {
+export type SubmitParams = {
   mode: 'login' | 'register';
   fields: {
     email: string;
@@ -102,27 +102,25 @@ export function useAuthSubmit() {
 
       const { status, message, data } = parseError(res);
 
-      // Полезно: DRF валидация вернёт 400 и поля вида { email: ["..."], phone_number: ["..."] }
       const emailErr = normalizeToText(data?.email);
       const phoneErr = normalizeToText(data?.phone_number);
 
-      // Нормализованный lowercase для эвристик по тексту
       const msgLower = (message || '').toLowerCase();
       const emailLower = (emailErr || '').toLowerCase();
       const phoneLower = (phoneErr || '').toLowerCase();
 
-      // Явные кейсы дубликатов полей
       const isDuplicateEmail =
         !!emailErr ||
-        msgLower.includes('email') && (msgLower.includes('уже') || msgLower.includes('exists') || msgLower.includes('зарегистр'));
+        (msgLower.includes('email') &&
+          (msgLower.includes('уже') || msgLower.includes('exists') || msgLower.includes('зарегистр')));
 
       const isDuplicatePhone =
         !!phoneErr ||
         msgLower.includes('phone') ||
         msgLower.includes('номер телефона') ||
-        (msgLower.includes('телефон') && (msgLower.includes('уже') || msgLower.includes('exists') || msgLower.includes('зарегистр')));
+        (msgLower.includes('телефон') &&
+          (msgLower.includes('уже') || msgLower.includes('exists') || msgLower.includes('зарегистр')));
 
-      // ВАЖНО: сначала проверяем телефон и email РАЗДЕЛЬНО.
       if (isDuplicatePhone) {
         const dupMsg = 'Пользователь с таким номером телефона уже зарегистрирован';
         toast.error(dupMsg);
@@ -137,7 +135,6 @@ export function useAuthSubmit() {
         return;
       }
 
-      // 409 от кастомного обработчика (на случай гонок сохранения) — пытаемся угадать поле, иначе общий текст
       if (status === 409) {
         if (msgLower.includes('email')) {
           const dupMsg = 'Пользователь с таким email уже зарегистрирован';
@@ -151,20 +148,17 @@ export function useAuthSubmit() {
           setLocalError(dupMsg);
           return;
         }
-        // общий 409
         toast.error(message || 'Запись с такими данными уже существует');
         setLocalError(!isHtmlError(message) ? (message || 'Запись с такими данными уже существует') : null);
         return;
       }
 
-      // 500 — только toast
       if (status === 500 || isHtmlError(message)) {
         toast.error('Ошибка сервера при регистрации. Попробуйте позже.');
         setLocalError(null);
         return;
       }
 
-      // Остальные ошибки
       const fallback = 'Не удалось завершить регистрацию.';
       toast.error(message || fallback);
       setLocalError(!isHtmlError(message) ? (message || fallback) : null);

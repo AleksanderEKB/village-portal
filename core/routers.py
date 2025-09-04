@@ -5,6 +5,7 @@ from core.user.viewsets import UserViewSet
 from core.auth.viewsets import RegisterViewSet, LoginViewSet, RefreshViewSet
 from core.auth.viewsets.verify_email import VerifyEmailView
 from core.auth.viewsets.password_reset import PasswordResetRequestView, PasswordResetConfirmView
+from core.auth.viewsets.change_password import ChangePasswordView
 
 
 router = routers.DefaultRouter()
@@ -19,4 +20,5 @@ urlpatterns = [
     path('auth/verify-email/<uuid:token>/', VerifyEmailView.as_view(), name='auth-verify-email'),
     path('auth/password-reset/', PasswordResetRequestView.as_view(), name='auth-password-reset'),
     path('auth/password-reset/confirm/', PasswordResetConfirmView.as_view(), name='auth-password-reset-confirm'),
+    path('auth/change-password/', ChangePasswordView.as_view(), name='auth-change-password'),
 ]

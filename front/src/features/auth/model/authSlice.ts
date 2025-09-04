@@ -1,8 +1,9 @@
 // front/src/features/auth/model/authSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { apiLogin, apiRegister, apiUpdateProfile } from '../api/api';
+import { apiLogin, apiRegister, apiUpdateProfile, apiChangePassword } from '../api/api';
 import type { AuthState, LoginDto, RegisterDto, LoginResponse, IUser } from './types';
 import { pickMessageFromData } from '../../shared/utils/httpError';
+import { toast } from 'react-toastify';
 
 type RejectPayload = { status: number; data: any };
 
@@ -13,6 +14,7 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   isAuthenticated: false,
+  authLoaded: false,
 };
 
 export const loginThunk = createAsyncThunk<LoginResponse, LoginDto, { rejectValue: RejectPayload }>(
@@ -61,7 +63,32 @@ export const updateProfileThunk = createAsyncThunk<
   }
 );
 
-// Гидратация из localStorage при старте
+export const changePasswordThunk = createAsyncThunk<
+  { detail: string },
+  { old_password: string; new_password: string },
+  { rejectValue: RejectPayload }
+>(
+  'auth/changePassword',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await apiChangePassword(payload);
+      toast.success(res.detail || 'Пароль успешно изменён');
+      return res;
+    } catch (e: any) {
+      const status = e?.response?.status ?? 0;
+      const data = e?.response?.data ?? { detail: 'Не удалось сменить пароль' };
+      const msg =
+        pickMessageFromData(data) ??
+        data?.old_password ??
+        data?.new_password ??
+        data?.detail ??
+        'Не удалось сменить пароль';
+      toast.error(Array.isArray(msg) ? msg.join(', ') : msg);
+      return rejectWithValue({ status, data });
+    }
+  }
+);
+
 export const hydrateFromStorage = createAsyncThunk<{ access: string; refresh: string; user: IUser } | null>(
   'auth/hydrate',
   async () => {
@@ -157,14 +184,28 @@ const authSlice = createSlice({
         localStorage.setItem('user', JSON.stringify(action.payload));
       })
 
-      // HYDRATE
+      // CHANGE PASSWORD (без изменений стора)
+      .addCase(changePasswordThunk.fulfilled, (state) => {})
+      .addCase(changePasswordThunk.rejected, (state) => {})
+
+      // HYDRATE lifecycle
+      .addCase(hydrateFromStorage.pending, (state) => {
+        state.authLoaded = false;
+      })
       .addCase(hydrateFromStorage.fulfilled, (state, action) => {
-        if (!action.payload) return;
+        if (!action.payload) {
+          state.authLoaded = true;
+          return;
+        }
         const { access, refresh, user } = action.payload;
         state.access = access;
         state.refresh = refresh;
         state.user = user;
         state.isAuthenticated = true;
+        state.authLoaded = true;
+      })
+      .addCase(hydrateFromStorage.rejected, (state) => {
+        state.authLoaded = true;
       });
   },
 });

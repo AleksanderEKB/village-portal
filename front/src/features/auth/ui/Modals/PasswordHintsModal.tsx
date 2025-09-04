@@ -1,3 +1,4 @@
+// front/src/features/auth/ui/Modals/PasswordHintsModal.tsx
 import React from 'react';
 import Modal from './Modal';
 

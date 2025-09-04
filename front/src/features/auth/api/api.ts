@@ -44,3 +44,8 @@ export async function apiConfirmPasswordReset(token: string, password: string): 
   const { data } = await postJson<{ detail: string }>('/api/auth/password-reset/confirm/', { token, password });
   return data;
 }
+
+export const apiChangePassword = async (payload: { old_password: string; new_password: string }) => {
+  const { data } = await postJson<{ detail: string }>('/api/auth/change-password/', payload);
+  return data;
+};

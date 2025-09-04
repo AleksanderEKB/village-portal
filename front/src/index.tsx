@@ -19,7 +19,7 @@ const AuthPage = React.lazy(() =>
 );
 
 const ProfilePage = React.lazy(() =>
-  import(/* webpackChunkName: "profile" */ "./features/profile/ProfilePage")
+  import(/* webpackChunkName: "profile" */ "./features/auth/Pages/profile/ProfilePage")
 );
 
 const PrivateRoute = React.lazy(() =>
