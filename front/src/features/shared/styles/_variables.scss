@@ -1,4 +1,9 @@
 // front/src/features/shared/styles/_variables.scss
-$main-bg: #688e68;
-$color-1: #FFF8DC;
+
+@use './fonts/fonts';
+
+$main-bg: #215e5e;
+$color-1: #cafeff;
 $color-2: #f44949;
+
+$mainFont: font-main;

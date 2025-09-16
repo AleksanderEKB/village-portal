@@ -48,9 +48,6 @@ export function useAuthForm(initialMode: 'login' | 'register') {
   const [touched, setTouched] = useState<{ [K in keyof AuthFormFields]?: boolean }>({});
   const [errors, setErrors] = useState<AuthFormErrors>({});
 
-  
-  
-
   const passwordCheck: PasswordValidationResult = useMemo(() => {
     return validatePassword(fields.password, {
       minLength: 10,
@@ -72,6 +69,8 @@ export function useAuthForm(initialMode: 'login' | 'register') {
 
   const handleFieldChange = useCallback(
     (field: keyof AuthFormFields, value: string | File | null) => {
+      setLocalError(null); // Сброс localError при любом изменении поля
+
       setFields((prev) => ({ ...prev, [field]: value as any }));
       setTouched((prev) => ({ ...prev, [field]: true }));
 
@@ -179,22 +178,29 @@ export function useAuthForm(initialMode: 'login' | 'register') {
         }));
       }
 
-    if (field === 'avatar') {
-      const avatarError = validateAvatar(value as File | null);
-      setErrors((prev) => ({
-        ...prev,
-        avatar: avatarError,
-      }));
-    }
+      if (field === 'avatar') {
+        const avatarError = validateAvatar(value as File | null);
+        setErrors((prev) => ({
+          ...prev,
+          avatar: avatarError,
+        }));
+      }
     },
-    [mode, fields.password, fields.confirmPassword, fields.first_name, fields.last_name, fields.email, validateConfirm, validateAvatar]
+    [
+      mode,
+      fields.password,
+      fields.confirmPassword,
+      fields.first_name,
+      fields.last_name,
+      fields.email,
+      validateConfirm,
+      validateAvatar,
+    ]
   );
 
   const handleRemoveAvatar = () => {
     setFields((prev) => ({ ...prev, avatar: null }));
   };
-
-  
 
   return {
     mode,

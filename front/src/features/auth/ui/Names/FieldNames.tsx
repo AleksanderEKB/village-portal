@@ -13,6 +13,7 @@ type Props = {
   touched?: boolean;
   error?: string | null;
   describedById?: string; // опционально, если нужно переопределить id ошибки
+  placeholder?: string;
 };
 
 const FieldNames: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const FieldNames: React.FC<Props> = ({
   touched,
   error,
   describedById,
+  placeholder,
 }) => {
   const hasError = !!(touched && error);
   const describedId = hasError ? (describedById ?? `${id}-error`) : undefined;
@@ -43,6 +45,7 @@ const FieldNames: React.FC<Props> = ({
         className={`${styles.input} ${touched ? (hasError ? styles.inputError : styles.inputValid) : ''}`}
         aria-invalid={hasError}
         aria-describedby={describedId}
+        placeholder={placeholder}
       />
       {hasError && (
         <div id={describedId} className={styles.fieldError}>

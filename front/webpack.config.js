@@ -1,4 +1,4 @@
-// webpack.config.js
+// front/webpack.config.js
 console.log('WEBPACK CONFIG IS USED');
 const path = require('path');
 const webpack = require('webpack');
@@ -21,14 +21,12 @@ module.exports = {
 
   module: {
     rules: [
-      // TS/TSX
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         use: 'ts-loader',
       },
 
-      // CSS
       {
         test: /\.css$/i,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
@@ -42,13 +40,23 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              modules: {
-                exportLocalsConvention: 'camelCase',
-              },
+              modules: { exportLocalsConvention: 'camelCase' },
               esModule: true,
+              sourceMap: true, // можно включить для удобства
             },
           },
-          'sass-loader',
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true, // обязательно для resolve-url-loader
+            },
+          },
         ],
       },
 
@@ -56,21 +64,32 @@ module.exports = {
       {
         test: /\.s[ac]ss$/i,
         exclude: /\.module\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: { sourceMap: true },
+          },
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true, // обязательно
+            },
+          },
+        ],
       },
 
-      // ассеты (иконки, шрифты и т.п.)
       {
         test: /\.(png|jpe?g|gif|svg|ico|webp|woff2?|eot|ttf|otf)$/i,
         type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: 8 * 1024,
-          },
-        },
-        generator: {
-          filename: 'assets/[name].[contenthash][ext]',
-        },
+        parser: { dataUrlCondition: { maxSize: 8 * 1024 } },
+        generator: { filename: 'assets/[name].[contenthash][ext]' },
       },
     ],
   },
@@ -90,7 +109,6 @@ module.exports = {
         extractComments: false,
       }),
     ],
-    // выносит runtime и делит вендоры
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
@@ -127,7 +145,6 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(process.env),
     }),
-
     new HtmlWebpackPlugin({
       template: './src/index.html',
       minify: {
@@ -143,12 +160,10 @@ module.exports = {
         minifyURLs: true,
       },
     }),
-
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
       chunkFilename: '[name].[contenthash].css',
     }),
-
     new CopyWebpackPlugin({
       patterns: [{ from: 'src/favicon.ico', to: 'favicon.ico' }],
     }),
@@ -156,16 +171,11 @@ module.exports = {
 
   performance: {
     hints: 'warning',
-    // можно временно поднять лимиты, но лучше чинить размер бандла, а не лимиты
-    // maxEntrypointSize: 350000,
-    // maxAssetSize: 350000,
   },
 
   devServer: {
     historyApiFallback: true,
     allowedHosts: 'all',
-    static: {
-      directory: path.resolve(__dirname, 'dist'),
-    },
+    static: { directory: path.resolve(__dirname, 'dist') },
   },
 };

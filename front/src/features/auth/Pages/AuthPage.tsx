@@ -1,15 +1,12 @@
 // front/src/features/auth/Pages/AuthPage.tsx
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { selectAuthError, selectAuthLoading } from '../model/selectors';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import styles from './auth.module.scss';
 import { useAuthForm } from '../hooks/useAuthForm';
 import { getInitialMode } from '../utils/getInitialMode';
 import { useAuthSubmit } from '../hooks/useAuthSubmit';
-import AvatarPreview from '../ui/Avatar/AvatarPreview';
-import { toast } from 'react-toastify';
-import { apiRequestPasswordReset } from '../api/api';
 import AuthTabs from '../ui/Tabs/AuthTabs';
 import AuthInputField from '../ui/Auth/AuthInputField';
 import FieldNames from '../ui/Names/FieldNames';
@@ -22,7 +19,6 @@ import ForgotPasswordModal from '../ui/Modals/ForgotPasswordModal';
 import { useAuthHandlers } from '../hooks/useAuthHandlers';
 
 const AuthPage: React.FC = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const loading = useSelector(selectAuthLoading);
   const error = useSelector(selectAuthError);
@@ -61,6 +57,34 @@ const AuthPage: React.FC = () => {
     setFpOpen,
   });
 
+  // Проверка всех обязательных полей и ошибок
+  const isButtonDisabled = useMemo(() => {
+    // Проверяем наличие ошибок
+    const hasErrors = Object.values(errors).some(Boolean);
+
+    // Проверка обязательных полей для login
+    if (mode === 'login') {
+      if (!fields.email || !fields.password) return true;
+    }
+
+    // Проверка обязательных полей для register
+    if (mode === 'register') {
+      if (
+        !fields.email ||
+        !fields.password ||
+        !fields.confirmPassword ||
+        !fields.first_name ||
+        !fields.last_name ||
+        !fields.phone_number // если телефон не обязателен, убери эту строку
+      ) {
+        return true;
+      }
+    }
+
+    // Если есть ошибки или localError
+    return hasErrors || !!localError;
+  }, [mode, fields, errors, localError]);
+
   return (
     <div className={styles.formWrap}>
       <AuthTabs mode={mode} switchTo={switchTo} error={error} localError={localError} />
@@ -78,6 +102,7 @@ const AuthPage: React.FC = () => {
           required
           inputMode="email"
           autoComplete="email"
+          placeholder="Введите свой Email"
         />
 
         {mode === 'register' && (
@@ -93,6 +118,7 @@ const AuthPage: React.FC = () => {
               touched={!!touched.first_name}
               error={errors.first_name ?? null}
               describedById="firstName-error"
+              placeholder="Введите свое имя"
             />
 
             <FieldNames
@@ -106,6 +132,7 @@ const AuthPage: React.FC = () => {
               touched={!!touched.last_name}
               error={errors.last_name ?? null}
               describedById="lastName-error"
+              placeholder='Введите свою фамилию'
             />
 
             <PhoneField
@@ -136,25 +163,24 @@ const AuthPage: React.FC = () => {
         />
 
         {mode === 'register' && (
-          <>
-            <AvatarField
-              file={fields.avatar}
-              error={errors.avatar ?? null}
-              onRemove={handleRemoveAvatar}
-              onChange={(file) => handleFieldChange('avatar', file)}
-              inputId="avatar"
-              label="Аватар (опционально)"
-              describedById="avatar-error"
-            />
-          </>
+          <AvatarField
+            file={fields.avatar}
+            error={errors.avatar ?? null}
+            onRemove={handleRemoveAvatar}
+            onChange={(file) => handleFieldChange('avatar', file)}
+            inputId="avatar"
+            label="Аватар (опционально)"
+            describedById="avatar-error"
+          />
         )}
 
-        <AuthActions loading={loading} mode={mode} onSwitch={switchTo} />
+        <AuthActions
+          loading={loading}
+          mode={mode}
+          disabled={isButtonDisabled}
+          onSwitch={switchTo}
+        />
       </form>
-
-      <div className={styles.linksMuted}>
-        <Link to="/">На главную</Link>
-      </div>
 
       <PasswordHintsModal
         open={isHintOpen}

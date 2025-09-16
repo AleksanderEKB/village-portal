@@ -1,1 +1,16 @@
+// front/src/features/shared/styles/mixins/mixins.scss
 @forward '../variables';
+
+@mixin button-1 {
+    border: 1px solid #fff;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    background: #55b7b7;
+    color: #fff;
+    box-shadow: 0 0 0 1px #fff;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+
+

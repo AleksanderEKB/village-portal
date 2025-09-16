@@ -13,6 +13,7 @@ body {
     overflow-y: scroll; /* вертикальная прокрутка */
     overflow-x: hidden; /* отключаем горизонтальную */
     scrollbar-width: none; /* Firefox */
+    font-family: variables.$mainFont;
 }
 
 body::-webkit-scrollbar {

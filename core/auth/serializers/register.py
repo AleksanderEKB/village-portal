@@ -1,4 +1,3 @@
-# core/auth/serializers/register.py
 from uuid import uuid4
 from django.conf import settings
 from django.core.mail import send_mail
@@ -7,7 +6,7 @@ from rest_framework import serializers
 
 from core.user.serializers import UserSerializer
 from core.user.models import User
-
+from core.utils.sanitize import strip_all_html
 
 class RegisterSerializer(UserSerializer):
     password = serializers.CharField(max_length=128, min_length=8, write_only=True, required=True)
@@ -18,9 +17,12 @@ class RegisterSerializer(UserSerializer):
         fields = ['id', 'email', 'first_name', 'last_name', 'phone_number', 'password', 'avatar']
 
     def create(self, validated_data):
-        """
-        Один корректный create (раньше у вас было два метода create — второй перекрывал первый).
-        """
+        # САНИТАЙЗИМ ПЕРЕД СОЗДАНИЕМ
+        validated_data['first_name'] = strip_all_html(validated_data.get('first_name', '').strip())
+        validated_data['last_name'] = strip_all_html(validated_data.get('last_name', '').strip())
+        if validated_data.get('phone_number'):
+            validated_data['phone_number'] = strip_all_html(validated_data['phone_number'].strip())
+
         user = User.objects.create_user(**validated_data)
         user.is_active = False
         user.is_email_verified = False

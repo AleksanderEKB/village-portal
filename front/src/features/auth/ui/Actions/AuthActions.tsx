@@ -1,19 +1,20 @@
 // front/src/features/auth/ui/Actions/AuthActions.tsx
 import React from 'react';
-import styles from '../../Pages/auth.module.scss';
+import actionsStyles from './actions.module.scss';
 
 type AuthMode = 'login' | 'register';
 
 interface Props {
   loading: boolean;
   mode: AuthMode;
+  disabled?: boolean;
   onSwitch: (m: AuthMode) => void;
 }
 
-const AuthActions: React.FC<Props> = ({ loading, mode, onSwitch }) => {
+const AuthActions: React.FC<Props> = ({ loading, mode, disabled }) => {
   return (
-    <div className={styles.actions}>
-      <button type="submit" disabled={loading}>
+    <div className={actionsStyles.actionsButtons}>
+      <button type="submit" disabled={loading || disabled}>
         {loading
           ? mode === 'login'
             ? 'Входим…'
@@ -22,32 +23,6 @@ const AuthActions: React.FC<Props> = ({ loading, mode, onSwitch }) => {
           ? 'Войти'
           : 'Создать аккаунт'}
       </button>
-
-      <div className={styles.alt}>
-        {mode === 'login' ? (
-          <>
-            Нет аккаунта{' '}
-            <button
-              type="button"
-              className={styles.linkLike}
-              onClick={() => onSwitch('register')}
-            >
-              Зарегистрируйтесь
-            </button>
-          </>
-        ) : (
-          <>
-            Уже есть аккаунт{' '}
-            <button
-              type="button"
-              className={styles.linkLike}
-              onClick={() => onSwitch('login')}
-            >
-              Войдите
-            </button>
-          </>
-        )}
-      </div>
     </div>
   );
 };

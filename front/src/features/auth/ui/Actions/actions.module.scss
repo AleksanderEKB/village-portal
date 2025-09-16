@@ -1,0 +1,26 @@
+// front/src/features/auth/ui/Actions/actions.module.scss
+@use '../../../shared/styles/mixins/mixins.scss' as mixins;
+
+.actionsButtons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+
+  button {
+    border: 1px solid #fff;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    background: #12d30b;
+    color: #fff;
+    box-shadow: 0 0 0 1px #fff;
+    font-family: inherit;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      background: red;
+    }
+  }
+}

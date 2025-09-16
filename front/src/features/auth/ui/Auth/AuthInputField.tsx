@@ -18,6 +18,7 @@ interface AuthInputFieldProps {
   required?: boolean;
   inputMode?: InputMode;
   autoComplete?: AutoComplete;
+  placeholder?: string;
 }
 
 const AuthInputField: React.FC<AuthInputFieldProps> = ({
@@ -32,6 +33,7 @@ const AuthInputField: React.FC<AuthInputFieldProps> = ({
   required = false,
   inputMode,
   autoComplete,
+  placeholder,
 }) => {
   const isTouched = !!touched;           // ✅ приводим к boolean
   const hasError = Boolean(isTouched && error);
@@ -51,6 +53,7 @@ const AuthInputField: React.FC<AuthInputFieldProps> = ({
         className={`${styles.input} ${isTouched ? (hasError ? styles.inputError : styles.inputValid) : ''}`}
         aria-invalid={hasError}
         aria-describedby={hasError ? `${id}-error` : undefined}
+        placeholder={placeholder}
       />
       {hasError && (
         <div id={`${id}-error`} className={styles.fieldError}>
