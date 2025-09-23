@@ -1,0 +1,26 @@
+// front/src/shared/ui/DropMenu/dropMenu.module.scss
+
+.menu {
+  position: absolute;
+  top: calc(100% + 8px); /* под изображением */
+  left: 50%;
+  transform: translate(-50%, -.5rem);
+  opacity: 0;
+  pointer-events: none;
+
+  min-width: 10rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: .625rem;
+  padding: .375rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  z-index: 10;
+
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.menuOpen {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}

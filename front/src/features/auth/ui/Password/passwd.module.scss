@@ -1,0 +1,60 @@
+// front/src/features/auth/ui//Password/password.module.scss
+@use '../../../shared/styles/mixins/mixins.scss' as mixins;
+
+
+@include mixins.fields;
+
+.labelWithAction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.linkLike {
+    @include mixins.button-1;
+    padding: .2rem .6rem;
+}
+
+.passwordField {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 100%;
+    padding-right: 40px; // чтобы текст не налезал на иконку
+  }
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    color: #1f6feb;
+  }
+}
+
+.inputError {
+  border: 1.5px solid #e74c3c !important;
+  background: #fff6f6;
+}
+.inputValid {
+  border: 1.5px solid #2ecc40 !important;
+}
+
+// Индикатор силы
+.pwdStrength { margin-top: .5rem; }
+.pwdStrengthBar { height: 6px; background: #e6e6e6; border-radius: 4px; overflow: hidden; }
+.pwdStrengthBarFill { height: 100%; width: 0; background: linear-gradient(90deg, #ff8a8a, #ffd27a, #a7e08c); transition: width .2s ease; }
+.pwdStrengthLabel { font-size: 12px; color: #666; margin-top: .25rem; }

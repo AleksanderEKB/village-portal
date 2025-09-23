@@ -1,0 +1,29 @@
+@use '../../../shared/styles/mixins/mixins.scss' as mixins;
+
+.title {
+  text-align: center;
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.tabs {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+
+.tab, .tabActive {
+  @include mixins.button-1;
+}
+.tabActive {
+    border-color: #7fdfb5;
+    box-shadow: 0 0 0 1px #7fdfb5;
+}
+
+.error {
+        color: #c92a2a;
+        margin-bottom: 1.625rem;
+        font-size: .875rem;
+        text-align: center;
+}

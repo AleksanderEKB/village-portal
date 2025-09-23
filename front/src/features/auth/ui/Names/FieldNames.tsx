@@ -1,6 +1,6 @@
 // front/src/features/auth/ui/Names/FieldNames.tsx
 import React from 'react';
-import styles from '../../Pages/auth.module.scss';
+import namesStyles from './names.module.scss';
 
 type Props = {
   id: string;
@@ -33,7 +33,7 @@ const FieldNames: React.FC<Props> = ({
   const describedId = hasError ? (describedById ?? `${id}-error`) : undefined;
 
   return (
-    <div className={styles.field}>
+    <div className={namesStyles.field}>
       <label htmlFor={id}>{label}</label>
       <input
         id={id}
@@ -42,13 +42,13 @@ const FieldNames: React.FC<Props> = ({
         onBlur={onBlur}
         required={required}
         autoComplete={autoComplete}
-        className={`${styles.input} ${touched ? (hasError ? styles.inputError : styles.inputValid) : ''}`}
+        className={`${namesStyles.input} ${touched ? (hasError ? namesStyles.inputError : namesStyles.inputValid) : ''}`}
         aria-invalid={hasError}
         aria-describedby={describedId}
         placeholder={placeholder}
       />
       {hasError && (
-        <div id={describedId} className={styles.fieldError}>
+        <div id={describedId} className={namesStyles.fieldError}>
           {error}
         </div>
       )}

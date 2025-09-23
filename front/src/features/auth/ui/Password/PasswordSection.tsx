@@ -1,6 +1,6 @@
 // front/src/features/auth/ui/Auth/PasswordSection.tsx
 import React, { useState } from 'react';
-import styles from '../../Pages/auth.module.scss';
+import passwdStyles from './passwd.module.scss';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 type Mode = 'login' | 'register';
@@ -65,13 +65,13 @@ const PasswordSection: React.FC<Props> = ({
   return (
     <>
       {/* Поле Пароль */}
-      <div className={styles.field}>
-        <div className={styles.labelWithAction}>
+      <div className={passwdStyles.field}>
+        <div className={passwdStyles.labelWithAction}>
           <label htmlFor="password">Пароль</label>
           {mode === 'register' ? (
             <button
               type="button"
-              className={styles.linkLike}
+              className={passwdStyles.linkLike}
               onClick={onOpenHint}
               aria-haspopup="dialog"
               aria-controls="password-hints-dialog"
@@ -79,13 +79,13 @@ const PasswordSection: React.FC<Props> = ({
               Подсказка
             </button>
           ) : (
-            <button type="button" className={styles.linkLike} onClick={onOpenForgot}>
+            <button type="button" className={passwdStyles.linkLike} onClick={onOpenForgot}>
               Забыли пароль?
             </button>
           )}
         </div>
 
-        <div className={styles.passwordField}>
+        <div className={passwdStyles.passwordField}>
           <input
             id="password"
             type={showPassword ? 'text' : 'password'}
@@ -93,11 +93,11 @@ const PasswordSection: React.FC<Props> = ({
             onChange={(e) => onChangePassword(e.target.value)}
             required
             autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-            className={`${styles.input} ${
+            className={`${passwdStyles.input} ${
               mode === 'register' && touchedPassword
                 ? errorPassword || passwordCheck.error
-                  ? styles.inputError
-                  : styles.inputValid
+                  ? passwdStyles.inputError
+                  : passwdStyles.inputValid
                 : ''
             }`}
             onBlur={onBlurPassword}
@@ -108,7 +108,7 @@ const PasswordSection: React.FC<Props> = ({
           />
           <button
             type="button"
-            className={styles.eyeIcon}
+            className={passwdStyles.eyeIcon}
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label="Показать/скрыть пароль"
           >
@@ -117,22 +117,22 @@ const PasswordSection: React.FC<Props> = ({
         </div>
 
         {mode === 'register' && (
-          <div className={styles.pwdStrength}>
-            <div className={styles.pwdStrengthBar}>
+          <div className={passwdStyles.pwdStrength}>
+            <div className={passwdStyles.pwdStrengthBar}>
               <div
-                className={styles.pwdStrengthBarFill}
+                className={passwdStyles.pwdStrengthBarFill}
                 style={{ width: `${scoreToPercent(passwordCheck.score)}%` }}
                 aria-hidden
               />
             </div>
-            <div className={styles.pwdStrengthLabel}>
+            <div className={passwdStyles.pwdStrengthLabel}>
               Сила пароля: {strengthText[passwordCheck.strength]}
             </div>
           </div>
         )}
 
         {mode === 'register' && (errorPassword || passwordCheck.error) && (
-          <div id="password-error" className={styles.fieldError}>
+          <div id="password-error" className={passwdStyles.fieldError}>
             {errorPassword || passwordCheck.error}
           </div>
         )}
@@ -140,9 +140,9 @@ const PasswordSection: React.FC<Props> = ({
 
       {/* Поле Подтверждение */}
       {mode === 'register' && (
-        <div className={styles.field}>
+        <div className={passwdStyles.field}>
           <label htmlFor="confirmPassword">Повторите пароль</label>
-          <div className={styles.passwordField}>
+          <div className={passwdStyles.passwordField}>
             <input
               id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
@@ -150,8 +150,8 @@ const PasswordSection: React.FC<Props> = ({
               onChange={(e) => onChangeConfirm(e.target.value)}
               required
               autoComplete="new-password"
-              className={`${styles.input} ${
-                touchedConfirm ? (errorConfirm ? styles.inputError : styles.inputValid) : ''
+              className={`${passwdStyles.input} ${
+                touchedConfirm ? (errorConfirm ? passwdStyles.inputError : passwdStyles.inputValid) : ''
               }`}
               onBlur={onBlurConfirm}
               aria-invalid={!!(touchedConfirm && errorConfirm)}
@@ -159,7 +159,7 @@ const PasswordSection: React.FC<Props> = ({
             />
             <button
               type="button"
-              className={styles.eyeIcon}
+              className={passwdStyles.eyeIcon}
               onClick={() => setShowConfirmPassword((prev) => !prev)}
               aria-label="Показать/скрыть подтверждение пароля"
             >
@@ -167,7 +167,7 @@ const PasswordSection: React.FC<Props> = ({
             </button>
           </div>
           {touchedConfirm && errorConfirm && (
-            <div id="confirm-error" className={styles.fieldError}>
+            <div id="confirm-error" className={passwdStyles.fieldError}>
               {errorConfirm}
             </div>
           )}

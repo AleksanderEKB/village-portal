@@ -12,5 +12,36 @@
     cursor: pointer;
 }
 
+@mixin fields {
+    .field {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 14px;
 
+        label {
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        input {
+            border: 1px solid #ccd2d9;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            outline: none;
+
+            &:focus {
+            border-color: #7fdfb5;
+            box-shadow: 0 0 0 3px #7a8cff33;
+            }
+        }
+    }
+
+    .fieldError {
+        color: #c92a2a;
+        margin-bottom: 1.625rem;
+        font-size: .875rem;
+        text-align: center;
+    }
+}
 

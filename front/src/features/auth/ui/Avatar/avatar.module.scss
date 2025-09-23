@@ -1,0 +1,115 @@
+.fieldRoot {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* центрируем всё по горизонтали */
+  gap: 12px;
+}
+
+.avatarFieldRoot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.label {
+  font-size: .875rem;
+  font-weight: 600;
+  color: #2f2f2f;
+  text-align: center;
+}
+
+.previewWrap {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatarImage {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  outline: none;
+  border: 2px solid transparent;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  }
+
+  &:focus-visible {
+    border-color: #2684ff;
+    box-shadow: 0 0 0 3px rgba(38,132,255,0.25);
+  }
+}
+
+// .menu {
+//   position: absolute;
+//   top: calc(100% + 8px); /* под изображением */
+//   left: 50%;
+//   transform: translate(-50%, -.5rem);
+//   opacity: 0;
+//   pointer-events: none;
+
+//   min-width: 10rem;
+//   background: #fff;
+//   border: 1px solid #e5e7eb;
+//   border-radius: .625rem;
+//   padding: .375rem;
+//   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+//   z-index: 10;
+
+//   transition: opacity 120ms ease, transform 120ms ease;
+// }
+
+// .menuOpen {
+//   opacity: 1;
+//   pointer-events: auto;
+//   transform: translate(-50%, 0);
+// }
+
+
+.hiddenInput {
+  /* скрываем, но не через display: none; чтобы было доступно для screen readers при необходимости */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap; /* для iOS */
+  border: 0;
+}
+
+// .errorText {
+//   margin-top: .375rem;
+//   font-size: .75rem;
+//   color: #d62d20;
+//   text-align: center;
+// }
+
+.menuItem {
+  display: block;
+  color: #2f2f2f;
+  padding: .5rem 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  &:hover, &:focus {
+    background: #f5f5f5;
+    // text-decoration: underline;
+  }
+}
+.menuItemDanger {
+  @extend .menuItem;
+  color: #d9534f;
+}

@@ -1,3 +1,4 @@
+// front/src/features/header/components/Header.tsx
 import React from "react";
 import '../styles.scss';
 
@@ -8,10 +9,10 @@ const Header: React.FC = () => {
                 <picture>
                     <source 
                         media="(max-width: 699px)" 
-                        srcSet="https://bhair.online/media/default/header_mobile.jpg" 
+                        srcSet="https://bhair.online/media/default/header_mobile.png" 
                     />
                     <img 
-                        src="https://bhair.online/media/default/header_desktop.jpg" 
+                        src="https://bhair.online/media/default/header_desktop.png" 
                         alt="Header" 
                         className="header_image" 
                     />

@@ -1,6 +1,6 @@
 // front/src/features/auth/ui/Tabs/AuthTabs.tsx
 import React from 'react';
-import styles from '../../Pages/auth.module.scss';
+import tabsStyles from './tabs.module.scss';
 
 interface AuthTabsProps {
   mode: 'login' | 'register';
@@ -11,10 +11,10 @@ interface AuthTabsProps {
 
 const AuthTabs: React.FC<AuthTabsProps> = ({ mode, switchTo, error, localError }) => (
   <div>
-    <div className={styles.tabs}>
+    <div className={tabsStyles.tabs}>
       <button
         type="button"
-        className={mode === 'login' ? styles.tabActive : styles.tab}
+        className={mode === 'login' ? tabsStyles.tabActive : tabsStyles.tab}
         onClick={() => switchTo('login')}
         aria-pressed={mode === 'login'}
       >
@@ -22,7 +22,7 @@ const AuthTabs: React.FC<AuthTabsProps> = ({ mode, switchTo, error, localError }
       </button>
       <button
         type="button"
-        className={mode === 'register' ? styles.tabActive : styles.tab}
+        className={mode === 'register' ? tabsStyles.tabActive : tabsStyles.tab}
         onClick={() => switchTo('register')}
         aria-pressed={mode === 'register'}
       >
@@ -30,9 +30,9 @@ const AuthTabs: React.FC<AuthTabsProps> = ({ mode, switchTo, error, localError }
       </button>
     </div>
 
-    <h1 className={styles.title}>{mode === 'login' ? 'Вход' : 'Регистрация'}</h1>
+    <h1 className={tabsStyles.title}>{mode === 'login' ? 'Вход' : 'Регистрация'}</h1>
 
-    {(error || localError) && <div className={styles.error}>{error || localError}</div>}
+    {(error || localError) && <div className={tabsStyles.error}>{error || localError}</div>}
   </div>
 );
 

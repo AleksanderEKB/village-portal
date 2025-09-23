@@ -1,6 +1,6 @@
 // front/src/features/auth/ui/Auth/AuthInputField.tsx
 import React from 'react';
-import styles from '../../Pages/auth.module.scss';
+import fieldStyles from './authField.module.scss';
 
 type InputMode = React.InputHTMLAttributes<HTMLInputElement>['inputMode'];
 type InputType = React.InputHTMLAttributes<HTMLInputElement>['type'];
@@ -39,7 +39,7 @@ const AuthInputField: React.FC<AuthInputFieldProps> = ({
   const hasError = Boolean(isTouched && error);
 
   return (
-    <div className={styles.field}>
+    <div className={fieldStyles.field}>
       <label htmlFor={id}>{label}</label>
       <input
         id={id}
@@ -50,13 +50,13 @@ const AuthInputField: React.FC<AuthInputFieldProps> = ({
         required={required}
         inputMode={inputMode}
         autoComplete={autoComplete}
-        className={`${styles.input} ${isTouched ? (hasError ? styles.inputError : styles.inputValid) : ''}`}
+        className={`${fieldStyles.input} ${isTouched ? (hasError ? fieldStyles.inputError : fieldStyles.inputValid) : ''}`}
         aria-invalid={hasError}
         aria-describedby={hasError ? `${id}-error` : undefined}
         placeholder={placeholder}
       />
       {hasError && (
-        <div id={`${id}-error`} className={styles.fieldError}>
+        <div id={`${id}-error`} className={fieldStyles.fieldError}>
           {error}
         </div>
       )}

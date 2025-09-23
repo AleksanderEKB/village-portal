@@ -169,8 +169,9 @@ const AuthPage: React.FC = () => {
             onRemove={handleRemoveAvatar}
             onChange={(file) => handleFieldChange('avatar', file)}
             inputId="avatar"
-            label="Аватар (опционально)"
+            label="Аватар"
             describedById="avatar-error"
+            defaultUrl="/media/avatars/default_avatar.jpeg"
           />
         )}
 

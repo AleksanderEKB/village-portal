@@ -1,11 +1,22 @@
 // front/src/features/auth/Pages/ResetPasswordPage.tsx
 import React, { useMemo, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import styles from './auth.module.scss';
+import styles from '../ui/Password/passwd.module.scss';
 import { apiConfirmPasswordReset } from '../api/api';
 import { toast } from 'react-toastify';
-import { validatePassword } from '../utils/validatePassword';
+import { validatePassword, PasswordStrength } from '../utils/validatePassword';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import PasswordHintsModal from '../ui/Modals/PasswordHintsModal';
+
+const strengthText: Record<PasswordStrength, string> = {
+  'very-weak': 'Очень слабый',
+  weak: 'Слабый',
+  medium: 'Средний',
+  strong: 'Сильный',
+  'very-strong': 'Очень сильный',
+};
+
+const scoreToPercent = (score: number) => Math.round((score / 4) * 100);
 
 const ResetPasswordPage: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -18,6 +29,9 @@ const ResetPasswordPage: React.FC = () => {
   // Показ/скрытие символов
   const [showPw, setShowPw] = useState(false);
   const [showPw2, setShowPw2] = useState(false);
+
+  // Модалка с подсказками
+  const [hintOpen, setHintOpen] = useState(false);
 
   const pwdCheck = useMemo(
     () =>
@@ -62,9 +76,23 @@ const ResetPasswordPage: React.FC = () => {
   return (
     <div className={styles.formWrap} style={{ maxWidth: 420 }}>
       <h1 className={styles.title}>Новый пароль</h1>
+
       <form onSubmit={onSubmit} noValidate>
+        {/* Поле Новый пароль */}
         <div className={styles.field}>
-          <label htmlFor="newPassword">Новый пароль</label>
+          <div className={styles.labelWithAction}>
+            <label htmlFor="newPassword">Новый пароль</label>
+            <button
+              type="button"
+              className={styles.linkLike}
+              onClick={() => setHintOpen(true)}
+              aria-haspopup="dialog"
+              aria-controls="password-hints-dialog"
+            >
+              Подсказка
+            </button>
+          </div>
+
           <div className={styles.passwordField}>
             <input
               id="newPassword"
@@ -73,7 +101,8 @@ const ResetPasswordPage: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="new-password"
               required
-              className={`${styles.input} ${pwdCheck.error ? styles.inputError : ''}`}
+              className={`${styles.input} ${pwdCheck.error ? styles.inputError : styles.inputValid}`}
+              onBlur={() => void 0}
               aria-invalid={!!pwdCheck.error}
               aria-describedby={pwdCheck.error ? 'new-password-error' : undefined}
             />
@@ -86,6 +115,21 @@ const ResetPasswordPage: React.FC = () => {
               {showPw ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
+
+          {/* Индикатор силы пароля */}
+          <div className={styles.pwdStrength}>
+            <div className={styles.pwdStrengthBar}>
+              <div
+                className={styles.pwdStrengthBarFill}
+                style={{ width: `${scoreToPercent(pwdCheck.score)}%` }}
+                aria-hidden
+              />
+            </div>
+            <div className={styles.pwdStrengthLabel}>
+              Сила пароля: {strengthText[pwdCheck.strength]}
+            </div>
+          </div>
+
           {pwdCheck.error && (
             <div id="new-password-error" className={styles.fieldError}>
               {pwdCheck.error}
@@ -93,6 +137,7 @@ const ResetPasswordPage: React.FC = () => {
           )}
         </div>
 
+        {/* Поле Подтверждение */}
         <div className={styles.field}>
           <label htmlFor="confirmPassword">Повторите пароль</label>
           <div className={styles.passwordField}>
@@ -103,7 +148,10 @@ const ResetPasswordPage: React.FC = () => {
               onChange={(e) => setConfirm(e.target.value)}
               autoComplete="new-password"
               required
-              className={`${styles.input} ${confirm && confirm !== password ? styles.inputError : ''}`}
+              className={`${styles.input} ${
+                confirm ? (confirm !== password ? styles.inputError : styles.inputValid) : ''
+              }`}
+              onBlur={() => void 0}
               aria-invalid={!!(confirm && confirm !== password)}
               aria-describedby={confirm && confirm !== password ? 'confirm-password-error' : undefined}
             />
@@ -132,6 +180,13 @@ const ResetPasswordPage: React.FC = () => {
           </div>
         </div>
       </form>
+
+      {/* Модалка с подсказками по паролю */}
+      <PasswordHintsModal
+        open={hintOpen}
+        onClose={() => setHintOpen(false)}
+        passwordCheck={{ hints: pwdCheck.hints }}
+      />
     </div>
   );
 };

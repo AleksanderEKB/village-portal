@@ -2,7 +2,7 @@
 import React from 'react';
 import { toast } from 'react-toastify';
 import AvatarPreview from './AvatarPreview';
-import styles from '../../Pages/auth.module.scss';
+import avatarStyles from './avatar.module.scss';
 
 type Props = {
   file: File | null;
@@ -12,6 +12,7 @@ type Props = {
   inputId?: string;
   label?: string;
   describedById?: string;
+  defaultUrl: string;
 };
 
 const AvatarField: React.FC<Props> = ({
@@ -20,37 +21,50 @@ const AvatarField: React.FC<Props> = ({
   onChange,
   onRemove,
   inputId = 'avatar',
-  label = 'Аватар (опционально)',
+  label = 'Аватар',
   describedById,
+  defaultUrl,
 }) => {
-  return (
-    <div className={styles.field}>
-      <label htmlFor={inputId}>{label}</label>
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
 
-      <AvatarPreview file={file} onRemove={onRemove} />
+  const handleFile = (f: File | null, target?: HTMLInputElement | null) => {
+    if (f && !f.type.startsWith('image/')) {
+      toast.error('Файл не является изображением');
+      if (target) target.value = '';
+      return;
+    }
+    onChange(f);
+  };
+
+  return (
+    <div className={avatarStyles.fieldRoot}>
+      <AvatarPreview
+        file={file}
+        defaultUrl={defaultUrl}
+        onRemove={() => {
+          if (inputRef.current) inputRef.current.value = '';
+          onRemove();
+        }}
+        onChangeRequest={() => inputRef.current?.click()}
+        label={label}
+      />
 
       <input
+        ref={inputRef}
         id={inputId}
         type="file"
         accept="image/*"
+        className={avatarStyles.hiddenInput}
         onChange={(e) => {
           const f = e.target.files?.[0] ?? null;
-          if (f && !f.type.startsWith('image/')) {
-            toast.error('Файл не является изображением');
-            e.currentTarget.value = '';
-            return;
-          }
-          onChange(f);
+          handleFile(f, e.currentTarget);
         }}
         aria-invalid={!!error}
-        aria-describedby={error ? (describedById ?? `${inputId}-error`) : undefined}
+        aria-describedby={describedById}
       />
 
       {error && (
-        <div
-          id={describedById ?? `${inputId}-error`}
-          className={styles.fieldError}
-        >
+        <div id={describedById} className={avatarStyles.errorText} role="alert">
           {error}
         </div>
       )}
