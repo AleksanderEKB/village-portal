@@ -171,7 +171,7 @@ const AuthPage: React.FC = () => {
             inputId="avatar"
             label="Аватар"
             describedById="avatar-error"
-            defaultUrl="/media/avatars/default_avatar.jpeg"
+            defaultUrl="/media/default/default_avatar.jpeg"
           />
         )}
 

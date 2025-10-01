@@ -1,3 +1,4 @@
+// front/src/features/auth/Pages/profile/profile.module.scss
 .formWrap {
   max-width: 420px;
   margin: 40px auto;
@@ -14,6 +15,7 @@
   font-weight: 700;
 }
 
+/* Общие поля */
 .field {
   display: flex;
   flex-direction: column;
@@ -38,6 +40,7 @@
   }
 }
 
+/* Кнопки формы профиля */
 .actions {
   display: flex;
   gap: 10px;
@@ -64,4 +67,128 @@
     color: #5865f2;
     text-decoration: none;
   }
+}
+
+/* Доп. стили для блока пароля — в духе PasswordSection */
+.labelWithAction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.linkLike {
+  background: transparent;
+  border: none;
+  color: #5865f2;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Поле пароля с иконкой глаза */
+.passwordField {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 100%;
+    padding-right: 40px; // чтобы текст не налезал на иконку
+  }
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    color: #1f6feb;
+  }
+}
+
+/* Состояния валидности, как в PasswordSection */
+// .input { }
+
+.inputError {
+  border: 1.5px solid #e74c3c !important;
+  background: #fff6f6;
+}
+.inputValid {
+  border: 1.5px solid #2ecc40 !important;
+}
+
+/* Индикатор силы пароля */
+.pwdStrength { margin-top: .5rem; }
+.pwdStrengthBar { height: 6px; background: #e6e6e6; border-radius: 4px; overflow: hidden; }
+.pwdStrengthBarFill { height: 100%; width: 0; background: linear-gradient(90deg, #ff8a8a, #ffd27a, #a7e08c); transition: width .2s ease; }
+.pwdStrengthLabel { font-size: 12px; color: #666; margin-top: .25rem; }
+
+/* Ошибки поля */
+.fieldError {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #e74c3c;
+}
+
+/* Блок пароля (кнопка/форма) */
+.pwBlock { margin-top: 20px; }
+.pwBtn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #5865f2;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.pwForm { margin-top: 10px; }
+
+/* Вторая кнопка (Отмена) */
+.secondary {
+  background: #e9ecf5 !important;
+  color: #2b2d33 !important;
+}
+
+/* Аватар */
+.avatarBlock { display: flex; align-items: center; justify-content: center; }
+
+
+.dangerZone {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid #ffe0e0;
+  background: #fff5f5;
+  border-radius: 8px;
+}
+.dangerTitle {
+  font-weight: 700;
+  font-size: 14px;
+  color: #b42318;
+  margin-bottom: 10px;
+}
+.dangerBtn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #d92d20;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+}
+.dangerBtn:hover {
+  background: #b42318;
 }

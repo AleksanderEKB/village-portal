@@ -1,3 +1,4 @@
+// front/src/features/auth/ui/Avatar/AvatarPreview.tsx
 import React from 'react';
 import avatarStyles from './avatar.module.scss';
 import DropMenu from '../../../shared/components/dropmenu/DropdownMenu';

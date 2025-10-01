@@ -13,10 +13,9 @@ from core.abstract.models import AbstractManager, AbstractModel
 class UserManager(BaseUserManager, AbstractManager):
     def get_object_by_public_id(self, public_id):
         try:
-            instance = self.get(public_id=public_id)
-            return instance
+            return self.get(public_id=public_id)
         except (ObjectDoesNotExist, ValueError, TypeError):
-            return Http404
+            raise Http404
 
     def create_user(self, email, password=None, **kwargs):
         if email is None:

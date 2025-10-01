@@ -1,6 +1,6 @@
 // front/src/features/auth/model/authSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { apiLogin, apiRegister, apiUpdateProfile, apiChangePassword } from '../api/api';
+import { apiLogin, apiRegister, apiUpdateProfile, apiChangePassword, apiDeleteProfile } from '../api/api';
 import type { AuthState, LoginDto, RegisterDto, LoginResponse, IUser } from './types';
 import { pickMessageFromData } from '../../shared/utils/httpError';
 import { toast } from 'react-toastify';
@@ -115,6 +115,20 @@ function extractErrorMessage(payload?: RejectPayload, fallback: string = 'Оши
   return msg || fallback;
 }
 
+export const deleteProfileThunk = createAsyncThunk<void, { userId: string }, { rejectValue: RejectPayload }>(
+  'auth/deleteProfile',
+  async ({ userId }, { rejectWithValue }) => {
+    try {
+      await apiDeleteProfile(userId);
+      return;
+    } catch (e: any) {
+      const status = e?.response?.status ?? 0;
+      const data = e?.response?.data ?? { detail: 'Не удалось удалить профиль' };
+      return rejectWithValue({ status, data });
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -206,7 +220,22 @@ const authSlice = createSlice({
       })
       .addCase(hydrateFromStorage.rejected, (state) => {
         state.authLoaded = true;
-      });
+      })
+      // DELETE PROFILE
+      .addCase(deleteProfileThunk.fulfilled, (state) => {
+        state.user = null;
+        state.access = null;
+        state.refresh = null;
+        state.isAuthenticated = false;
+        state.error = null;
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+        toast.success('Профиль удалён');
+      })
+      .addCase(deleteProfileThunk.rejected, (state, action) => {
+        state.error = extractErrorMessage(action.payload ?? undefined, 'Не удалось удалить профиль');
+      })
   },
 });
 

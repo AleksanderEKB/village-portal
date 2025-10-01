@@ -1,3 +1,4 @@
+// front/src/features/auth/api/api.ts
 import axiosInstance, { postForm, postJson, patchForm } from '../../../axiosInstance';
 import type { LoginDto, RegisterDto, LoginResponse, IUser } from '../model/types';
 
@@ -79,3 +80,7 @@ export const apiChangePassword = async (payload: { old_password: string; new_pas
   const { data } = await postJson<{ detail: string }>('/api/auth/change-password/', payload);
   return data;
 };
+
+export async function apiDeleteProfile(userId: string): Promise<void> {
+  await axiosInstance.delete(`/api/user/${userId}/`);
+}
