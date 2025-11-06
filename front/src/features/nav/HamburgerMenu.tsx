@@ -1,8 +1,6 @@
-// src/features/nav/HamburgerMenu.tsx
-import React, { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../app/hook';
-import { logout } from '../auth/model/authSlice';
+import React, { useEffect, useRef, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { useAppSelector } from '../../app/hook';
 import { selectIsAuth, selectUser } from '../auth/model/selectors';
 import styles from './hamburger.module.scss';
 
@@ -10,42 +8,53 @@ const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isAuthenticated = useAppSelector(selectIsAuth);
   const user = useAppSelector(selectUser);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => setIsOpen(v => !v);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    setIsOpen(false);
-    navigate('/');
-  };
-
-  // Закрываем меню при смене маршрута (в т.ч. когда меняется таб /login ↔ /register)
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('click', handleClickOutside);
+    } else {
+      document.removeEventListener('click', handleClickOutside);
+    }
+
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isOpen]);
+
   return (
-    <div className={styles.hamburgerMenu}>
+    <div className={styles.hamburgerMenu} ref={menuRef}>
       <button
         type="button"
         aria-label={isOpen ? 'Закрыть меню' : 'Открыть меню'}
         aria-expanded={isOpen}
-        className={styles.hamburgerIcon}
+        className={[
+          styles.hamburgerIcon,
+          styles.iconFixed,         // всегда фиксированная позиция в правом верхнем углу
+          isOpen ? styles.openIcon : ''
+        ].join(' ')}
         onClick={toggleMenu}
       >
-        {isOpen ? '✖' : '☰'}
+        <span className={styles.line} />
+        <span className={styles.line} />
+        <span className={styles.line} />
       </button>
 
-      <nav className={`${styles.menuContent} ${isOpen ? styles.open : ''}`} role="navigation">
-        {isAuthenticated && user && (
-          <div className={styles.userGreeting}>
-            Приветствую, {user.first_name ?? user.email ?? 'пользователь'}
-          </div>
-        )}
-
+      <nav
+        className={`${styles.menuContent} ${isOpen ? styles.open : ''}`}
+        role="navigation"
+      >
         <NavLink
           to="/"
           className={({ isActive }) => (isActive ? styles.activeLink : undefined)}
@@ -53,29 +62,36 @@ const HamburgerMenu: React.FC = () => {
           Главная
         </NavLink>
 
+        <NavLink
+          to="/services"
+          className={({ isActive }) => (isActive ? styles.activeLink : undefined)}
+        >
+          Услуги
+        </NavLink>
+
+        <NavLink
+          to="/posts"
+          className={({ isActive }) => (isActive ? styles.activeLink : undefined)}
+        >
+          Лента
+        </NavLink>
+
         {!isAuthenticated && (
-          <>
-            <NavLink
-              to="/register"
-              className={({ isActive }) => (isActive ? styles.activeLink : undefined)}
-            >
-              Вход/Регистрация
-            </NavLink>
-          </>
+          <NavLink
+            to="/login"
+            className={({ isActive }) => (isActive ? styles.activeLink : undefined)}
+          >
+            Вход/Регистрация
+          </NavLink>
         )}
 
         {isAuthenticated && (
-          <>
-            <NavLink
-              to="/profile"
-              className={({ isActive }) => (isActive ? styles.activeLink : undefined)}
-            >
-              Профиль
-            </NavLink>
-            <button type="button" className={styles.logoutBtn} onClick={handleLogout}>
-              Выход
-            </button>
-          </>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) => (isActive ? styles.activeLink : undefined)}
+          >
+            Профиль
+          </NavLink>
         )}
       </nav>
     </div>

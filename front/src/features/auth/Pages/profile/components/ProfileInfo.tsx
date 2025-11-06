@@ -9,14 +9,14 @@ const ProfileInfo: React.FC = () => {
   if (!user) return null;
 
   return (
-    <div style={{ marginBottom: 16 }}>
-      <div><b>Имя:</b> {user.first_name}</div>
-      <div><b>Фамилия:</b> {user.last_name}</div>
-      <div>
+    <div>
+      <div className={styles.infoString}><b>Имя:</b> {user.first_name}</div>
+      <div className={styles.infoString}><b>Фамилия:</b> {user.last_name}</div>
+      <div className={styles.infoString}>
         <b>Телефон:</b>{' '}
         {user.phone_number ?? <span style={{ color: '#aaa' }}>не указан</span>}
       </div>
-      <div><b>Email:</b> {user.email}</div>
+      <div className={styles.infoString}><b>Email:</b> {user.email}</div>
     </div>
   );
 };

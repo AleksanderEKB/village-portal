@@ -1,0 +1,421 @@
+/* front/src/features/posts/ui/posts.module.scss */
+@use '../../shared/styles/mixins/mixins.scss' as mixins;
+
+.card {
+  background: mixins.$block;
+  border: mixins.$frame;
+  border-radius: .75rem;
+  padding: .75rem;
+  display: grid;
+  gap: .625rem;
+  color: mixins.$main-text;
+  margin: 0 .5rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* ВЫРОВНЯЛИ ЛЕВУЮ И ПРАВУЮ ЧАСТИ */
+  gap: 10px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.meta {
+  color: mixins.$secondary-text;
+  font-size: .6rem;
+  padding-top: .6rem;
+}
+
+.dateTime {
+  font-size: .5rem;
+  color: mixins.$secondary-text;
+  margin-top: .3rem;
+  text-align: right;
+}
+
+/* Кнопка-иконка меню */
+.menuWrapper {
+  position: relative;
+}
+
+.menuButton {
+  border: 0;
+  background: transparent;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+
+  // &:hover {
+  //   background: #f3f4f6;
+  // }
+}
+
+.imageFeed {
+  width: 100%;
+  max-height: 18.75rem;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #f6f7f9;
+}
+
+.imageDetail {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #f6f7f9;
+}
+
+.content {
+  font-size: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.actionBlock {
+  display: flex;
+  justify-content: flex-end; /* гоняем всё вправо */
+  gap: .5rem;
+  margin: .625rem 0;
+  align-items: center;
+  padding: 0 1rem 1rem 0;
+  border-bottom: mixins.$border-line;
+  border-bottom-color: mixins.$opacity;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  button {
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    // background: #e9ecf5;
+  }
+}
+
+.likeActive {
+  // background: #ffeff0 !important;
+  color: #d92d20;
+}
+
+.commentList {
+  display: grid;
+  gap: 8px;
+}
+
+.commentItem {
+  display: grid;
+  grid-template-columns: 2.375rem 1fr;
+  gap: .625rem;
+  border-bottom: mixins.$border-line;
+  border-bottom-color: mixins.$opacity;
+
+}
+
+.commentText {
+  padding: .5rem .625rem;
+  color: mixins.$main-text;
+  font-size: .9rem;
+}
+
+.addComment {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+
+  input {
+    // border: 1px solid #ccd2d9;
+    // border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+    background: mixins.$main-bg;
+    border: none;
+    box-shadow: none;
+    appearance: none;
+    color: mixins.$main-text;
+  }
+
+  button {
+    border: 0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #5865f2;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+
+.createForm {
+  background: #fff;
+  border: 1px solid #e6e8eb;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+
+  textarea {
+    border: 1px solid #ccd2d9;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    min-height: 80px;
+    outline: none;
+    resize: vertical;
+  }
+
+  input[type="file"] {
+    font-size: 13px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+
+    button {
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #5865f2;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  }
+}
+
+/* ===== Новые стили для ленты/сетки ===== */
+.feed {
+  display: grid;
+  gap: .75rem;
+}
+
+.createFormWrapper {
+  /* форма создания поста всегда на всю ширину */
+  grid-column: 1 / -1;
+}
+
+.status {
+  color: #fff;
+}
+
+.empty {
+  background: #fff;
+  border: 1px solid #e6e8eb;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+/* Сетка постов: 1 колонка на мобилке, до 4 колонок на больших экранах */
+.grid {
+  display: grid;
+  gap: .625rem;
+  grid-template-columns: 1fr; /* мобильная лента */
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ===== Десктопный layout для PostDetailPage ===== */
+.detailPage {
+  display: grid;
+  gap: .75rem;
+}
+
+.backLink {
+  color: #fff;
+  text-decoration: none;
+}
+
+.notFound {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.detailGrid {
+  display: grid;
+  gap: .75rem;
+  grid-template-columns: 60% 40%;
+  align-items: stretch;
+}
+
+.detailImageWrapper {
+  // background: #fff;
+  // border: 1px solid #e6e8eb;
+  // border-radius: 12px;
+  overflow: hidden;
+  /* ограничим общую высоту области — правая колонка подстроится */
+  max-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+  // background: #f6f7f9;
+}
+
+.noImageStub {
+  width: 100%;
+  min-height: 300px;
+  display: grid;
+  place-items: center;
+  color: #999;
+}
+
+.detailRight {
+  padding: .75rem;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh; /* чтобы высота соответствовала левой колонке */
+  overflow: hidden;
+  color: mixins.$main-text;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .625rem;
+  padding-bottom: .55rem;
+  border-bottom: mixins.$border-line;
+  border-bottom-color: mixins.$opacity;
+}
+
+.detailComments {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  overflow: hidden;      /* контейнер */
+  flex: 1 1 auto;
+}
+
+.detailCommentsTitle {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.detailComments .commentList {
+  overflow: auto;        /* скролл именно списка */
+  padding-right: 4px;
+}
+
+.noComments {
+  color: #999;
+  background: #f9fafb;
+  border: 1px solid #eef0f3;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.detailCommentForm {
+  padding-top: .5rem;
+  border-top: 1px solid #eef0f3;
+}
+
+.detailContentBlock {
+  background: #fff;
+  border: 1px solid #e6e8eb;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+/* Полноэкранный просмотр (галерея) */
+.fullscreenOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.fullscreenImage {
+  max-height: 100vh; /* по высоте экрана */
+  max-width: 100vw;
+  object-fit: contain;
+  pointer-events: none; /* чтобы клик закрывал по фону */
+}
+
+.fullscreenClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: 0;
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.detailHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detailLikeBtn {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  // background: #e9ecf5;
+  font: inherit;
+  line-height: 1;
+  background: mixins.$main-bg;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 798.98px) {
+  /* на мобильном — остаётся старый layout, сетка ниже не нужна */
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+}

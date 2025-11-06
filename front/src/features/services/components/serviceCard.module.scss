@@ -1,0 +1,78 @@
+/* front/src/features/services/components/serviceCard.module.scss */
+.card {
+  border-radius: .75rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+}
+
+.imageWrap {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* квадрат */
+  background: #f6f7f9;
+  overflow: hidden;
+
+  /* Центрируем картинку, если она меньше по одной из сторон при contain */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* показываем целиком, без обрезки */
+  object-position: center;
+  display: block;
+  /* опционально: если у самого изображения есть прозрачность,
+     можно добавить фон, но лучше оставить фон у .imageWrap */
+  /* background: #f6f7f9; */
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    #f3f4f6,
+    #f3f4f6 10px,
+    #e5e7eb 10px,
+    #e5e7eb 20px
+  );
+}
+
+.content {
+  padding: .875rem .875rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.title {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.05rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.desc {
+  color: #fff;
+  font-size: .95rem;
+  line-height: 1.35rem;
+  min-height: 2.7rem; /* ~2 строки */
+  text-align: justify;
+}
+
+.price {
+  margin-top: auto;
+  font-weight: 700;
+  color: #fff;
+  font-size: 1.05rem;
+  text-align: right;
+}

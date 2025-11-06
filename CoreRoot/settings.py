@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'core',
     'core.user',
     'core.auth',
+    'core.services',
+    'core.posts',
 ]
 
 MIDDLEWARE = [
@@ -117,10 +119,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/kutak/bhair/static/'
+STATIC_ROOT = '/home/kutak/bobrovsky/static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/home/kutak/bhair/media/'
+MEDIA_ROOT = '/home/kutak/bobrovsky/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

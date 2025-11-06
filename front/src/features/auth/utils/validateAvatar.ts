@@ -7,7 +7,7 @@ export function isImageFile(file: File | null): boolean {
 export function validateAvatar(file: File | null): string | undefined {
   if (!file) return undefined; // Аватар опционален
   if (!isImageFile(file)) {
-    return 'Файл не является изображением';
+    return '                                                                                                     является изображением';
   }
   // Можно добавить ограничения по размеру, например 3 МБ:
   const MAX_SIZE = 3 * 1024 * 1024;

@@ -1,5 +1,48 @@
 @use '../../../shared/styles/mixins/mixins.scss' as mixins;
 
+.container {
+  position: relative;
+}
+
+/* крестик */
+.closeBtn {
+  position: absolute;
+  top: -1.25rem;
+  right: -1.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .line {
+    position: absolute;
+    width: 1rem;
+    height: 0.15rem;
+    background-color: #222;
+    border-radius: 0.15rem;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+  }
+
+  .line:nth-child(1) {
+    transform: rotate(45deg);
+  }
+
+  .line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .line:nth-child(3) {
+    transform: rotate(-45deg);
+  }
+}
+
 .title {
   text-align: center;
   margin: 0 0 1rem;
@@ -16,14 +59,15 @@
 .tab, .tabActive {
   @include mixins.button-1;
 }
+
 .tabActive {
-    border-color: #7fdfb5;
-    box-shadow: 0 0 0 1px #7fdfb5;
+  border-color: mixins.$frame;
+  box-shadow: mixins.$shadow;
 }
 
 .error {
-        color: #c92a2a;
-        margin-bottom: 1.625rem;
-        font-size: .875rem;
-        text-align: center;
+  color: #c92a2a;
+  margin-bottom: 1.625rem;
+  font-size: .875rem;
+  text-align: center;
 }

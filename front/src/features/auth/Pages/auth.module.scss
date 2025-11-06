@@ -6,6 +6,7 @@
   margin: 2.5rem auto;
   padding: 1.5rem;
   border-radius: .75rem;
-  background: mixins.$color-1;
-  box-shadow: 0px 0px 11px -2px #123045;
+  background: mixins.$secondary-bg;
+  border: mixins.$frame;
+  color: mixins.$main-text;
 }

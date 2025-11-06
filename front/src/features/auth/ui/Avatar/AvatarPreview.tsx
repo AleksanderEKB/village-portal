@@ -27,7 +27,7 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({
   defaultUrl,
   onRemove,
   onChangeRequest,
-  label = 'Аватар',
+  label,
 }) => {
   const [objectUrl, setObjectUrl] = React.useState<string | null>(null);
   const [menuOpen, setMenuOpen] = React.useState(false);

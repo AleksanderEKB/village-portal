@@ -50,31 +50,6 @@
   }
 }
 
-// .menu {
-//   position: absolute;
-//   top: calc(100% + 8px); /* под изображением */
-//   left: 50%;
-//   transform: translate(-50%, -.5rem);
-//   opacity: 0;
-//   pointer-events: none;
-
-//   min-width: 10rem;
-//   background: #fff;
-//   border: 1px solid #e5e7eb;
-//   border-radius: .625rem;
-//   padding: .375rem;
-//   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-//   z-index: 10;
-
-//   transition: opacity 120ms ease, transform 120ms ease;
-// }
-
-// .menuOpen {
-//   opacity: 1;
-//   pointer-events: auto;
-//   transform: translate(-50%, 0);
-// }
-
 
 .hiddenInput {
   /* скрываем, но не через display: none; чтобы было доступно для screen readers при необходимости */
@@ -88,13 +63,6 @@
   white-space: nowrap; /* для iOS */
   border: 0;
 }
-
-// .errorText {
-//   margin-top: .375rem;
-//   font-size: .75rem;
-//   color: #d62d20;
-//   text-align: center;
-// }
 
 .menuItem {
   display: block;

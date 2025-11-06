@@ -38,11 +38,25 @@ const ToastContainerLazy = React.lazy(() =>
   }))
 );
 
+const ServicesListPage = React.lazy(() =>
+  import(/* webpackChunkName: "services-list" */ "./features/services/pages/ServicesListPage")
+);
+
+const ServiceDetailPage = React.lazy(() =>
+  import(/* webpackChunkName: "service-detail" */ "./features/services/pages/ServiceDetailPage")
+);
+
+const PostsFeedPage = React.lazy(() =>
+  import(/* webpackChunkName: "posts-feed" */ "./features/posts/pages/PostsFeedPage")
+);
+const PostDetailPage = React.lazy(() =>
+  import(/* webpackChunkName: "post-detail" */ "./features/posts/pages/PostDetailPage")
+);
+
 const Main: React.FC = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    // Гидратация состояния авторизации из localStorage при монтировании
     dispatch(hydrateFromStorage());
   }, [dispatch]);
 
@@ -51,11 +65,16 @@ const Main: React.FC = () => {
       {/* Роуты с Header */}
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
+
+        {/* NEW: услуги */}
+        <Route path="/services" element={<ServicesListPage />} />
+        <Route path="/services/:slug" element={<ServiceDetailPage />} />
+        <Route path="/posts" element={<PostsFeedPage />} />
+        <Route path="/posts/:id" element={<PostDetailPage />} />
       </Route>
 
       {/* Роуты без Header */}
       <Route element={<AuthLayout />}>
-        {/* Оба URL используют единый компонент с табами */}
         <Route path="/login" element={<AuthPage />} />
         <Route path="/register" element={<AuthPage />} />
         <Route path="/verify-email/:token" element={<EmailVerifyPage />} />

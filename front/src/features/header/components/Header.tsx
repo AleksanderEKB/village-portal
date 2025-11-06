@@ -1,6 +1,6 @@
-// front/src/features/header/components/Header.tsx
 import React from "react";
 import '../styles.scss';
+import HamburgerMenu from '../../nav/HamburgerMenu';
 
 const Header: React.FC = () => {
     return (
@@ -9,14 +9,16 @@ const Header: React.FC = () => {
                 <picture>
                     <source 
                         media="(max-width: 699px)" 
-                        srcSet="https://bhair.online/media/default/header_mobile.png" 
+                        srcSet="https://bobrovsky.online/media/default/b2.webp" 
                     />
                     <img 
-                        src="https://bhair.online/media/default/header_desktop.png" 
+                        src="https://bobrovsky.online/media/default/b1.webp" 
                         alt="Header" 
                         className="header_image" 
                     />
                 </picture>
+                {/* Кнопка внутри header; позиционируется фиксировано в правом верхнем углу и не двигается при скролле */}
+                <HamburgerMenu />
             </div>
         </header>
     );

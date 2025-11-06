@@ -1,13 +1,17 @@
+// front/src/features/header/styles.scss
 .header_root {
     position: relative;
+    top: 0;
+    z-index: 1000; /* ниже, чем кнопка (1001), но выше контента */
     width: 100%;
     height: auto;
+    // background: #000; /* опционально: чтобы под ним не просвечивал контент при скролле */
 }
 
 .header_image_container {
     margin: 0;
     padding: 0;
-    position: relative;
+    position: relative; /* чтобы абсолютное позиционирование гамбургера работало внутри */
     width: 100%;
     height: auto;
 }
@@ -18,7 +22,6 @@
     object-fit: cover;
     max-width: 100%;
 }
-
 
 .header_text {
     position: absolute;
@@ -40,6 +43,5 @@
         0 0 25px #e77cde, 
         0 0 30px #eb6cc5, 
         0 0 35px #dd7ac4;
-    filter: brightness(3); /* Увеличение яркости */
+    filter: brightness(3);
 }
-

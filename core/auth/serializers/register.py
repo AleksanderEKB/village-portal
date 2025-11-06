@@ -32,7 +32,7 @@ class RegisterSerializer(UserSerializer):
 
         verification_link = f"{settings.MY_HOST}/verify-email/{user.email_verification_token}/"
         send_mail(
-            subject='Подтвердите ваш email на bhair.online',
+            subject='Подтвердите ваш email на bobrovsky.online',
             message=(
                 "Здравствуйте!\n\nДля завершения регистрации перейдите по ссылке:\n"
                 f"{verification_link}\n\nЕсли вы не регистрировались, проигнорируйте это письмо."
