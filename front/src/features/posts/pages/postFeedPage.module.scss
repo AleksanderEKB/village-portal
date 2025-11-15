@@ -1,0 +1,47 @@
+@use '../../shared/styles/mixins/mixins.scss' as mixins;
+
+
+.feed {
+  display: grid;
+  gap: .75rem;
+}
+
+.createFormWrapper {
+  grid-column: 1 / -1;
+}
+
+.status {
+  color: #fff;
+}
+
+.empty {
+  background: #fff;
+  border: 1px solid #e6e8eb;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  gap: .625rem;
+  grid-template-columns: 1fr; /* мобильная лента */
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

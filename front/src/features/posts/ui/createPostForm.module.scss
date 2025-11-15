@@ -1,0 +1,51 @@
+@use '../../shared/styles/mixins/mixins.scss' as mixins;
+
+.createForm {
+  // padding/раскладка как было
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+
+  textarea {
+    padding: 10px 12px;
+    font-size: 14px;
+    min-height: 80px;
+    resize: vertical;
+
+    background: mixins.$main-bg;
+    color: mixins.$main-text;
+
+    border: none;
+    outline: none;
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    // без рамок/углубления при фокусе
+    &:focus,
+    &:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+
+    &::placeholder {
+    //   color: mixins.$muted-text;
+      opacity: 1;
+    }
+  }
+
+  input[type="file"] {
+    font-size: 13px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+
+    button {
+      @include mixins.button-1;
+    }
+  }
+}

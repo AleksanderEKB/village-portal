@@ -88,7 +88,7 @@
 
 .actionBlock {
   display: flex;
-  justify-content: flex-end; /* гоняем всё вправо */
+  justify-content: flex-end;
   gap: .5rem;
   margin: .625rem 0;
   align-items: center;
@@ -112,7 +112,6 @@
 }
 
 .likeActive {
-  // background: #ffeff0 !important;
   color: #d92d20;
 }
 
@@ -142,16 +141,29 @@
   gap: 8px;
 
   input {
-    // border: 1px solid #ccd2d9;
-    // border-radius: 8px;
     padding: 10px 12px;
     font-size: 14px;
     outline: none;
     background: mixins.$main-bg;
+    color: mixins.$main-text;
+
     border: none;
     box-shadow: none;
     appearance: none;
-    color: mixins.$main-text;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    // без видимой рамки и "углубления" при фокусе
+    &:focus,
+    &:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      // color: mixins.$muted-text;
+      opacity: 1;
+    }
   }
 
   button {
@@ -314,15 +326,15 @@
   color: mixins.$main-text;
 }
 
-.detailHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: .625rem;
-  padding-bottom: .55rem;
-  border-bottom: mixins.$border-line;
-  border-bottom-color: mixins.$opacity;
-}
+// .detailHeader {
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   gap: .625rem;
+//   padding-bottom: .55rem;
+//   border-bottom: mixins.$border-line;
+//   border-bottom-color: mixins.$opacity;
+// }
 
 .detailComments {
   display: flex;
@@ -399,23 +411,24 @@
   gap: 8px;
 }
 
-.detailLikeBtn {
-  border: 0;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-  // background: #e9ecf5;
-  font: inherit;
-  line-height: 1;
-  background: mixins.$main-bg;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+// .detailLikeBtn {
+//   border: 0;
+//   border-radius: 8px;
+//   padding: 8px 12px;
+//   cursor: pointer;
+//   font: inherit;
+//   line-height: 1;
+//   background: mixins.$main-bg;
+//   display: flex;
+//   align-items: center;
+//   gap: 6px;
+// }
 
 @media (max-width: 798.98px) {
-  /* на мобильном — остаётся старый layout, сетка ниже не нужна */
-  .detailGrid {
-    grid-template-columns: 1fr;
+
+  .content {
+    color: #5865f2;
+    text-align: justify;
   }
+
 }

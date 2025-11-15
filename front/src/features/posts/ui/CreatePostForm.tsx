@@ -1,6 +1,6 @@
 // front/src/features/posts/ui/CreatePostForm.tsx
 import React from 'react';
-import styles from './posts.module.scss';
+import styles from './createPostForm.module.scss';
 import { useAppDispatch, useAppSelector } from '../../../app/hook';
 import { createPostThunk } from '../model/slice';
 import { selectIsAuth } from '../../auth/model/selectors';

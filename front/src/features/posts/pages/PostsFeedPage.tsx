@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hook';
 import { fetchPostsThunk } from '../model/slice';
 import PostCard from '../ui/PostCard';
 import CreatePostForm from '../ui/CreatePostForm';
-import styles from '../ui/posts.module.scss';
+import styles from './postFeedPage.module.scss';
 
 const PostsFeedPage: React.FC = () => {
   const dispatch = useAppDispatch();

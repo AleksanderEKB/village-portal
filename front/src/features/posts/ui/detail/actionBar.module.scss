@@ -1,0 +1,71 @@
+@use '../../../shared/styles/mixins/mixins.scss' as mixins;
+
+
+.actionBlock {
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+  margin: .625rem 0;
+  align-items: center;
+  padding: 0 1rem 1rem 0;
+  border-bottom: mixins.$border-line;
+  border-bottom-color: mixins.$opacity;
+
+    .dropMenu {
+        right: 0px;
+        left: auto;
+        transform: none;
+    }
+
+}
+
+.menuWrapper {
+  position: relative;
+}
+
+.actions {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+
+  button {
+    border: 0;
+    border-radius: .5rem;
+    padding: .5rem .75rem;
+    cursor: pointer;
+  }
+}
+
+.menuButton {
+  border: 0;
+  background: transparent;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+
+}
+
+.iconeElipsis {
+    width: 2rem;
+    height: 2rem;
+    display: block;
+}
+
+.detailLikeBtn {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+  background: mixins.$main-bg;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.likeActive {
+  color: #d92d20;
+}

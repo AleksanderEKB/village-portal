@@ -1,0 +1,44 @@
+@use '../../../shared/styles/mixins/mixins.scss' as mixins;
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .625rem;
+  padding-bottom: .55rem;
+  border-bottom: mixins.$border-line;
+  border-bottom-color: mixins.$opacity;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.authorName {
+    font-weight: 700;
+    font-size: .875rem;
+}
+
+.meta {
+  color: mixins.$secondary-text;
+  font-size: .6rem;
+  padding-top: .6rem;
+}
+
+
+@media (max-width: 798.98px) {
+
+  .headerLeft {
+    padding-left: 1rem;
+  }
+
+}
