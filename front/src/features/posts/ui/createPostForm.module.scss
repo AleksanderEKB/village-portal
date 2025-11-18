@@ -1,7 +1,7 @@
+// front/src/features/posts/ui/createPostForm.module.scss
 @use '../../shared/styles/mixins/mixins.scss' as mixins;
 
 .createForm {
-  // padding/раскладка как было
   padding: 12px;
   display: grid;
   gap: 8px;
@@ -10,10 +10,15 @@
     padding: 10px 12px;
     font-size: 14px;
     min-height: 80px;
-    resize: vertical;
 
-    background: mixins.$main-bg;
+    /* авто-расширение */
+    height: auto;          /* базовая высота — дальше управляет JS */
+    overflow: hidden;      /* без внутреннего скролла */
+    resize: none;          /* запрещаем ручной resize, чтобы не конфликтовал */
+
+    background: mixins.$block;
     color: mixins.$main-text;
+    border-radius: .75rem;
 
     border: none;
     outline: none;
@@ -22,7 +27,6 @@
     -webkit-appearance: none;
     -moz-appearance: none;
 
-    // без рамок/углубления при фокусе
     &:focus,
     &:focus-visible {
       outline: none;
@@ -30,7 +34,6 @@
     }
 
     &::placeholder {
-    //   color: mixins.$muted-text;
       opacity: 1;
     }
   }

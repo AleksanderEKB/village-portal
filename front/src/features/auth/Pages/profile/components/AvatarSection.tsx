@@ -5,6 +5,8 @@ import { selectUser } from '../../../model/selectors';
 import { updateProfileThunk } from '../../../model/authSlice';
 import AvatarPreview from '../../../ui/Avatar/AvatarPreview';
 import styles from '../profile.module.scss';
+import { toast } from 'react-toastify';
+import { validateImageFile } from '../../../../shared/utils/validateFile';
 
 const DEFAULT_AVATAR_URL = '/media/default/default_avatar.jpeg';
 
@@ -34,6 +36,12 @@ const AvatarSection: React.FC = () => {
   const onAvatarFilePicked = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     if (!file) return;
+
+    // Проверка, что выбран именно файл-изображение
+    if (!validateImageFile(file, (msg) => toast.error(msg))) {
+      e.currentTarget.value = '';
+      return;
+    }
 
     setPendingAvatarFile(file);
     setHasCustomAvatar(true);

@@ -3,6 +3,7 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import AvatarPreview from './AvatarPreview';
 import avatarStyles from './avatar.module.scss';
+import { validateImageFile } from '../../../shared/utils/validateFile';
 
 type Props = {
   file: File | null;
@@ -28,8 +29,7 @@ const AvatarField: React.FC<Props> = ({
   const inputRef = React.useRef<HTMLInputElement | null>(null);
 
   const handleFile = (f: File | null, target?: HTMLInputElement | null) => {
-    if (f && !f.type.startsWith('image/')) {
-      toast.error('Файл не является изображением');
+    if (!validateImageFile(f, (msg) => toast.error(msg))) {
       if (target) target.value = '';
       return;
     }
