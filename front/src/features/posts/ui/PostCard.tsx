@@ -1,43 +1,26 @@
 // front/src/features/posts/ui/PostCard.tsx
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from './posts.module.scss';
 import type { Post } from '../model/types';
 import { useAppDispatch, useAppSelector } from '../../../app/hook';
 import { toggleLikeThunk, updatePostThunk, deletePostThunk } from '../model/slice';
 import { selectIsAuth } from '../../auth/model/selectors';
 import DropMenu from '../../shared/components/dropmenu/DropdownMenu';
+import { FaEllipsis } from 'react-icons/fa6';
 
-const DEFAULT_AVATAR = '/media/default/default_avatar.jpeg';
+import { DEFAULT_AVATAR } from '../model/constants';
+import { formatTime } from '../lib/time';
+import { truncateSmart } from '../lib/text';
+import { useDropdownMenu } from '../model/hooks/useDropdownMenu';
+import { usePostEditing } from '../model/hooks/usePostEditing';
 
-function formatTime(dateStr: string) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  const diff = Math.floor((now.getTime() - d.getTime()) / 60000);
-  if (diff < 60) return `${diff} мин назад`;
-  const h = Math.floor(diff / 60);
-  if (h < 24) return `${h} ч назад`;
-  return d.toLocaleDateString('ru-RU');
-}
-
-/**
- * Клиентский фолбэк — на случай, если short_content ещё не приходит с API.
- */
-function truncateSmart(input: string, max = 100): string {
-  const s = (input ?? '').trim();
-  if (s.length <= max) return s;
-  const sub = s.slice(0, max);
-  const space = sub.lastIndexOf(' ');
-  const head = (space > 0 ? sub.slice(0, space) : sub).trimEnd();
-  return head + '…';
-}
+import styles from './postCard.module.scss';
 
 type Props = {
   post: Post;
-  variant?: 'feed' | 'detail';
 };
 
-const PostCard: React.FC<Props> = ({ post, variant = 'feed' }) => {
+const PostCard: React.FC<Props> = ({ post }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isAuth = useAppSelector(selectIsAuth);
@@ -48,32 +31,14 @@ const PostCard: React.FC<Props> = ({ post, variant = 'feed' }) => {
   const meId = useAppSelector((s: any) => s?.auth?.user?.id);
   const isOwner = isAuth && meId && meId === post.author.id;
 
-  const [menuOpen, setMenuOpen] = React.useState(false);
-  const wrapperRef = React.useRef<HTMLDivElement | null>(null);
+  const { menuOpen, setMenuOpen, wrapperRef } = useDropdownMenu();
 
-  const [editing, setEditing] = React.useState(false);
-  const [draft, setDraft] = React.useState(effectivePost.content);
-
-  React.useEffect(() => {
-    setDraft(effectivePost.content);
-  }, [effectivePost.content]);
-
-  React.useEffect(() => {
-    const onDocDown = (e: MouseEvent) => {
-      if (!wrapperRef.current) return;
-      if (!wrapperRef.current.contains(e.target as Node)) setMenuOpen(false);
-    };
-    if (menuOpen) document.addEventListener('mousedown', onDocDown);
-    return () => document.removeEventListener('mousedown', onDocDown);
-  }, [menuOpen]);
-
-  React.useEffect(() => {
-    const onEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
-    };
-    if (menuOpen) document.addEventListener('keydown', onEsc);
-    return () => document.removeEventListener('keydown', onEsc);
-  }, [menuOpen]);
+  const { editing, draft, setDraft, startEdit, cancelEdit, saveEdit } = usePostEditing({
+    initialContent: effectivePost.content,
+    onSave: async (content: string) => {
+      await dispatch(updatePostThunk({ id: post.id, content })).unwrap();
+    },
+  });
 
   const onLike = () => {
     if (!isAuth || toggling) return;
@@ -85,7 +50,7 @@ const PostCard: React.FC<Props> = ({ post, variant = 'feed' }) => {
 
   const onEditClick = () => {
     setMenuOpen(false);
-    setEditing(true);
+    startEdit();
   };
 
   const onDeleteClick = async () => {
@@ -96,26 +61,18 @@ const PostCard: React.FC<Props> = ({ post, variant = 'feed' }) => {
   };
 
   const onSaveEdit = async () => {
-    await dispatch(
-      updatePostThunk({
-        id: post.id,
-        content: draft
-      })
-    ).unwrap();
-    setEditing(false);
+    await saveEdit();
   };
 
   const onCancelEdit = () => {
-    setEditing(false);
-    setDraft(effectivePost.content);
+    cancelEdit();
   };
 
   const contentToRender = React.useMemo(() => {
     if (!effectivePost.content) return '';
-    if (variant === 'detail') return effectivePost.content;
     if (effectivePost.short_content) return effectivePost.short_content;
     return truncateSmart(effectivePost.content, 100);
-  }, [effectivePost.content, effectivePost.short_content, variant]);
+  }, [effectivePost.content, effectivePost.short_content]);
 
   return (
     <div className={styles.card}>
@@ -127,7 +84,7 @@ const PostCard: React.FC<Props> = ({ post, variant = 'feed' }) => {
             className={styles.avatar}
           />
           <div>
-            <div style={{ fontWeight: 700, fontSize: '.875rem' }}>
+            <div className={styles.authorName}>
               {authorName}
             </div>
             <div className={styles.meta}>{formatTime(post.created)}</div>
@@ -138,32 +95,34 @@ const PostCard: React.FC<Props> = ({ post, variant = 'feed' }) => {
           <div className={styles.menuWrapper} ref={wrapperRef}>
             <button
               type="button"
-              className={styles.menuButton}
+              className={styles.actionBtn}
               aria-haspopup="menu"
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((v) => !v)}
               title="Действия"
             >
-              ⋯
+              <FaEllipsis />
             </button>
             <DropMenu
               open={menuOpen}
-              style={{ right: 0, left: 'auto', transform: 'none' }}
+              className={styles.dropMenuRight}
             >
-              <button
-                type="button"
-                style={{ width: '100%', textAlign: 'left', padding: '.5rem', background: 'transparent', border: 0, cursor: 'pointer', borderRadius: 6 }}
-                onClick={onEditClick}
-              >
-                ✏️ Редактировать
-              </button>
-              <button
-                type="button"
-                style={{ width: '100%', textAlign: 'left', padding: '.5rem', background: 'transparent', border: 0, cursor: 'pointer', borderRadius: 6, color: '#d92d20' }}
-                onClick={onDeleteClick}
-              >
-                🗑 Удалить
-              </button>
+              <div className={styles.dropdownMenuGroup}>
+                <button
+                  type="button"
+                  className={styles.dropdownBtn}
+                  onClick={onEditClick}
+                >
+                  ✏️ Редактировать
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.dropdownBtn} ${styles.dropdownBtnDanger}`}
+                  onClick={onDeleteClick}
+                >
+                  🗑 Удалить
+                </button>
+              </div>
             </DropMenu>
           </div>
         )}
@@ -176,26 +135,25 @@ const PostCard: React.FC<Props> = ({ post, variant = 'feed' }) => {
               <img
                 src={effectivePost.image}
                 alt=""
-                className={variant === 'feed' ? styles.imageFeed : styles.imageDetail}
+                className={styles.imageFeed}
               />
             )}
           </Link>
           {contentToRender && <div className={styles.content}>{contentToRender}</div>}
         </>
       ) : (
-        <div style={{ display: 'grid', gap: 8 }}>
+        <div className={styles.editGrid}>
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            className={styles.content}
-            style={{ border: '1px solid #ccd2d9', borderRadius: 8, padding: 8 }}
+            className={`${styles.content} ${styles.editTextarea}`}
             placeholder="Текст поста"
           />
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-            <button type="button" onClick={onCancelEdit} style={{ border: 0, background: '#eef2f7', padding: '10px 14px', borderRadius: 8, cursor: 'pointer' }}>
+          <div className={styles.editActions}>
+            <button type="button" onClick={onCancelEdit} className={styles.btnCancel}>
               Отмена
             </button>
-            <button type="button" onClick={onSaveEdit} style={{ border: 0, background: '#5865f2', color: '#fff', fontWeight: 700, padding: '10px 14px', borderRadius: 8, cursor: 'pointer' }}>
+            <button type="button" onClick={onSaveEdit} className={styles.btnSave}>
               Сохранить
             </button>
           </div>
@@ -213,7 +171,7 @@ const PostCard: React.FC<Props> = ({ post, variant = 'feed' }) => {
           >
             ❤ {effectivePost.likes_count}
           </button>
-          <Link to={`/posts/${post.id}`} style={{ textDecoration: 'none' }}>
+          <Link to={`/posts/${post.id}`} className={styles.commentsLink}>
             Комментарии ({effectivePost.comments_count})
           </Link>
         </div>

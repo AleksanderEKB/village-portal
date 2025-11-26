@@ -1,4 +1,3 @@
-// front/src/features/posts/pages/PostsFeedPage.tsx
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hook';
 import { fetchPostsThunk } from '../model/slice';
@@ -16,22 +15,24 @@ const PostsFeedPage: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <div className={styles.feed}>
-      <div className={styles.createFormWrapper}>
-        <CreatePostForm />
-      </div>
-
-      {loading && <div className={styles.status}>Загрузка…</div>}
-
-      {!loading && posts.length === 0 ? (
-        <div className={styles.empty}>Постов пока нет</div>
-      ) : (
-        <div className={styles.grid}>
-          {posts.map((p) => (
-            <PostCard key={p.id} post={p} variant="feed" />
-          ))}
+    <div className={styles.wrap}>
+      <div className={styles.feed}>
+        <div className={styles.createFormWrapper}>
+          <CreatePostForm />
         </div>
-      )}
+
+        {loading && <div className={styles.status}>Загрузка…</div>}
+
+        {!loading && posts.length === 0 ? (
+          <div className={styles.empty}>Постов пока нет</div>
+        ) : (
+          <div className={styles.grid}>
+            {posts.map((p) => (
+              <PostCard key={p.id} post={p} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

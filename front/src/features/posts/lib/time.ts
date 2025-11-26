@@ -8,3 +8,20 @@ export function formatRelativeTime(dateStr: string) {
   if (hours < 24) return `${hours} ч назад`;
   return d.toLocaleDateString('ru-RU');
 }
+
+
+export function formatTime(dateStr: string): string {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffMin = Math.floor((now.getTime() - d.getTime()) / 60000);
+
+  if (diffMin < 1) return 'только что';
+  if (diffMin < 60) return `${diffMin} мин назад`;
+
+  const hours = Math.floor(diffMin / 60);
+  if (hours < 24) return `${hours} ч назад`;
+
+  return d.toLocaleDateString('ru-RU');
+}
+

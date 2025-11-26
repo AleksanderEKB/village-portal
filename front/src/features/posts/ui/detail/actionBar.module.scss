@@ -36,22 +36,21 @@
   }
 }
 
-.menuButton {
-  border: 0;
-  background: transparent;
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 8px;
-
+.actionBtn {
+  font-size: 2rem;
+  color: mixins.$icons;
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  appearance: none;
 }
 
-.iconeElipsis {
-    width: 2rem;
-    height: 2rem;
-    display: block;
-}
+// .iconeElipsis {
+//     width: 2rem;
+//     height: 2rem;
+//     display: block;
+// }
 
 .detailLikeBtn {
   border: 0;

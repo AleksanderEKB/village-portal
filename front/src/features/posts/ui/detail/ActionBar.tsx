@@ -2,6 +2,7 @@
 import React from 'react';
 import styles from './actionBar.module.scss';
 import DropMenu from '../../../shared/components/dropmenu/DropdownMenu';
+import { FaEnvelope } from "react-icons/fa6";
 
 type Props = {
   isOwner: boolean;
@@ -38,16 +39,12 @@ export const ActionBar: React.FC<Props> = ({
         <div className={styles.menuWrapper}>
           <button
             type="button"
-            className={styles.menuButton}
+            className={styles.actionBtn}
             aria-haspopup="menu"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            <img
-              src="/media/icons/ellipsis-solid-full.svg"
-              alt=""
-              className={styles.iconeElipsis}
-            />
+            <FaEnvelope />
           </button>
           <DropMenu
             open={menuOpen}

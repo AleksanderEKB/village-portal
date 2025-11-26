@@ -3,20 +3,41 @@
 
 /* Сброс */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Вариант 1: скрываем полосы прокрутки везде, но оставляем скролл */
+
+/* Базовые настройки документа */
+html, body {
+  height: 100%;
+  overflow-y: auto;   /* скролл есть */
+  overflow-x: hidden; /* горизонталь отключена глобально */
+  scrollbar-gutter: stable both-edges; /* стабилизируем макет без «прыжков» */
+}
+
+/* Прячем скроллбары во всех скроллируемых контейнерах */
+
+/* Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* IE 10+, старый Edge */
+* {
+  -ms-overflow-style: none;
+}
+
+/* WebKit (Chrome, Safari, Opera, Electron) */
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* Общие стили для body */
 body {
-    background: variables.$main-bg;
-    overflow-y: scroll; /* вертикальная прокрутка */
-    overflow-x: hidden; /* отключаем горизонтальную */
-    scrollbar-width: none; /* Firefox */
-    font-family: variables.$mainFont;
-}
-
-body::-webkit-scrollbar {
-    display: none; /* Chrome, Safari */
+  background: variables.$main-bg;
+  font-family: variables.$mainFont;
 }

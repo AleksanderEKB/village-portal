@@ -65,7 +65,17 @@ class PostSerializer(serializers.ModelSerializer):
         return make_excerpt(obj.content or "", 100)
 
     def create(self, validated_data):
+        """
+        Если пользователь не загрузил изображение, но написал текст,
+        присваиваем дефолтную картинку.
+        В БД храним относительный путь от MEDIA_ROOT: 'default/post_default.jpeg'
+        (URL будет /media/default/post_default.jpeg).
+        """
         request = self.context['request']
+        content = (validated_data.get('content') or '').strip()
+        image = validated_data.get('image')
+        if content and not image:
+            validated_data['image'] = 'default/post_default.jpeg'
         return Post.objects.create(author=request.user, **validated_data)
 
     def update(self, instance: Post, validated_data):

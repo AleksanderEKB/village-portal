@@ -1,0 +1,81 @@
+@use '../../styles/mixins/mixins.scss' as mixins;
+
+/*
+Управляющие переменные (дефолты). Можно переопределять из TS.
+*/
+.collapse {
+  // Контейнер (высота)
+  --ac-height-open-duration: 780ms;
+  --ac-height-close-duration: 700ms;
+  --ac-height-open-easing: cubic-bezier(0.22, 0.72, 0.22, 1);
+  --ac-height-close-easing: cubic-bezier(0.2, 0.6, 0.2, 1);
+
+  // Контент (opacity/transform)
+  --ac-content-in-duration: 520ms;
+  --ac-content-out-duration: 420ms;
+  --ac-content-in-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ac-content-out-easing: cubic-bezier(0.2, 0.6, 0.2, 1);
+
+  // Визуальные параметры
+  --ac-translate: 10px;
+  --ac-opacity-from: 0;
+
+  overflow: hidden;
+  height: 0;
+  transition: none; // высотой управляет TS по фазам
+}
+
+/* Анимация контента по фазам.
+   Важно: во время expanding/closed/hiding/collapsing контент прозрачный,
+   во время content-in/expanded — видимый.
+*/
+.inner {
+  will-change: opacity, transform;
+}
+
+/* начальные (скрытые) состояния */
+.collapse[data-phase='closed'] .inner,
+.collapse[data-phase='expanding'] .inner,
+.collapse[data-phase='hiding'] .inner,
+.collapse[data-phase='collapsing'] .inner {
+  opacity: var(--ac-opacity-from);
+  transform: translateY(calc(var(--ac-translate) * -1)) scale(0.98);
+  filter: none;
+  pointer-events: none;
+}
+
+/* показываем контент ПОСЛЕ расширения контейнера */
+.collapse[data-phase='content-in'] .inner,
+.collapse[data-phase='expanded'] .inner {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Транзишены для фаз появления/исчезновения содержимого */
+.collapse[data-phase='content-in'] .inner {
+  transition-property: opacity, transform;
+  transition-duration: var(--ac-content-in-duration);
+  transition-timing-function: var(--ac-content-in-easing);
+}
+
+.collapse[data-phase='hiding'] .inner {
+  transition-property: opacity, transform;
+  transition-duration: var(--ac-content-out-duration);
+  transition-timing-function: var(--ac-content-out-easing);
+}
+
+/* Для стабильных фаз убираем лишние переходы */
+.collapse[data-phase='expanded'] .inner,
+.collapse[data-phase='closed'] .inner,
+.collapse[data-phase='expanding'] .inner,
+.collapse[data-phase='collapsing'] .inner {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapse,
+  .inner {
+    transition: none !important;
+  }
+}

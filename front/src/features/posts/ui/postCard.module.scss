@@ -1,0 +1,189 @@
+// front/src/features/posts/ui/postCard.module.scss
+@use '../../shared/styles/mixins/mixins.scss' as mixins;
+
+.card {
+  background: mixins.$block;
+  border: mixins.$frame;
+  border-radius: .75rem;
+  padding: .75rem;
+  display: grid;
+  gap: .75rem;
+  color: mixins.$main-text;
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .625em;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: .625em;
+}
+
+.avatar {
+  @include mixins.avatar;
+}
+
+.authorName {
+  font-weight: 700;
+  font-size: .875rem;
+}
+
+.meta {
+  color: mixins.$secondary-text;
+  font-size: .6rem;
+  padding-top: .6rem;
+}
+
+.menuWrapper {
+  position: relative;
+}
+
+.actionBtn {
+  @include mixins.actBtn;
+}
+
+/* Позиционирование выпадающего меню вправо */
+.dropMenuRight {
+  right: 0 !important;
+  left: auto !important;
+  transform: none !important;
+}
+
+/* Контейнер кнопок в дропдауне */
+.dropdownMenuGroup {
+  display: grid;
+  gap: .25rem;
+  padding: .25rem;
+}
+
+/* Кнопки в дропдауне */
+.dropdownBtn {
+  width: 100%;
+  text-align: left;
+  padding: .5rem;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  border-radius: 6px;
+  color: mixins.$main-text;
+
+  &:hover {
+    background: white;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 1px;
+  }
+}
+
+.dropdownBtnDanger {
+  color: #d92d20;
+
+  &:hover {
+    background: rgba(217, 45, 32, 0.08);
+  }
+}
+
+.imageFeed {
+  width: 100%;
+  max-height: 18.75rem;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.content {
+  font-size: .875em;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+/* Блок редактирования */
+.editGrid {
+  display: grid;
+  gap: 8px;
+}
+
+.editTextarea {
+  border: 1px solid #ccd2d9;
+  border-radius: 8px;
+  padding: 8px;
+  background: #fff;
+  color: mixins.$main-text;
+
+  &:focus {
+    outline: none;
+    border-color: #fff;
+    box-shadow: 0 0 0 3px;
+  }
+}
+
+.editActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btnCancel {
+  border: 0;
+  background: #eef2f7;
+  color: mixins.$main-text;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.98);
+  }
+}
+
+.btnSave {
+  border: 0;
+  background: #5865f2;
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+}
+
+.actions {
+  display: flex;
+  gap: .75em;
+  align-items: center;
+
+  button {
+    border: 0;
+    border-radius: .5em;
+    padding: .5em .75em;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: .6;
+    }
+  }
+}
+
+.likeActive {
+  color: #d92d20;
+}
+
+.commentsLink {
+  text-decoration: none;
+  color: #fff;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

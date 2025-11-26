@@ -1,20 +1,114 @@
-// front/src/features/posts/ui/createPostForm.module.scss
+/* front/src/features/posts/ui/createPostForm.module.scss */
 @use '../../shared/styles/mixins/mixins.scss' as mixins;
 
-.createForm {
-  padding: 12px;
+/* Длительность анимации кнопки должна совпадать с ADD_BTN_FADE_MS в TS */
+:root {
+  --add-btn-fade-duration: 1500ms;
+  --add-btn-fade-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --add-post-gap: 0.5rem;
+  --add-post-icon-size: 1.5rem;
+  --add-post-label-size: 1rem;
+  --add-post-color: #{mixins.$icons};
+
+  /* ВАЖНО: это целевая высота — максимально возможная высота блока с кнопкой */
+  --add-btn-max-height: 64px;
+}
+
+.addButtonBox {
   display: grid;
-  gap: 8px;
+  place-items: center;
+
+  /* Вместо min-height — управляем max-height и скрываем переполнение,
+     чтобы избежать «скачка» высоты при скрытии/появлении */
+  max-height: var(--add-btn-max-height);
+  padding: .5rem 0;
+  overflow: hidden;
+
+  /* Плавно анимируем opacity, max-height и padding */
+  transition:
+    opacity var(--add-btn-fade-duration) var(--add-btn-fade-easing),
+    max-height var(--add-btn-fade-duration) var(--add-btn-fade-easing),
+    padding var(--add-btn-fade-duration) var(--add-btn-fade-easing),
+    visibility 0s linear var(--add-btn-fade-duration);
+  will-change: opacity, max-height, padding;
+}
+
+.addBtnVisible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s, 0s, 0s, 0s;
+}
+
+.addBtnHidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  /* Вместо мгновенного 0 — плавно схлопываем высоту и внутренние отступы */
+  max-height: 0;
+  padding: 0;
+
+  /* Не откладываем переключение visibility: оно не влияет на поток,
+     а max-height/padding обеспечат плавность без «качелей» */
+  transition-delay: 0s, 0s, 0s, 0s;
+}
+.addPostBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--add-post-gap);
+
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  appearance: none;
+
+  color: var(--add-post-color);
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.addPostBtnIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--add-post-icon-size);
+  color: var(--add-post-color);
+
+  svg {
+    width: 1.3em;
+    height: 1.3em;
+    display: block;
+  }
+}
+
+.addPostBtnLabel {
+  font-size: var(--add-post-label-size);
+  color: var(--add-post-color);
+  font-family: mixins.$mainFont;
+}
+
+.collapseWrapper {
+  margin: 0;
+}
+
+.createForm {
+  display: grid;
+  gap: .5rem;
+  padding: 0 .5rem;
 
   textarea {
     padding: 10px 12px;
     font-size: 14px;
     min-height: 80px;
 
-    /* авто-расширение */
-    height: auto;          /* базовая высота — дальше управляет JS */
-    overflow: hidden;      /* без внутреннего скролла */
-    resize: none;          /* запрещаем ручной resize, чтобы не конфликтовал */
+    height: auto;
+    overflow: hidden;
+    resize: none;
 
     background: mixins.$block;
     color: mixins.$main-text;
@@ -24,8 +118,6 @@
     outline: none;
     box-shadow: none;
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
 
     &:focus,
     &:focus-visible {
@@ -38,17 +130,19 @@
     }
   }
 
-  input[type="file"] {
-    font-size: 13px;
+  .imagePreviewSlot {
+    display: grid;
+    place-items: center;
   }
 
   .actions {
     display: flex;
-    gap: 8px;
-    justify-content: flex-end;
+    gap: 1.25rem;
+    justify-content: center;
+    align-items: center;
 
-    button {
-      @include mixins.button-1;
+    .actionBtn {
+      @include mixins.actBtn;
     }
   }
 }

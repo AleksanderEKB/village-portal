@@ -1,9 +1,21 @@
 @use '../../shared/styles/mixins/mixins.scss' as mixins;
 
+/* Контейнер как в Services: даёт ровные отступы слева/справа на мобильных */
+.wrap {
+  max-width: 1140px;
+  margin: 1rem auto 2rem;
+  padding: 0 .75rem;
+  box-sizing: border-box;
+  width: 100%;
+}
 
+/* Внутренний layout страницы ленты */
 .feed {
   display: grid;
   gap: .75rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden; /* локальная защита от случайных переполнений */
 }
 
 .createFormWrapper {
@@ -22,26 +34,45 @@
   text-align: center;
 }
 
+/* Сетка постов: безопасные треки через minmax(0, 1fr) */
 .grid {
   display: grid;
-  gap: .625rem;
-  grid-template-columns: 1fr; /* мобильная лента */
+  gap: .75rem;
+  grid-template-columns: minmax(0, 1fr); /* мобильная колонка + защита от переполнения */
+  width: 100%;
+  box-sizing: border-box;
 }
 
+/* Не даём детям расширять колонку и вызывать горизонтальный скролл */
+.grid > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Медиа внутри карточек не должны выпирать */
+.grid img,
+.grid video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Брейкпоинты как у тебя, но с minmax(0, 1fr) — безопаснее */
 @media (min-width: 640px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
   .grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1280px) {
   .grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
